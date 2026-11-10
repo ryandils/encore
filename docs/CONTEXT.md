@@ -15,11 +15,12 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 - Tested cloud checkout bootstrap: `pnpm run cloud:setup`. The saved **encore cloud env** configuration was observed ready/runnable for this repository on `main` on November 10, 2026; each new runtime still needs verification.
 - Repository-local issue inventory, prioritization, and orchestration skills are explicitly routed by AGENTS.md in the current chat. Inventory/recommendations remain read-only; implementation requires an action request and current readiness evidence. [Cloud instructions](CLOUD_ENVIRONMENT.md) contain the invocation table. Skills are available in checkouts containing their files; no global installation, new chat launch, or scheduler is implied.
 
+- An isolated owner fixture rehearsal at `/demo/owner-rehearsal` covers venue/night setup, price changes, simulated staff access, traffic summary, cash closeout, session-only history and CSV. It is disabled in production and clears on refresh; no real invitations or shared backend are involved.
 - B2 synthetic door console at `/demo/door`: phone-sized paid/free entry, exit, eligible undo, recent actions, acknowledged occupancy and explicit pending/rejected/unknown/stale feedback. An in-memory adapter consumes B1 contracts; reload resets it and production rejects the route. No database or login is required for these fake records.
 
 ## Not implemented
 
-No live ledger endpoints, owner dashboard, venue/night authorization, or production authentication exists yet. Real-user email verification and recovery require future provider configuration. The door fixture records simulated actions only; it cannot record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
+No live ledger endpoints, production owner dashboard, venue/night authorization, or production authentication exists yet. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
 
 ## Durable decisions
 

@@ -148,3 +148,9 @@ For the first pilot: encrypted transport, persistent managed database, backup/re
 - One shared door cash pool; no bar sales, tips, or payouts mixed in.
 - Counts are operational estimates. Keep ordinary ID checks, venue procedures, and authority requirements.
 - No forecasting until enough comparable nights exist and accuracy can be measured.
+
+## Owner fixture rehearsal boundary
+
+`/demo/owner-rehearsal` is a production-disabled, database-free screen with synthetic local state, separate from session-backed `/demo/owner`. `src/features/owner/fixture-model.ts` consumes B1 command parsers and ledger/reconciliation functions without changing the shared contracts. Immutable client snapshots preserve historical charged amounts and closed results for this page session. Closing rejects later local writes; CSV escapes fields and formula-like text. Simulated invites use reserved `.invalid` recipients and inert links; accepting or revoking them grants no real permissions.
+
+This UI is a rehearsal for B3, not a server API implementation. Refresh discards state, and separate tabs/devices and the B2 door fixture do not synchronize. B4 must replace local operations with authorized, transactional persistence before operational use. No schema, migration, authentication, or package changes are required by this rehearsal.

@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. **Live door endpoints, owner screens, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. **Live door endpoints, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -40,6 +40,14 @@ These checks cover contributor setup, the landing-page scaffold, database/authen
 `src/domain/ledger.ts` exposes pure projections and closeout calculations. `src/domain/contracts.ts` supplies the shared command/result types and parsers; `src/domain/fixtures.ts` exposes `createLedgerFixtures()` with fresh, explicitly synthetic examples for the documented $10/$15 scenario. Consumers must display its synthetic label and must not imply that fixture state is saved or shared between devices.
 
 Run `pnpm run test` for the database-free ledger and contract cases. With local PostgreSQL running and migrations applied, run `pnpm run ledger:verify` for database constraint checks. See [architecture and contract boundaries](docs/ARCHITECTURE.md) and [local database verification](docs/LOCAL_DATABASE.md). No live ledger API or door/owner UI is added by these modules.
+
+## Owner screen rehearsal (synthetic only)
+
+Run `pnpm run dev` and open [the owner rehearsal](http://localhost:3000/demo/owner-rehearsal). No database or login is needed for this isolated fixture screen; it exposes no account or real venue data and is disabled in production. Use fake values only. State lives in this browser page and resets on refresh; it is not saved or shared with the door demo or another device.
+
+Create a venue with capacity 100 and $5/$10/$15 presets, then open a night with occupancy 0 and a $100 float. Use the labeled fixture controls for four $10 admissions and one exit. Change the second preset to $15 and admit once more. The summary should show five entries, one exit, occupancy/peak four, $55 cover and $155 expected drawer cash. Count $150 and confirm close to see a -$5 cash variance. Closed history and CSV preserve the charged prices and closeout snapshot for this page session. Synthetic invite creation, acceptance and revocation send no messages and grant no access.
+
+The rehearsal uses B1 command types and pure calculations. It does not verify live authorization, atomic writes, persistence after refresh, or two-device convergence; those remain B4 (#11).
 
 ## Try the synthetic door console
 
