@@ -31,7 +31,7 @@ export default function Home() {
         </section>
 
         <section id="setup-status" aria-labelledby="setup-title" className="mt-14 scroll-mt-6 rounded-2xl border border-white/10 bg-slate-900 p-6 sm:mt-20 sm:p-8">
-          <p className="mb-2 text-sm font-medium text-amber-200">Current milestone · B0.1</p>
+          <p className="mb-2 text-sm font-medium text-amber-200">Current milestone · B0.3</p>
           <h2 id="setup-title" className="text-2xl font-semibold tracking-tight">The foundation is taking shape.</h2>
           <p className="mt-3 max-w-2xl leading-relaxed text-slate-300">
             This page is a setup preview. It does not record admissions, track
@@ -42,18 +42,19 @@ export default function Home() {
             <div>
               <dt className="font-semibold text-slate-100">Available now</dt>
               <dd className="mt-2 leading-relaxed text-slate-300">
-                A responsive landing page and a shared application foundation
-                for the team to build on.
+                A responsive landing page, local database storage, and a synthetic
+                owner/staff sign-in demo for local development.
               </dd>
             </div>
             <div>
               <dt className="font-semibold text-slate-100">Still to come</dt>
               <dd className="mt-2 leading-relaxed text-slate-300">
-                Database storage, sign-in, door recording, and owner closeout.
-                No accounts or venue data are connected.
+                Door recording, venue permissions, and owner closeout.
+                No real accounts or venue data are connected.
               </dd>
             </div>
           </dl>
+          <a href="/demo/sign-in" className="mt-7 inline-flex min-h-12 items-center rounded-lg border border-amber-300/60 px-5 py-3 font-semibold text-amber-200 hover:bg-amber-300/10">Try local sign-in demo</a>
         </section>
       </main>
 

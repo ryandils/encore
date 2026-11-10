@@ -8,7 +8,7 @@ describe('setup landing page', () => {
 
     expect(html).toContain('Demo / setup milestone');
     expect(html).toContain('Do not use it to run a live door.');
-    expect(html).toContain('No accounts or venue data are connected.');
+    expect(html).toContain('No real accounts or venue data are connected.');
     // This milestone must not offer a form that appears to record real venue data.
     expect(html).not.toMatch(/<(?:form|input|button|textarea|select)\b/);
   });

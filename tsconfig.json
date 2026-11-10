@@ -16,7 +16,8 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./src/*"] }
+    "paths": { "@/*": ["./src/*"] },
+    "types": ["node", "react", "react-dom", "bun-types/sqlite"]
   },
   "include": [
     "next-env.d.ts",
