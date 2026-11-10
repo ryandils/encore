@@ -78,7 +78,7 @@ The door screen has five stable regions in order:
 4. **Actions:** three price controls, separate Free entry, and a visibly distinct Exit control. Place this group in the lower half on a typical phone without forcing important text off short screens.
 5. **Recent actions:** acknowledgment, amount, time, permitted actor context, and eligible Undo. Keep pending items visibly separate from saved history.
 
-Use at least 48 × 48 CSS pixel touch targets; prefer 56–64 pixels high for routine controls and larger price tiles. Leave at least 8 pixels between adjacent targets. Use full-width labels on 320-pixel screens if a three-column price layout would squeeze text. Never position Exit directly against a primary admission target with no separation.
+Use at least 48 × 48 CSS pixel touch targets; prefer 56–64 pixels high for routine controls and larger price tiles. Leave at least 8 pixels between adjacent targets. Use full-width labels on 320-pixel screens if a three-column price layout would squeeze text. Place Exit (−) on the left and Free entry (+) on the right in both visual and document order. This puts the increment action on the right without changing its $0 meaning. Never position Exit directly against a primary admission target with no separation.
 
 Respect safe-area insets at top and bottom. Sticky action groups must not cover focused controls, feedback, browser chrome, or the virtual keyboard. At large text sizes and short heights, allow ordinary page scrolling rather than shrinking text or trapping content in a fixed-height phone shell. No swipe-only, hover-only, long-press-only, or vibration-only operation.
 

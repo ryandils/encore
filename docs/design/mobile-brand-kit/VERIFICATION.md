@@ -30,3 +30,7 @@ The staged `pnpm run context:check --base origin/main` passed the structured han
 - Full application build was not run: `scripts/build.ts` begins with the same blocked Prisma generation. There are no application changes in this design task. A future full check needs the environment owner to permit the documented Prisma download host.
 - No real phone, iOS/Safari, VoiceOver/TalkBack, screen-reader, virtual-keyboard, or physical venue usability test was performed. No blanket WCAG AAA certification is claimed. Computed palette ratios are documented in the guidelines.
 - This review has no real actions, persistence, auth, shared state, polling, or financial endpoint. It cannot prove transaction ordering, retries, permissions, concurrency, or two-device behavior. Those remain implementation gates after the relevant prerequisites merge.
+
+## Follow-up: left exit / right entry
+
+Swapped the secondary action document order: Exit (−), No refund on the left; Free entry (+), $0 cover on the right. Refreshed both mobile evidence images. Chromium checks at 320/390/430 pixels passed label, left-to-right position, disabled illustrative-control, five-state selection, closed-state hiding, and no-overflow assertions. Doctor and repository checks passed again. Full typecheck was attempted again; the existing Prisma host limitation remains separately reported.
