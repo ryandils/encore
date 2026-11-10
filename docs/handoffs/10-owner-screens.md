@@ -22,6 +22,10 @@ Playwright with system Chromium on the development server passed the complete re
 
 Independent review resolved ambiguous staff revoke controls by naming the recipient and prioritizing revoked invite status. No substantive review findings remain. `git diff --check` and `pnpm run context:check --base origin/main` passed.
 
+### Integration with merged B2
+
+Merged main at `62391c9` into this branch after PR #28 landed. Resolved README and CONTEXT conflicts by preserving both demos; independent review confirmed every B2 source/test file remains identical to main. The combined local doctor, repository check, lint and 187 tests pass. Full local typecheck remains blocked by the same Prisma proxy HTTP 403; hosted checks must pass on the integrated commit before merge.
+
 ## Context impact
 
 README adds the runnable rehearsal and acceptance walkthrough. CONTEXT records the fixture capability separately from the live backend. ARCHITECTURE documents the production boundary, local state and B4 integration requirements.

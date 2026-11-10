@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. A separate synthetic owner rehearsal covers setup, summary and closeout. **Live door endpoints, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. **Live door endpoints, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -48,6 +48,12 @@ Run `pnpm run dev` and open [the owner rehearsal](http://localhost:3000/demo/own
 Create a venue with capacity 100 and $5/$10/$15 presets, then open a night with occupancy 0 and a $100 float. Use the labeled fixture controls for four $10 admissions and one exit. Change the second preset to $15 and admit once more. The summary should show five entries, one exit, occupancy/peak four, $55 cover and $155 expected drawer cash. Count $150 and confirm close to see a -$5 cash variance. Closed history and CSV preserve the charged prices and closeout snapshot for this page session. Synthetic invite creation, acceptance and revocation send no messages and grant no access.
 
 The rehearsal uses B1 command types and pure calculations. It does not verify live authorization, atomic writes, persistence after refresh, or two-device convergence; those remain B4 (#11).
+
+## Try the synthetic door console
+
+Run `pnpm run dev` and open [http://localhost:3000/demo/door](http://localhost:3000/demo/door). This separate, visibly labeled fixture needs no database or sign-in. It records paid/free entries, exits and eligible undo actions in this browser tab only; refreshing resets the fixture. Staff screens show recorded occupancy and individual actions, not owner financial totals. Demo controls let you rehearse rejected saves, lost acknowledgements and disconnection. Retry keeps the original request ID to avoid recording an uncertain action twice.
+
+The route returns 404 in production. This is UI/contract verification, not live persistence, venue authorization or shared-device operation; B4 supplies those capabilities.
 
 ## Local PostgreSQL and synthetic seed
 
