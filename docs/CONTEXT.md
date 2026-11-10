@@ -8,7 +8,8 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 - Windows/macOS quick start, task/PR templates, and learning prompts. PRs #1 and #2 established this foundation.
 - Repository-local context-upkeep skill and per-change handoff gate, merged in PR #15.
 - One Next.js App Router/React/Tailwind scaffold with a phone-first landing page explicitly labeled as a demo/setup milestone; strict TypeScript 7 app checks and real lint/test/build commands alongside the harness.
-- Tested cloud checkout bootstrap: `pnpm run cloud:setup`; saved environment creation/publication remains a settings step, not a confirmed resource.
+- Tested cloud checkout bootstrap: `pnpm run cloud:setup`. The saved **encore cloud env** configuration was observed ready/runnable for this repository on `main` on November 10, 2026; each new runtime still needs verification.
+- Repository-local issue inventory, prioritization, and orchestration skills are explicitly routed by AGENTS.md in the current chat. Inventory/recommendations remain read-only; implementation requires an action request and current readiness evidence. [Cloud instructions](CLOUD_ENVIRONMENT.md) contain the invocation table. Skills are available in checkouts containing their files; no global installation, new chat launch, or scheduler is implied.
 
 ## Not implemented
 

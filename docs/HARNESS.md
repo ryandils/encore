@@ -32,16 +32,20 @@ Use `pnpm add -D <package>` to add development dependencies and commit pnpm-lock
 ## One task, one reviewable change
 
 1. **Orient:** read AGENTS.md and product docs; inspect branch, status, current tasks, and open PRs. If the agent cannot inspect GitHub, say so and have the human verify the claim before overlapping shared work.
-2. **Define:** copy [the task brief](tasks/TEMPLATE.md) or create a task through GitHub's Deliverable issue form. State user outcome, boundaries, dependencies, acceptance examples, and evidence. An issue ID is a claimable coordination point; issue assignment is not a lock.
+2. **Define:** use an existing issue and [the task brief](tasks/TEMPLATE.md) to state user outcome, boundaries, dependencies, acceptance examples, and evidence. Create a new issue through the Deliverable form only when explicitly authorized. An issue ID is a claimable coordination point; issue assignment is not a lock.
 3. **Plan:** name affected files and checks. For a learning session, explain the plan before making the first edit and give the learner a chance to ask questions. Explicit human instructions to proceed remain valid.
 4. **Build:** one branch per task. Prefer the smallest useful vertical slice. No parallel independent app scaffolds.
 5. **Verify:** run actual checks and inspect the diff. Record failures as failures. For app behavior, add the specific behavioral evidence required by the task, beyond the harness.
 6. **Explain:** the learner can describe what changed, why, and one remaining limit. Agent explanations support this; they are not evidence that the learner understood.
-7. **Review:** open a PR with results. Another person reviews; a human decides to merge. After merge, everyone updates their local main.
+7. **Review:** have an independent reviewer inspect the integrated diff, then open a PR with verified results and limitations. Humans decide whether to merge. Issue closure, merge, deployment, and environment publication require explicit authorization. After a confirmed merge, everyone updates their local main.
 
-Prompt files in [.codex/prompts](../.codex/prompts/README.md) are copy/paste recipes. They are **not** automatically executed or special Codex commands. AGENTS.md is the persistent repository instruction entry point. No global Codex settings, permission bypasses, or shared credentials are required.
+The [Encore skill entry points](CLOUD_ENVIRONMENT.md) support issue listing, ranked recommendations, and scoped orchestration in the current chat. Listing/recommendation requests remain read-only. Other files in [.codex/prompts](../.codex/prompts/README.md) remain copy/paste recipes; the old cloud prompt links to the orchestrator skill. AGENTS.md routes requests even without automatic discovery. No global installation, permission bypasses, or shared credentials are required.
 
-## Keeping three people from colliding
+## Parallel cloud teams and ownership
+
+Use `$encore-orchestrator implement #5` or `$encore-orchestrator investigate #6` in an Encore checkout containing [the skill](../.agents/skills/encore-orchestrator/SKILL.md). For cloud work select **encore cloud env**. Each chat has an accountable lead, useful parallel subagents, and independent review. [WORKFLOW.md](WORKFLOW.md) owns the detailed coordination rules; the skill does not launch chats or install a scheduler.
+
+## Keeping contributors from colliding
 
 - Ryan or the first volunteer owns B0; confirm that claim on GitHub. Everyone else can complete L0 or review product assumptions now.
 - B1 defines the shared types before Mike/Conomos split owner and door screens.

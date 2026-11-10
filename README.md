@@ -36,7 +36,7 @@ These checks cover contributor setup and the landing-page scaffold. They do not 
 
 - [Harness and shared AI workflow](docs/HARNESS.md)
 - [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
-- [Copy/paste Codex prompts](.codex/prompts/README.md)
+- [Codex skills and prompt recipes](.codex/prompts/README.md)
 - [Task brief template](docs/tasks/TEMPLATE.md)
 
 ## The weekend MVP
