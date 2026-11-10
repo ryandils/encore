@@ -1,0 +1,2 @@
+# Keep migrations tied to the PostgreSQL provider.
+provider = "postgresql"

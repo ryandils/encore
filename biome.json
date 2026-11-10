@@ -6,7 +6,11 @@
       "tests/**",
       "next.config.ts",
       "vitest.config.ts",
-      "scripts/typecheck.ts"
+      "scripts/typecheck.ts",
+      "scripts/build.ts",
+      "scripts/db*.ts",
+      "prisma/**/*.ts",
+      "prisma.config.ts"
     ]
   },
   "linter": { "enabled": true, "rules": { "preset": "recommended" } },

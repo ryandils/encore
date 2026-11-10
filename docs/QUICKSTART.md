@@ -2,7 +2,7 @@
 
 Goal: Conomos and Ryan can clone the same commit, run the same checks, and submit a small reviewed change. No previous programming experience is required. Budget roughly 30–60 minutes for the first setup, with time for downloads.
 
-**Current milestone: a demo/setup landing page.** You can run the web preview locally; database, authentication, and door operations come later in [the build plan](BUILD_PLAN.md). You do not need Docker, PostgreSQL, API keys, or paid services for this guide.
+**Current milestone: a demo/setup landing page and local database fixtures.** You can run the web preview and contributor checks without Docker or credentials. To migrate and seed PostgreSQL, follow the [local database guide](LOCAL_DATABASE.md), which adds Docker Desktop on Windows/macOS. Authentication and door operations remain later work in [the build plan](BUILD_PLAN.md); no paid service or production key is needed.
 
 ## 1. Install the tools
 
@@ -88,7 +88,7 @@ git rev-parse HEAD
 - `doctor` checks Node/pnpm/Git and repository prerequisites. Every required line should say `OK`.
 - `check` validates the starter harness and local document links. Look for `PASS harness`.
 - `typecheck` verifies the harness and application with strict TypeScript 7. Node 24 runs erasable .ts harness files directly; the app tooling handles React's TSX.
-- `lint`, `test`, and `build` check application source conventions, exercise the landing page, and create the optimized Next.js build.
+- `lint`, `test`, and `build` check source conventions, exercise the landing page and database-command guards, and create the optimized Next.js build. They do not start PostgreSQL.
 - `git status` should show a clean working tree before your first edit.
 - `git rev-parse HEAD` prints the commit fingerprint. Send Ryan that fingerprint and your check results to confirm you're on the same baseline. Don't send environment files or tokens.
 
@@ -97,6 +97,8 @@ Run `pnpm run compiler:version` to confirm `Version 7.0.2`. Printing the compile
 To preview the landing page, run `pnpm run dev`, then open [http://localhost:3000](http://localhost:3000). Keep that terminal running while using the page; Ctrl+C stops the server. For the optimized build, run `pnpm run build` and then `pnpm run start` instead. Use one server at a time on port 3000.
 
 Passing these checks does **not** mean the door ledger is implemented or ready for customers. No environment file or account is needed for this setup page.
+
+For database work, continue with [local PostgreSQL setup](LOCAL_DATABASE.md). Its `db:init`, `db:up`, `db:generate`, `db:migrate`, `db:seed`, and `db:verify` commands work the same way in native PowerShell and macOS Terminal. Keep `.env` private and use only the supplied synthetic records in this development database.
 
 ## 5. Connect your AI coding tool
 

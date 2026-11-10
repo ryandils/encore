@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const commands = [
+  ['node_modules/prisma/build/index.js', 'generate'],
   ['node_modules/next/dist/bin/next', 'typegen'],
   ['node_modules/typescript/bin/tsc', '--project', 'tsconfig.harness.json'],
   ['node_modules/typescript/bin/tsc', '--project', 'tsconfig.json'],

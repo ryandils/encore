@@ -13,5 +13,9 @@
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["scripts/**/*.ts"]
+  "include": [
+    "scripts/**/*.ts",
+    "prisma/**/*.ts",
+    "prisma.config.ts"
+  ]
 }

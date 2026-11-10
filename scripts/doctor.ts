@@ -27,5 +27,6 @@ console.log(`Platform: ${process.platform}/${process.arch}`);
 console.log(pkg.scripts.dev
   ? 'An app dev script exists; follow the current README for its additional prerequisites.'
   : 'Harness only: no Encore app server or database is implemented yet.');
+console.log('Local database work additionally needs Docker Compose v2: run pnpm run db:status. The landing page and baseline checks do not need PostgreSQL.');
 console.log('This check does not verify GitHub write access, Codex login, or pilot readiness.');
 process.exitCode = failures ? 1 : 0;

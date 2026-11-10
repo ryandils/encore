@@ -1,6 +1,6 @@
 # Implementation direction and shared contracts
 
-The Next.js/React/Tailwind setup landing page and strict TypeScript 7 checks exist. The database, authentication, ledger, and API sections below remain design contracts for later build-plan tasks.
+The Next.js/React/Tailwind setup landing page, strict TypeScript 7 checks, and local PostgreSQL/Prisma identity storage exist. Authentication behavior, full domain models, ledger, and API sections below remain design contracts for later build-plan tasks.
 
 ## Stack and structure
 
@@ -23,7 +23,20 @@ Suggested layout:
 
 A future native client can reuse contracts and domain logic. Native UI is separate work. No AI runtime, payment SDK, SMS SDK, or analytics vendor is needed for B0-B5.
 
-## Minimal entities
+## Implemented local identity storage
+
+B0.2 adds a minimal schema for repeatable local setup; it does not implement the domain model below. See [local database setup](LOCAL_DATABASE.md) for migrations, seed, reset boundaries, and restart verification.
+
+| Model | Stored fields and constraints |
+| --- | --- |
+| `User` | String identity ID, name, unique email, `emailVerified` defaulting to false, optional image, creation/update timestamps. The shape prepares for Better Auth; no custom password fields or login behavior are present. |
+| `DemoIdentity` | One profile per user (`userId` primary key and relation), `DemoRole` (`OWNER` or `STAFF`), and an explicit synthetic label. |
+
+The seed uses stable synthetic IDs and reserved `.invalid` emails, writing both identities and their demo metadata in a transaction. Repeating it preserves identity IDs and creation timestamps. `DemoIdentity.role` is fixture metadata only: it must never substitute for `VenueMembership`, an active `NightAssignment`, or server authorization. B0.3 must integrate the maintained auth library and its account/session/verification storage; B1 adds the domain contracts and models.
+
+Prisma and its PostgreSQL adapter are pinned together in the manifest/lockfile. Generated TypeScript client output is untracked under `.generated/prisma`, outside `node_modules` so Node 24 can execute it with type stripping. Both typechecking and the build command generate the client first, so a fresh install does not depend on a prior command's generated output; generation requires no live database. Local migration/seed/reset commands reject production mode and targets outside the dedicated loopback database; reset additionally requires an explicit acknowledgement. The fixed local URL is a development boundary, not a production migration/deployment mechanism. The web landing page does not import the client, read the database, or expose seeded identities.
+
+## Planned domain entities
 
 | Entity | Key fields |
 | --- | --- |

@@ -14,7 +14,7 @@ Update impacted canonical docs in the same PR, add a new per-change handoff for 
 
 ## Repository state
 
-This repository has a contributor harness and a Next.js/React/Tailwind setup landing page. It has no database, authentication, door ledger, or owner dashboard yet. Read docs/HARNESS.md and preserve the existing Node 24/pnpm 12.18.0 manifest, lockfile, scripts, and CI as B0 continues. Update README.md with commands that actually work; distinguish harness checks from application behavior.
+This repository has a contributor harness, a Next.js/React/Tailwind setup landing page, and local PostgreSQL/Prisma migrations with synthetic identity fixtures. Authentication, the door ledger, and owner dashboard are not implemented. Read docs/HARNESS.md and docs/LOCAL_DATABASE.md; preserve the existing Node 24/pnpm 12.18.0 manifest, lockfile, scripts, and CI as B0 continues. Update README.md with commands that actually work; distinguish harness checks from application and database behavior.
 
 ## TypeScript requirement
 
