@@ -14,6 +14,12 @@ The link checker skips fenced examples and external URLs; it does not validate h
 
 CI runs the same baseline on Linux, Windows, and macOS for pull requests and main. It has read-only repository permissions. It runs repository checks, not Codex, and needs no model credentials. A green result is evidence for the checks actually run, not general approval to ship. Merge rules/branch protections are a separate GitHub setting; this workflow does not enable them.
 
+## Context upkeep
+
+Follow [WORKFLOW.md](WORKFLOW.md) and the [repository skill](../.agents/skills/encore-context-upkeep/SKILL.md). Read [current context](CONTEXT.md) at task start. Update affected canonical docs and add a new [handoff](handoffs/TEMPLATE.md) for non-document changes. After staging it, run `npm run context:check -- --base origin/main`; `npm run context:test` exercises the gate against temporary Git repositories.
+
+CI runs the gate against the PR base or pre-push commit. It checks that a new handoff has filled sections, not whether its statements are true or GitHub issues are synchronized. No background bot is installed and branch protections are not configured by this workflow.
+
 ## One task, one reviewable change
 
 1. **Orient:** read AGENTS.md and product docs; inspect branch, status, current tasks, and open PRs. If the agent cannot inspect GitHub, say so and have the human verify the claim before overlapping shared work.

@@ -10,7 +10,9 @@
   "scripts": {
     "doctor": "node scripts/doctor.mjs",
     "check": "node scripts/check.mjs",
-    "compiler:version": "tsc --version"
+    "compiler:version": "tsc --version",
+    "context:check": "node scripts/context-check.mjs",
+    "context:test": "node --test scripts/context-check.test.mjs"
   },
   "devDependencies": {
     "typescript": "7.0.2"

@@ -37,6 +37,12 @@ These checks establish contributor readiness, not a working product. There are n
 
 The first pilot covers one entrance, a single shared door cash pool, USD cash cover, and online operation. The schema must isolate venues even though the first pilot uses one. Anonymous walk-ins require no phone, name, or account.
 
+## Project context and live work
+
+Start with [current context](docs/CONTEXT.md) and [the task workflow](docs/WORKFLOW.md). Live work is tracked in [GitHub issues](https://github.com/ryandils/encore/issues), not previous chats. Code changes include [task handoffs](docs/handoffs/README.md); agents follow the [context-upkeep skill](.agents/skills/encore-context-upkeep/SKILL.md).
+
+Next available work, if still Ready/unclaimed: [B0.1 app scaffold](https://github.com/ryandils/encore/issues/4). Conomos can independently take [L0 first contribution](https://github.com/ryandils/encore/issues/13).
+
 ## Read in this order
 
 - [MVP scope, flows, and acceptance criteria](docs/MVP.md)

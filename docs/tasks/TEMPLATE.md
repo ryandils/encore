@@ -30,3 +30,9 @@ Fixture or real integration? If fixture, how is it labeled?
 Actual result and verification:
 Remaining limitations:
 Next task:
+
+## Context upkeep
+
+Canonical docs likely affected:
+New handoff filename for code/tooling changes:
+Issue status/PR evidence to synchronize:
