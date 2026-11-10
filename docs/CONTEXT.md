@@ -34,6 +34,6 @@ No live ledger endpoints, production owner dashboard, venue/night authorization,
 
 ## Where to continue
 
-Live work/claims: [GitHub issues](https://github.com/ryandils/encore/issues). Consult the existing claims for [B2 door screens](https://github.com/ryandils/encore/issues/9) and [B3 owner screens](https://github.com/ryandils/encore/issues/10), then the prerequisites for [B4 shared backend integration](https://github.com/ryandils/encore/issues/11). Confirm merges and current ownership before claiming work. Issue-body Status fields own the live record; manually maintained `status:*` labels mirror them for filtering. These are pointers, not a live status snapshot.
+Live work/claims: [GitHub issues](https://github.com/ryandils/encore/issues). For the next implementation milestone, inspect [B4 shared backend integration](https://github.com/ryandils/encore/issues/11) and its prerequisite acceptance and ownership records. The [B2 door](https://github.com/ryandils/encore/issues/9) and [B3 owner](https://github.com/ryandils/encore/issues/10) records provide screen-fixture evidence; merged screens alone do not prove backend readiness. Confirm merges and current ownership before claiming work. Issue-body Status fields own the live record; manually maintained `status:*` labels mirror them for filtering. These are pointers, not a live status snapshot.
 
 Read [workflow](WORKFLOW.md), [build plan](BUILD_PLAN.md), and [harness](HARNESS.md). Use [handoffs](handoffs/README.md) for change-specific evidence. Don't infer current progress from this chat.
