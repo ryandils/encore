@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. **Live door endpoints, door/owner screens, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. **Live door endpoints, owner screens, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -40,6 +40,12 @@ These checks cover contributor setup, the landing-page scaffold, database/authen
 `src/domain/ledger.ts` exposes pure projections and closeout calculations. `src/domain/contracts.ts` supplies the shared command/result types and parsers; `src/domain/fixtures.ts` exposes `createLedgerFixtures()` with fresh, explicitly synthetic examples for the documented $10/$15 scenario. Consumers must display its synthetic label and must not imply that fixture state is saved or shared between devices.
 
 Run `pnpm run test` for the database-free ledger and contract cases. With local PostgreSQL running and migrations applied, run `pnpm run ledger:verify` for database constraint checks. See [architecture and contract boundaries](docs/ARCHITECTURE.md) and [local database verification](docs/LOCAL_DATABASE.md). No live ledger API or door/owner UI is added by these modules.
+
+## Try the synthetic door console
+
+Run `pnpm run dev` and open [http://localhost:3000/demo/door](http://localhost:3000/demo/door). This separate, visibly labeled fixture needs no database or sign-in. It records paid/free entries, exits and eligible undo actions in this browser tab only; refreshing resets the fixture. Staff screens show recorded occupancy and individual actions, not owner financial totals. Demo controls let you rehearse rejected saves, lost acknowledgements and disconnection. Retry keeps the original request ID to avoid recording an uncertain action twice.
+
+The route returns 404 in production. This is UI/contract verification, not live persistence, venue authorization or shared-device operation; B4 supplies those capabilities.
 
 ## Local PostgreSQL and synthetic seed
 
