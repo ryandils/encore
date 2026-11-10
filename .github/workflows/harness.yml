@@ -24,6 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run doctor
       - run: npm run compiler:version
+      - run: npm run typecheck
       - run: npm run check
       - run: npm run context:test
       - run: npm run context:check

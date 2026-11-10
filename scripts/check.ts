@@ -1,13 +1,12 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
 import { dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const errors = [];
+const errors: string[] = [];
 const skipped = new Set(['.git', 'node_modules', '.next', 'coverage', 'dist', 'out', '.vercel']);
-const files = [];
-function walk(dir) {
+const files: string[] = [];
+function walk(dir: string) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (skipped.has(entry.name) || entry.isSymbolicLink()) continue;
     const path = join(dir, entry.name);
@@ -44,11 +43,10 @@ for (const path of files) {
   const extension = extname(path);
   if (extension === '.json') {
     try { JSON.parse(readFileSync(path, 'utf8')); }
-    catch (error) { errors.push(`${label}: invalid JSON: ${error.message}`); }
+    catch (error) { errors.push(`${label}: invalid JSON: ${(error instanceof Error ? error.message : String(error))}`); }
   }
-  if (extension === '.mjs') {
-    const result = spawnSync(process.execPath, ['--check', path], { encoding: 'utf8' });
-    if (result.status !== 0) errors.push(`${label}: ${result.stderr || result.error}`);
+  if (['.js', '.jsx', '.mjs', '.cjs'].includes(extension.toLowerCase())) {
+    errors.push(`${label}: authored source must be TypeScript (.ts/.tsx), not JavaScript.`);
   }
   if (extension !== '.md') continue;
   const content = readFileSync(path, 'utf8');
@@ -73,6 +71,6 @@ if (errors.length) {
   errors.forEach(error => console.error(`FAIL ${error}`));
   process.exitCode = 1;
 } else {
-  console.log('PASS harness: required docs, inline local file links, JSON, Node script syntax, and the TypeScript 7 pin.');
-  console.log('No application lint, typecheck, tests, build, remote links, or heading anchors were checked.');
+  console.log('PASS harness: required docs, inline local file links, JSON, TypeScript-only source policy, and the TypeScript 7 pin.');
+  console.log('Run npm run typecheck for strict harness types. No application behavior, build, remote links, or heading anchors were checked.');
 }

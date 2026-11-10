@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 let failures = 0;
-function report(ok, message) {
+function report(ok: boolean | undefined, message: string) {
   console.log(`${ok ? 'OK' : 'FAIL'} ${message}`);
   if (!ok) failures++;
 }

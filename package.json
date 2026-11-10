@@ -8,13 +8,16 @@
     "npm": ">=11 <12"
   },
   "scripts": {
-    "doctor": "node scripts/doctor.mjs",
-    "check": "node scripts/check.mjs",
+    "doctor": "node scripts/doctor.ts",
+    "check": "node scripts/check.ts",
     "compiler:version": "tsc --version",
-    "context:check": "node scripts/context-check.mjs",
-    "context:test": "node --test scripts/context-check.test.mjs"
+    "context:check": "node scripts/context-check.ts",
+    "context:test": "node --test scripts/context-check.test.ts",
+    "typecheck": "tsc --project tsconfig.harness.json"
   },
   "devDependencies": {
+    "@types/node": "24.19.2",
     "typescript": "7.0.2"
-  }
+  },
+  "type": "module"
 }
