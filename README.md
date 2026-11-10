@@ -121,7 +121,7 @@ The first pilot covers one entrance, a single shared door cash pool, USD cash co
 
 Start with [current context](docs/CONTEXT.md) and [the task workflow](docs/WORKFLOW.md). Live work is tracked in [GitHub issues](https://github.com/ryandils/encore/issues), not previous chats. Code changes include [task handoffs](docs/handoffs/README.md); agents follow the [context-upkeep skill](.agents/skills/encore-context-upkeep/SKILL.md).
 
-[B0.3 authentication and demo roles](https://github.com/ryandils/encore/issues/6) establishes the local sign-in foundation. Before taking [B0.4 platform verification](https://github.com/ryandils/encore/issues/7), confirm prerequisite merges and current ownership on GitHub. These links identify work, not a live status snapshot.
+For screen work, consult the existing [B2 door-console](https://github.com/ryandils/encore/issues/9) and [B3 owner-screen](https://github.com/ryandils/encore/issues/10) claims. [B4 shared backend integration](https://github.com/ryandils/encore/issues/11) tracks their integration prerequisites. Confirm merges and current ownership on GitHub before taking work. Issue-body Status fields and their manual `status:*` label mirrors are described in the workflow; these links identify work, not a live status snapshot.
 
 ## Read in this order
 
