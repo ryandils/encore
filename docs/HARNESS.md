@@ -39,7 +39,7 @@ Use `pnpm add -D <package>` to add development dependencies and commit pnpm-lock
 6. **Explain:** the learner can describe what changed, why, and one remaining limit. Agent explanations support this; they are not evidence that the learner understood.
 7. **Review:** have an independent reviewer inspect the integrated diff, then open a PR with verified results and limitations. Humans decide whether to merge. Issue closure, merge, deployment, and environment publication require explicit authorization. After a confirmed merge, everyone updates their local main.
 
-The [encore-orchestrator skill](../.agents/skills/encore-orchestrator/SKILL.md) supports short requests in the current chat. Other files in [.codex/prompts](../.codex/prompts/README.md) remain copy/paste recipes; the old cloud prompt is a compatibility link to the skill. AGENTS.md explicitly routes relevant work to the skill even without automatic discovery. No global installation, permission bypasses, or shared credentials are required.
+The [Encore skill entry points](CLOUD_ENVIRONMENT.md) support issue listing, ranked recommendations, and scoped orchestration in the current chat. Listing/recommendation requests remain read-only. Other files in [.codex/prompts](../.codex/prompts/README.md) remain copy/paste recipes; the old cloud prompt links to the orchestrator skill. AGENTS.md routes requests even without automatic discovery. No global installation, permission bypasses, or shared credentials are required.
 
 ## Parallel cloud teams and ownership
 

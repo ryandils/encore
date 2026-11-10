@@ -39,11 +39,15 @@ Use TypeScript 7 in strict mode for all authored executable source: application 
 - Open a PR with the task ID, behavior, verification performed, and remaining limitations. Do not create new issues, close issues, merge PRs, deploy, or publish environments without explicit authorization. Avoid automatic issue-closing keywords in PR descriptions unless issue closure is explicitly authorized.
 - Do not add integrations, dependencies, or unrelated features just to make a demo look complete.
 
-## Cloud orchestration default
+## Skill routing and cloud orchestration
 
-For `$encore-orchestrator`, a plain-language request to use encore-orchestrator, or relevant Encore cloud implementation/investigation work, read and apply [.agents/skills/encore-orchestrator/SKILL.md](.agents/skills/encore-orchestrator/SKILL.md), even if the interface does not auto-discover it. Use it in the current chat; invocation does not require opening another chat. Examples: `$encore-orchestrator implement #5`, `$encore-orchestrator investigate #6`, or `Use encore-orchestrator to implement #5`.
+Read the matching repository-local skill for named invocations or equivalent plain-language requests, even if the interface does not auto-discover it. Use the current chat; no chat switch or full prompt copy is required. Route listing and recommendation requests before considering orchestration:
 
-Each cloud chat defaults to an accountable lead using useful parallel subagents and independent review. Only the lead assigns agents and mutates Git/PRs; its coordinator alone updates its claimed issue. Follow [the detailed ownership and validation workflow](docs/WORKFLOW.md) for distinct claims, exclusive file ownership, merged dependencies, and capacity limits. The repository-local skill does not globally install commands, launch chats, or create a scheduler.
+- `$encore-issues` or "list Encore issues": [encore-issues](.agents/skills/encore-issues/SKILL.md), read-only inventory of all open and closed issues by default; `open only` narrows it.
+- `$encore-prioritize` or "what should we work on next?": [encore-prioritize](.agents/skills/encore-prioritize/SKILL.md), a read-only ranked recommendation grounded in current evidence. An opinion request does not authorize claims or implementation.
+- `$encore-orchestrator implement #5`, `$encore-orchestrator investigate #6`, or `Use encore-orchestrator to implement #5`: [encore-orchestrator](.agents/skills/encore-orchestrator/SKILL.md), scoped implementation or read-only investigation. Use it for relevant Encore cloud action requests, not merely listing or recommending work.
+
+Each orchestration chat defaults to an accountable lead using useful parallel subagents and independent review. Only the lead assigns agents and mutates Git/PRs; its coordinator alone updates its claimed issue. Follow [the detailed ownership and validation workflow](docs/WORKFLOW.md) for distinct claims, exclusive file ownership, merged dependencies, and capacity limits. Repository-local skills do not globally install commands, launch chats, or create a scheduler.
 
 ## Critical invariants
 

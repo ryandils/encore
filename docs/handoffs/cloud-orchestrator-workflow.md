@@ -1,37 +1,40 @@
-# Encore orchestrator — repository-local skill
+# Encore skills — inventory, prioritization, and orchestration
 
 ## Task
 
-Provide the user-requested Encore orchestration workflow as a repository-local skill in [PR #21](https://github.com/ryandils/encore/pull/21), so it can be invoked in the current chat without copying a long prompt or switching chats. This is a contributor-workflow deliverable, not implementation of the example product issues.
+Deliver three repository-local Encore skills in [PR #21](https://github.com/ryandils/encore/pull/21) so users can list issues, ask for a ranked opinion, or request scoped work in the current chat. This is a contributor-workflow deliverable, not implementation of the example product issues. The user has authorized merging PR #21 after validation; no merge is claimed by this handoff.
 
 ## Outcome
 
-In a checkout containing the change, send `$encore-orchestrator implement #5` or `$encore-orchestrator investigate #6`. The plain-language fallback is `Use encore-orchestrator to implement #5`. [AGENTS.md](../../AGENTS.md) explicitly routes relevant requests to the skill when automatic discovery is unavailable. The skill applies the shared coordination policy with parallel subagents and independent review.
+In a checkout containing the change, `$encore-issues` lists all open and closed issues, `$encore-prioritize` gives an evidence-backed ranked recommendation, and `$encore-orchestrator implement #5` requests scoped implementation. `$encore-orchestrator investigate #6` remains read-only. [AGENTS.md](../../AGENTS.md) explicitly routes named and plain-language requests when automatic skill discovery is unavailable.
 
-The skill reaches `main` only after PR #21 merges. No global installation, skill-picker behavior, new chat launch, or cross-chat handoff is claimed.
+Listing and recommendation questions take precedence over orchestration triggers and do not authorize claims or edits. Issue numbers are examples, not standing claims or recommendations. No global installation, skill-picker behavior, new chat launch, or cross-chat handoff is claimed.
 
 ## Changes
 
-- Added [.agents/skills/encore-orchestrator/SKILL.md](../../.agents/skills/encore-orchestrator/SKILL.md) as the reusable entry point for implementation and read-only investigation.
-- Replaced the long [cloud prompt](../../.codex/prompts/cloud-orchestrator.md) with a short compatibility entry and invocation examples; its existing path still works.
-- Updated agent routing, the prompt index, and cloud/harness/context guidance to use the skill in the current chat. [WORKFLOW.md](../WORKFLOW.md) remains the canonical coordination policy rather than duplicating it across entry points.
-- Retained the parallel-cloud ownership rules and the [context-upkeep skill](../../.agents/skills/encore-context-upkeep/SKILL.md) alignment: each coordinator updates only its own issue, and issue closure requires explicit authorization.
-- Recorded the saved environment's observed ready/runnable listing on November 10, 2026 without publishing configuration IDs or claiming runtime startup success.
+- Added [encore-issues](../../.agents/skills/encore-issues/SKILL.md) for complete open/closed issue inventory and optional state filtering.
+- Added [encore-prioritize](../../.agents/skills/encore-prioritize/SKILL.md) for ranked opinions grounded in current GitHub and implementation evidence, without taking work.
+- Added [encore-orchestrator](../../.agents/skills/encore-orchestrator/SKILL.md) for scoped implementation/read-only investigation with parallel subagents and independent review; its routing explicitly defers listing/recommendation questions to the read-only skills.
+- Replaced the long [cloud prompt](../../.codex/prompts/cloud-orchestrator.md) with a compatibility entry and short examples. Updated agent routing, the prompt index, and cloud/harness/context guidance. [WORKFLOW.md](../WORKFLOW.md) remains the canonical coordination policy.
+- Retained the parallel-cloud ownership rules and [context-upkeep skill](../../.agents/skills/encore-context-upkeep/SKILL.md) alignment: each coordinator updates only its own issue; issue closure requires explicit authorization.
+- Recorded the saved environment's observed ready/runnable listing on November 10, 2026 without configuration IDs or an unobserved runtime-startup claim.
 
 ## Verification
 
-The lead ran `corepack pnpm run doctor`, `corepack pnpm run typecheck`, `corepack pnpm run check`, `corepack pnpm run context:check --base origin/main`, and `git diff --cached --check` against the skill revision; all passed. The skill worker validated YAML name/description fields and seven local links; the lead independently read the frontmatter and the repository check resolved local links.
+The lead ran `corepack pnpm run doctor` (Node 24.22.1/pnpm 12.18.0), `corepack pnpm run typecheck` (strict TypeScript 7), `corepack pnpm run check`, `corepack pnpm run context:check --base origin/main`, and `git diff --cached --check` against this three-skill revision; all passed.
 
-Independent review found no substantive issues: frontmatter/triggers are valid, coordination and read-only safeguards are preserved, context-upkeep and AGENTS.md fallback routing are explicit, and the former prompt is a short compatibility entry. Application tests, build, and browser checks were not rerun because application behavior/configuration is unchanged. Skill-picker discovery and actual invocation in another host have not been tested.
+Independent review found no outstanding substantive findings. Review fixes ensure retrieval uses the selected repository, open PRs receive separate repository-wide coverage rather than relying on issue references, and closed issues cannot become ready candidates or be silently reopened. An opinion alone remains read-only while an explicit implementation request in the same message retains its authority. Manual reasoning covered capped/all-state listings, Open/Done contradictions, blocked/claimed/already-implemented issues, no-ready results, and partial evidence; these were inspected scenarios, not executed tests.
+
+No live inventory/prioritization invocation, skill-picker check, or invocation in another host was performed. Application tests, build, and browser checks were not rerun because application behavior/configuration is unchanged. Hosted CI and merge remain pending.
 
 ## Context impact
 
-[AGENTS.md](../../AGENTS.md) routes the skill explicitly. [CLOUD_ENVIRONMENT.md](../CLOUD_ENVIRONMENT.md) owns usage and checkout availability; [WORKFLOW.md](../WORKFLOW.md) retains ownership/validation policy. [HARNESS.md](../HARNESS.md), [CONTEXT.md](../CONTEXT.md), and the [prompt index](../../.codex/prompts/README.md) link to the skill instead of requiring the old long prompt. GitHub remains the source of issue ownership/readiness. Product behavior, schemas, dependency pins, and application commands are unchanged.
+[AGENTS.md](../../AGENTS.md) routes all three skills with read-only precedence. [CLOUD_ENVIRONMENT.md](../CLOUD_ENVIRONMENT.md) owns the invocation table and checkout availability; [WORKFLOW.md](../WORKFLOW.md) retains coordination policy. [HARNESS.md](../HARNESS.md), [CONTEXT.md](../CONTEXT.md), and the [prompt index](../../.codex/prompts/README.md) point to the appropriate entry points. GitHub remains the source of issue ownership/readiness. Product behavior, schemas, dependency pins, and application commands are unchanged.
 
 ## Learning note
 
-A repository-local skill packages reusable instructions; it is not a new service or permission grant. Explicit AGENTS.md routing lets an agent read those instructions even if an interface does not list the skill automatically. Subagents still share the current chat's checkout, so file ownership and GitHub coordination remain necessary.
+A repository-local skill packages reusable instructions, not a new service or permission grant. Inventory answers what exists; prioritization explains what appears worth doing next; orchestration performs explicitly requested work. Keeping those intents separate makes asking for advice safe without accidentally claiming an issue.
 
 ## Next step
 
-Human review and merge of PR #21 remain next. Use the one-line skill request in a checkout containing the change; after merge, update other checkouts from `main`. Recheck live GitHub prerequisites before any example implementation. No new chats, environment publication, product issue claims, or dependency unblocking result from adding the skill.
+After hosted CI passes, perform the user-authorized merge of PR #21. After confirmed merge, contributors can update their checkouts from `main` and use the short requests in the current chat. Provide Conomos a copy-paste usage message without sending it. Recheck live GitHub prerequisites before any implementation; adding these skills does not claim product issues or unblock dependencies.

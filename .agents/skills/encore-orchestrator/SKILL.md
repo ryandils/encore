@@ -1,6 +1,6 @@
 ---
 name: encore-orchestrator
-description: Coordinate Encore issue implementation or read-only investigation with an accountable lead, useful parallel subagents, current GitHub claims, independent review, and verified PR handoffs. Use when asked to orchestrate Encore work, implement a named issue, investigate an issue without edits, or select the next ready issue within an authorized scope.
+description: Coordinate explicitly requested Encore issue implementation or read-only investigation with an accountable lead, parallel subagents, current GitHub claims, independent review, and verified handoffs. Use for named issue action or an authorized request to implement the next ready issue; route issue-listing questions to encore-issues and recommendation questions to encore-prioritize.
 ---
 
 # Encore orchestrator
@@ -8,6 +8,8 @@ description: Coordinate Encore issue implementation or read-only investigation w
 Use this skill inside an existing Encore chat. It does not launch chats, install a scheduler, or grant access to GitHub or environments. Follow [AGENTS.md](../../../AGENTS.md), the canonical [workflow](../../../docs/WORKFLOW.md), and the [context-upkeep skill](../encore-context-upkeep/SKILL.md); apply the latter at startup and handoff.
 
 ## Resolve the scope
+
+Listing issues belongs to [encore-issues](../encore-issues/SKILL.md); asking what to work on next belongs to [encore-prioritize](../encore-prioritize/SKILL.md). These read-only requests take precedence over broad orchestration triggers and do not authorize a claim or implementation. Continue into implementation only when the user has asked for that action.
 
 These invocations are equivalent entry points; a skill picker is optional:
 
@@ -20,7 +22,7 @@ Use encore-orchestrator to implement the next ready issue.
 
 Resolve the issue and mode from the request and existing conversation. Explicit implementation authorizes the scoped claim, edits, validation, branch, and reviewable PR workflow; investigation remains read-only. Do not ask again for information or authority already established. If a missing target or mode is genuinely ambiguous, continue read-only triage and ask only for the unresolved scope decision before making changes.
 
-For a named issue, stay on it. An explicit “next ready issue” request permits selection of the highest-priority unclaimed deliverable with merged prerequisites according to the build plan; prefer a small complete outcome. If none is ready, report why. Do not silently substitute another issue for a blocked named target or turn investigation into implementation. Additional issues require scope already authorized by the user or a new assignment.
+For a named issue, stay on it. An explicit “implement the next ready issue” request permits selection of the highest-priority unclaimed deliverable with merged prerequisites according to the build plan; prefer a small complete outcome. If none is ready, report why. Do not silently substitute another issue for a blocked named target or turn investigation into implementation. Additional issues require scope already authorized by the user or a new assignment.
 
 ## Orient and delegate
 

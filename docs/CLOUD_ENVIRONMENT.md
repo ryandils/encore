@@ -26,18 +26,20 @@ The command performs a frozen install and runs doctor, compiler version, strict 
 
 Select the saved environment for Encore tasks. Changes to its saved configuration or publication are separate authorized settings operations; this bootstrap does not create, rename, share, or publish an environment. Conomos needs his own authorized access to the repository and saved environment; access/sharing depends on the account/workspace configuration. Each cloud chat must have its own isolated checkout.
 
-## Use the orchestrator skill
+## Use Encore skills
 
-In the current Encore chat, invoke [encore-orchestrator](../.agents/skills/encore-orchestrator/SKILL.md) with one existing issue and a mode:
+Send a short request in the current Encore chat:
 
-```text
-$encore-orchestrator implement #5
-$encore-orchestrator investigate #6
-```
+| Request | Result |
+| --- | --- |
+| `$encore-issues` | [Read-only inventory](../.agents/skills/encore-issues/SKILL.md) of all open and closed issues; add `open only` to narrow it. |
+| `$encore-prioritize` | [Read-only ranked opinion](../.agents/skills/encore-prioritize/SKILL.md) based on current readiness, ownership, dependencies, and implementation evidence. |
+| `$encore-orchestrator implement #5` | [Orchestrated implementation](../.agents/skills/encore-orchestrator/SKILL.md), only if a fresh check confirms the issue is ready and unclaimed. |
+| `$encore-orchestrator investigate #6` | Parallel read-only investigation of that issue; no claim or implementation. |
 
-Plain-language fallback: `Use encore-orchestrator to implement #5`. AGENTS.md explicitly routes relevant requests to the skill even when automatic discovery is unavailable. You do not need to switch chats or copy a full prompt. Each invocation applies the existing scope/readiness rules; an investigation does not silently become implementation.
+Plain-language fallbacks include `Use encore-issues to list all issues`, `Use encore-prioritize to recommend what to work on next`, and `Use encore-orchestrator to implement #5`. AGENTS.md routes requests even when automatic discovery is unavailable. Listing or asking for an opinion remains read-only; it does not authorize the action workflow. Issue numbers are examples, not standing recommendations or claims.
 
-The skill is available only in checkouts containing `.agents/skills/encore-orchestrator/SKILL.md`; `main` receives it after [PR #21](https://github.com/ryandils/encore/pull/21) merges. Before then, use a checkout containing that PR's change. No global installation or skill-picker behavior has been verified. The [old prompt location](../.codex/prompts/cloud-orchestrator.md) remains a short compatibility entry.
+Skills are available in checkouts containing their `.agents/skills` files. Update from `main` after the change merges to use them in another checkout. No global installation or skill-picker behavior has been verified. The [old orchestrator prompt location](../.codex/prompts/cloud-orchestrator.md) remains a short compatibility entry.
 
 ## Optional parallel chats
 

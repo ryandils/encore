@@ -9,4 +9,6 @@ $encore-orchestrator investigate #6
 
 Plain-language fallback: `Use encore-orchestrator to implement #5`. [AGENTS.md](../../AGENTS.md) explicitly routes these requests even when automatic skill discovery is unavailable. No chat switch or full prompt copy is required.
 
-The checkout must contain the skill; `main` receives it after [PR #21](https://github.com/ryandils/encore/pull/21) merges. This is not a global installation or a tested skill-picker integration. See [cloud usage](../../docs/CLOUD_ENVIRONMENT.md) and [coordination policy](../../docs/WORKFLOW.md). The skill does not launch chats or bypass issue readiness checks.
+For a read-only issue list use `$encore-issues`; for a ranked recommendation use `$encore-prioritize`. Neither starts implementation. See [the skill index](README.md).
+
+The checkout must contain the skill files; update from `main` after the change merges. This is not a global installation or a tested skill-picker integration. See [cloud usage](../../docs/CLOUD_ENVIRONMENT.md) and [coordination policy](../../docs/WORKFLOW.md). The skill does not launch chats or bypass issue readiness checks.

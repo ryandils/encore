@@ -1,6 +1,12 @@
 # Skills and prompt recipes
 
-For Encore orchestration, use the repository-local [encore-orchestrator skill](../../.agents/skills/encore-orchestrator/SKILL.md) in the current chat: `$encore-orchestrator implement #5` or `$encore-orchestrator investigate #6`. Plain-language fallback: `Use encore-orchestrator to implement #5`. AGENTS.md routes these requests explicitly even when skill discovery is unavailable. The checkout must contain the skill; this is not a global installation.
+Use repository-local skills in the current chat:
+
+- [encore-issues](../../.agents/skills/encore-issues/SKILL.md): `$encore-issues` lists all open and closed issues read-only; add `open only` to narrow it.
+- [encore-prioritize](../../.agents/skills/encore-prioritize/SKILL.md): `$encore-prioritize` gives an evidence-backed ranked recommendation without starting work.
+- [encore-orchestrator](../../.agents/skills/encore-orchestrator/SKILL.md): `$encore-orchestrator implement #5` requests action; `$encore-orchestrator investigate #6` requests read-only investigation.
+
+Plain language such as `Use encore-prioritize to recommend what to work on next` works through AGENTS.md routing even without skill discovery. The checkout must contain the skills; this is not a global installation. Listing/recommendation questions never imply implementation. See [usage and availability](../../docs/CLOUD_ENVIRONMENT.md).
 
 The remaining recipes are ordinary text files, not installed commands. Open a recipe and paste it into your Codex interface with the repository selected.
 
