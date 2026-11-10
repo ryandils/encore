@@ -1,0 +1,27 @@
+.console { max-width: 36rem; margin: auto; padding: 1.25rem; color: #eff3fa; }
+.console * { box-sizing: border-box; }
+.console h1 { font-size: 1.7rem; line-height: 1.15; margin: .4rem 0 1rem; }
+.console h2 { font-size: 1.1rem; margin: 1.5rem 0 .75rem; }
+.console p { line-height: 1.5; }
+.console button, .console input { font: inherit; }
+.console button { cursor: pointer; min-height: 48px; border: 1px solid #5a6981; border-radius: .8rem; padding: .75rem; background: #1d2b42; color: #f5f7fc; font-weight: 700; }
+.console button:disabled { opacity: .48; cursor: not-allowed; }
+.console button:focus-visible, .console input:focus-visible { outline: 3px solid #ffd76a; outline-offset: 3px; }
+.heading { display: flex; flex-wrap: wrap; gap: .5rem; align-items: start; justify-content: space-between; }
+.eyebrow { letter-spacing: .14em; font-size: .75rem; color: #b9c9e3; }
+.badge { background: #203f40; color: #b3f7da; border-radius: 2rem; padding: .5rem .75rem; font-size: .75rem; }
+.countPanel { padding: 1rem 1.5rem; border: 1px solid #34445f; border-radius: 1.3rem; background: #111e32; }
+.countPanel p { margin: .3rem 0; }
+.countPanel .count { font-size: 5rem; line-height: 1.15; font-weight: 800; font-variant-numeric: tabular-nums; }
+.muted { color: #b8c5d9; font-size: .85rem; }
+.warning { color: #ffe3a1; background: #45351b; padding: .75rem; border-radius: .5rem; }
+.sync { display: flex; flex-direction: column; gap: .35rem; font-size: .8rem; margin: 1rem 0; color: #c0d3eb; }
+.feedback { border-left: 3px solid #83c5ff; padding: .1rem .75rem; font-size: .9rem; }
+.prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.console .price { min-height: 118px; background: #d0ef6a; color: #172007; border-color: #d0ef6a; padding: .7rem .2rem; }
+.price strong, .price span, .price small { display: block; }
+.price strong { font-size: 1.8rem; }.price span { font-size: .8rem; margin-top: .4rem; }.price small { font-size: .65rem; margin-top: .4rem; }
+.secondary { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .75rem; }
+.secondary button { min-height: 64px; }.secondary span { display: block; font-size: .7rem; font-weight: 400; margin-top: .3rem; }
+.actions { list-style: none; padding: 0; margin: 0; }.actions li { display: flex; align-items: center; justify-content: space-between; gap: .8rem; padding: .85rem 0; border-bottom: 1px solid #30405a; font-size: .9rem; }.actions small { display: block; color: #bcc9db; margin-top: .3rem; }
+.confirm, .recovery { padding: 1rem; background: #302b25; border: 1px solid #a28b5e; border-radius: .8rem; margin-top: 1rem; }.confirm label { display: block; margin-bottom: .5rem; }.confirm input { width: 100%; padding: .8rem; background: #111e32; color: white; border: 1px solid #8a9ab2; border-radius: .5rem; }.recovery button { width: 100%; margin-bottom: .5rem; }.refresh { width: 100%; margin-top: 1.5rem; }

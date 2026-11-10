@@ -117,6 +117,14 @@ Use integer cents, UUIDs, server UTC timestamps, and venue timezone for display.
 
 Closing captures an immutable reconciliation snapshot in the same transaction as closing the night. A repeated identical close request returns the original result; a different request cannot overwrite it. Owner reopening/revised reconciliations are deferred.
 
+## B2 synthetic door console
+
+`/demo/door` mounts the isolated phone-first console with an in-memory adapter from `src/features/door`. The server route rejects production before rendering. It deliberately needs no session because every record is a labeled synthetic fixture; this grants no real venue access and does not replace the protected sign-in demos.
+
+The console consumes only `LedgerApi.doorState` and `LedgerApi.recordEvent`. Its controller serializes intentional taps, keeps pending actions separate from acknowledged occupancy, preserves request IDs on retry, and halts new actions after an uncertain result until reconciled. It polls and refreshes through the adapter; an unavailable or stale snapshot is visibly identified. No aggregate cover, float, reconciliation or owner configuration is exposed in the staff view. Undo asks for confirmation and a reason, with eligibility supplied by the adapter.
+
+The fixture starts at zero occupancy with B1's original presets. It projects synthetic events with the shared pure ledger and simulates failed acknowledgements without claiming server persistence or authorization. Refresh resets the isolated fixture; B4 must replace the adapter with authorized transactional endpoints and verify concurrent devices. Existing B1 contracts, schema and authentication are unchanged.
+
 ## Connectivity and operation
 
 Online-first: persist each action on the backend, poll active screens within 3 seconds, refresh on focus, and mark data stale after 10 seconds without successful synchronization. Serialize local taps without dropping intentional repeated admissions. Retain each submitted request ID until its outcome is known; a retry reuses it. A new intentional tap gets a new ID.
