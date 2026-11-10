@@ -1,6 +1,6 @@
 # Implementation direction and shared contracts
 
-This is a design contract, not a description of existing code.
+The Next.js/React/Tailwind setup landing page and strict TypeScript 7 checks exist. The database, authentication, ledger, and API sections below remain design contracts for later build-plan tasks.
 
 ## Stack and structure
 
@@ -8,7 +8,9 @@ Use Next.js App Router, React, strict TypeScript 7 (pinned to 7.0.2), Tailwind C
 
 All authored source, including scripts/tests/configs where supported, uses .ts/.tsx. JavaScript source is rejected by the harness; generated runtime output and dependencies are excluded. Node 24 executes the erasable .ts harness; tsconfig.harness.json and pnpm run typecheck separately enforce types.
 
-B0 must preserve the TypeScript 7 baseline and harness config, add a strict application tsconfig, and verify the chosen Next.js and library versions with the installed compiler. Do not silently fall back to TypeScript 5/6 if scaffolding selects older defaults.
+Preserve the TypeScript 7 baseline, strict harness config, and strict application tsconfig. Verify framework and library updates with the installed compiler; do not silently fall back to TypeScript 5/6.
+
+The scaffold pins Next.js 16.4.5, React 19.3.1, and Tailwind CSS 4.3.5 in the shared manifest/lockfile. `next.config.ts` enables Next's `experimental.useTypeScriptCli` integration so builds use TypeScript 7's native CLI without disabling type checks. `experimental.strictRouteTypes` makes generated `next-env.d.ts` import the active route declarations and validator; the app tsconfig does not glob both development and production generated types, which would duplicate their global declarations after using both modes. `pnpm run typecheck` generates route declarations and checks the harness, app, tests, and supported configs. Biome performs app linting; Vitest runs the landing-page tests. The PostCSS plugin mapping is declarative JSON because Next's loader supports it without authored JavaScript.
 
 Suggested layout:
 

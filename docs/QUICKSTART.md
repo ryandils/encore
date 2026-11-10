@@ -2,7 +2,7 @@
 
 Goal: Conomos and Ryan can clone the same commit, run the same checks, and submit a small reviewed change. No previous programming experience is required. Budget roughly 30–60 minutes for the first setup, with time for downloads.
 
-**Current milestone: contributor setup, not a running bar app.** There is no app server, database, or web preview yet. B0 in [the build plan](BUILD_PLAN.md) adds those. You do not need Docker, PostgreSQL, API keys, or paid services for this guide.
+**Current milestone: a demo/setup landing page.** You can run the web preview locally; database, authentication, and door operations come later in [the build plan](BUILD_PLAN.md). You do not need Docker, PostgreSQL, API keys, or paid services for this guide.
 
 ## 1. Install the tools
 
@@ -77,20 +77,26 @@ pnpm install --frozen-lockfile
 pnpm run doctor
 pnpm run check
 pnpm run typecheck
+pnpm run lint
+pnpm run test
+pnpm run build
 git status
 git rev-parse HEAD
 ```
 
-- `pnpm install --frozen-lockfile` installs exactly what the lockfile describes; the repository includes the TypeScript 7.0.2 compiler, its platform package, and Node 24 type definitions.
+- `pnpm install --frozen-lockfile` installs exactly what the lockfile describes, including the app dependencies, TypeScript 7.0.2 compiler, and Node 24 type definitions.
 - `doctor` checks Node/pnpm/Git and repository prerequisites. Every required line should say `OK`.
 - `check` validates the starter harness and local document links. Look for `PASS harness`.
-- `typecheck` verifies harness scripts/tests with strict TypeScript 7. Node 24 runs .ts files directly, so Windows needs no extra transpiler tool.
+- `typecheck` verifies the harness and application with strict TypeScript 7. Node 24 runs erasable .ts harness files directly; the app tooling handles React's TSX.
+- `lint`, `test`, and `build` check application source conventions, exercise the landing page, and create the optimized Next.js build.
 - `git status` should show a clean working tree before your first edit.
 - `git rev-parse HEAD` prints the commit fingerprint. Send Ryan that fingerprint and your check results to confirm you're on the same baseline. Don't send environment files or tokens.
 
-Run `pnpm run compiler:version` to confirm `Version 7.0.2`. B0 will add actual application typechecking; printing the compiler version does not typecheck an app.
+Run `pnpm run compiler:version` to confirm `Version 7.0.2`. Printing the compiler version alone does not typecheck the application.
 
-Passing these checks does **not** mean Encore is implemented or ready for customers.
+To preview the landing page, run `pnpm run dev`, then open [http://localhost:3000](http://localhost:3000). Keep that terminal running while using the page; Ctrl+C stops the server. For the optimized build, run `pnpm run build` and then `pnpm run start` instead. Use one server at a time on port 3000.
+
+Passing these checks does **not** mean the door ledger is implemented or ready for customers. No environment file or account is needed for this setup page.
 
 ## 5. Connect your AI coding tool
 
@@ -128,7 +134,7 @@ Follow [the learning path](LEARNING_PATH.md). Start with L0, a small documentati
 | PowerShell blocks a .ps1 launcher | Use `npm.cmd` only for bootstrap, then `pnpm.cmd install --frozen-lockfile` and `pnpm.cmd run doctor`. |
 | GitHub push denied | Confirm the invitation was accepted as `conomos`, and authenticate Git's browser prompt as that account. Never put a token in the remote URL. |
 | Checks don't exist after cloning | This harness PR may not be merged yet; ask Ryan which branch to use. Do not create a second package manifest. |
-| Port 3000 has nothing on it | Expected at this milestone; there is no app dev server yet. |
+| Port 3000 has nothing on it | Run `pnpm run dev` from the repository root and leave the terminal open. Check its output for errors or a different port if 3000 was already busy. |
 | Git reports conflicts or existing edits | Stop and ask Codex to explain `git status`; preserve those edits. Do not use `reset --hard` as a setup step. |
 
 If stuck, share the command, its error text, OS, and commit fingerprint. Redact secrets and personal paths. Ask for one next diagnostic step rather than reinstalling everything.

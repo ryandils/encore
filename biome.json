@@ -1,0 +1,15 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+  "files": {
+    "includes": [
+      "src/**",
+      "tests/**",
+      "next.config.ts",
+      "vitest.config.ts",
+      "scripts/typecheck.ts"
+    ]
+  },
+  "linter": { "enabled": true, "rules": { "preset": "recommended" } },
+  "formatter": { "enabled": false },
+  "assist": { "enabled": false }
+}

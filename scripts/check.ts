@@ -76,5 +76,5 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   console.log('PASS harness: required docs, inline local file links, JSON, TypeScript-only source policy, and the TypeScript 7 pin.');
-  console.log('Run pnpm run typecheck for strict harness types. No application behavior, build, remote links, or heading anchors were checked.');
+  console.log('Run pnpm run typecheck for strict harness and app types. No application behavior, build, remote links, or heading anchors were checked.');
 }

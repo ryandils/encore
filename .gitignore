@@ -12,6 +12,7 @@ out/
 dist/
 coverage/
 *.tsbuildinfo
+next-env.d.ts
 
 # Local tooling
 .DS_Store

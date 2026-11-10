@@ -14,7 +14,7 @@ Update impacted canonical docs in the same PR, add a new per-change handoff for 
 
 ## Repository state
 
-This repository has a contributor harness, not an Encore application. Read docs/HARNESS.md and use pnpm run doctor / pnpm run check. B0 extends the existing Node 24/pnpm 12.18.0 manifest, lockfile, scripts, and CI with actual app tooling; it must not overwrite the harness or claim it verifies app behavior. Update README.md with commands that actually work.
+This repository has a contributor harness and a Next.js/React/Tailwind setup landing page. It has no database, authentication, door ledger, or owner dashboard yet. Read docs/HARNESS.md and preserve the existing Node 24/pnpm 12.18.0 manifest, lockfile, scripts, and CI as B0 continues. Update README.md with commands that actually work; distinguish harness checks from application behavior.
 
 ## TypeScript requirement
 
@@ -61,7 +61,7 @@ Phone-first, thumb-sized controls, readable in a dark venue, explicit labels, an
 
 When implementation exists, run the repository's actual lint, typecheck, relevant tests, and build. Prioritize tests for money math, event projection, concurrent writes, idempotency, permissions, and close/reconcile behavior. UI changes need a narrow-phone browser check. Report commands and results honestly; distinguish local/demo behavior from a real two-device backend test.
 
-Run pnpm run doctor, pnpm run check, and pnpm run typecheck for every task. These verify contributor setup and documentation, not application behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
+Run pnpm run doctor, pnpm run check, and pnpm run typecheck for every task. Doctor/check verify contributor setup and documentation; typecheck covers the harness and application. Run pnpm run lint, pnpm run test, and pnpm run build for application changes. None of these checks proves unimplemented ledger, authorization, or database behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
 
 ## Completion handoff
 
