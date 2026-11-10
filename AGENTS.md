@@ -8,7 +8,15 @@ Read README.md, docs/MVP.md, docs/ARCHITECTURE.md, and docs/BUILD_PLAN.md before
 
 ## Repository state
 
-Initially this is a documentation-only repository. Do not claim an app runs or tests pass before executable code exists. Do not invent setup commands. B0 establishes the package manifest, lockfile, runtime versions, scripts, and CI; update README.md with commands that actually work.
+This repository has a contributor harness, not an Encore application. Read docs/HARNESS.md and use npm run doctor / npm run check. B0 extends the existing Node 24/npm 11 manifest, lockfile, scripts, and CI with actual app tooling; it must not overwrite the harness or claim it verifies app behavior. Update README.md with commands that actually work.
+
+## Learning and cross-platform collaboration
+
+- Follow docs/QUICKSTART.md for the shared Windows/macOS baseline. Repository scripts must work in native PowerShell and macOS terminals; prefer Node APIs over shell-specific commands.
+- When the user is learning, explain the task, affected files, and evidence before the first edit and give them a chance to discuss it. Respect an existing explicit instruction to proceed; do not repeatedly request permission for routine work.
+- Use docs/tasks/TEMPLATE.md or the Deliverable issue form to define small observable outcomes. Explain branch, diff, commit, and PR when they affect the learner's next action.
+- In handoffs explain one important implementation choice and one limitation. Never claim the learner understands merely because the agent generated an explanation.
+- This repository is now public. Keep personal details, screenshots of conversations, actual venue/customer data, and credentials out of all public artifacts. Use fake records and account-specific authorization; never share login tokens.
 
 ## Team workflow
 
@@ -43,7 +51,7 @@ Phone-first, thumb-sized controls, readable in a dark venue, explicit labels, an
 
 When implementation exists, run the repository's actual lint, typecheck, relevant tests, and build. Prioritize tests for money math, event projection, concurrent writes, idempotency, permissions, and close/reconcile behavior. UI changes need a narrow-phone browser check. Report commands and results honestly; distinguish local/demo behavior from a real two-device backend test.
 
-Never use real patron data or send real texts to test. This MVP has no outbound messaging.
+Run npm run doctor and npm run check for every task. These verify contributor setup and documentation, not application behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
 
 ## Completion handoff
 

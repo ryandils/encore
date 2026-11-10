@@ -18,3 +18,9 @@ Next task/handoff:
 ## Scope
 
 Any change to MVP scope or architecture, and why:
+
+## Learning handoff
+
+One implementation choice and why:
+One limitation or question for the reviewer:
+Harness commands and results (separate from app checks):

@@ -1,6 +1,8 @@
 # Build plan and team handoffs
 
-This repository starts with docs only. Task status below is a baseline, not live coordination; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
+This repository has product docs and a contributor harness, but no app yet. Task status below is a baseline, not live coordination; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
+
+New contributors can complete [the L0 learning exercise](LEARNING_PATH.md) before B0. Read [the shared harness workflow](HARNESS.md) before claiming a product task.
 
 ## Dependency order
 
@@ -12,9 +14,9 @@ B2/B3 may build against B1's documented synthetic fixtures while B4 finishes bac
 
 Suggested lead: Ryan or whichever founder starts first. Status: unstarted.
 
-- Create a single Next.js/TypeScript/Tailwind app with the structure in ARCHITECTURE.md.
-- Pin a supported Node version, package manager, dependencies, and lockfile.
-- Add lint, typecheck, test, build, and seed scripts, plus CI for the supported checks.
+- Extend the existing harness with a single Next.js/TypeScript/Tailwind app using the structure in ARCHITECTURE.md; do not replace its package/CI baseline.
+- Preserve Node 24.x/npm 11.x support and the npm lockfile; pin compatible application dependencies.
+- Add actual app lint, typecheck, test, build, and seed scripts, plus CI alongside the existing contributor checks. Keep Windows/macOS commands portable.
 - Provide local PostgreSQL setup, an .env.example with placeholders, and actual setup commands in README.md.
 - Build a labeled demo shell with synthetic owner/staff accounts and no outbound messages.
 - Set up the maintained auth library; make demo bypass impossible in production.

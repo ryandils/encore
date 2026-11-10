@@ -1,0 +1,46 @@
+name: Deliverable
+description: Define one small, testable piece of Encore
+title: "[Task] "
+body:
+  - type: input
+    id: milestone
+    attributes:
+      label: Build-plan task or learning exercise
+      placeholder: B2 slice or L0
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User outcome
+      description: Who benefits, what can they do, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Included and excluded
+      description: Keep this to one reviewable slice.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance examples
+      description: Starting state, action, expected result, and a failure case.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and claim
+      description: Required merged tasks, suggested owner, and branch. Confirm availability before starting.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Verification plan
+      description: Commands, manual checks, and what is mocked versus real.
+    validations:
+      required: true
