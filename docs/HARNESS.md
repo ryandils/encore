@@ -6,15 +6,20 @@ Here, "harness" means the shared instructions, task briefs, executable checks, a
 
 | Command | What it proves |
 | --- | --- |
-| `pnpm install --frozen-lockfile` | The committed dependency lock can be installed; includes TypeScript 7.0.2, its platform package, and Node 24 type definitions |
+| `pnpm install --frozen-lockfile` | The committed dependency lock can be installed; includes app tooling, TypeScript 7.0.2, its platform package, and Node 24 type definitions |
 | `pnpm run doctor` | Node 24/pnpm 12.18.0, Git clone, and expected setup files are present |
 | `pnpm run check` | Required docs exist, JSON parses, authored JavaScript files are rejected, simple inline relative file links resolve, and the installed compiler matches the pinned TypeScript 7 dependency; frozen installation validates the pnpm lockfile |
+| `pnpm run typecheck` | Generates Next.js route declarations, then runs strict TypeScript 7 checks for the harness, application, tests, and supported configs; no JavaScript input or emitted application code |
+| `pnpm run lint` | Biome checks authored application/test/config source using recommended correctness and accessibility rules |
+| `pnpm run test` | Landing-page tests verify the demo label, limitations, navigation structure, and absence of data-entry controls |
+| `pnpm run build` | Next.js produces an optimized application build with TypeScript checking enabled |
+| `pnpm run dev` / `pnpm run start` | Start the development server / serve a completed optimized build locally |
 
-| `pnpm run typecheck` | Strict TypeScript 7 checks for all harness scripts/tests using tsconfig.harness.json; no JavaScript input or emitted files |
+The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. Doctor/check establish contributor setup and document consistency. App tests cover the setup landing page, not future permissions, money math, or database behavior. All harness scripts/tests remain .ts under strict tsconfig.harness.json, and tsconfig.json covers the app. Node 24 executes erasable TypeScript without a transpiler dependency, but that execution alone does not validate types. `pnpm run compiler:version` prints the compiler version.
 
-The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. All harness scripts/tests are .ts and have a strict harness tsconfig; there is still no app tsconfig or application typechecking. Node 24 executes erasable TypeScript without a transpiler dependency, but that execution alone does not validate types. `pnpm run compiler:version` prints the compiler version. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
+CI runs the same baseline plus app lint, tests, and build on Linux, Windows, and macOS for pull requests and main. It has read-only repository permissions. It runs repository/application checks, not Codex, and needs no model credentials. A green result is evidence for the checks actually run, not general approval to ship. Merge rules/branch protections are a separate GitHub setting; this workflow does not enable them.
 
-CI runs the same baseline on Linux, Windows, and macOS for pull requests and main. It has read-only repository permissions. It runs repository checks, not Codex, and needs no model credentials. A green result is evidence for the checks actually run, not general approval to ship. Merge rules/branch protections are a separate GitHub setting; this workflow does not enable them.
+Next.js uses its `experimental.useTypeScriptCli` integration for TypeScript 7's native compiler; build-time checking remains enabled. With `experimental.strictRouteTypes`, generated `next-env.d.ts` imports the active route types and validator, so development and production output can coexist without duplicate global declarations. Keep those generated imports instead of globbing both output trees into tsconfig.json. Biome supplies linting because the evaluated typescript-eslint release expects the older TypeScript compiler API. Tailwind's PostCSS configuration is JSON, which Next.js supports, rather than authored JavaScript or an unsupported TypeScript PostCSS config. Application and test source still use .ts/.tsx.
 
 ## Context upkeep
 

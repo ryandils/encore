@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification and an executable contributor harness. **No Encore application, deployment, or working integrations exist yet.** The first app implementation task is B0 in [the build plan](docs/BUILD_PLAN.md).
+This repository contains the MVP specification, contributor harness, and one Next.js/React/Tailwind landing page labeled **Demo / setup milestone**. It starts locally and has strict TypeScript 7 checks. **There is no database, authentication, door ledger, owner dashboard, or deployment yet.** The remaining B0 foundation work is described in [the build plan](docs/BUILD_PLAN.md).
 
 ## Start here: Windows or macOS
 
@@ -17,11 +17,22 @@ pnpm install --frozen-lockfile
 pnpm run doctor
 pnpm run check
 pnpm run typecheck
+pnpm run lint
+pnpm run test
+pnpm run build
 ```
 
-All authored executable source is **TypeScript**, checked with pinned **TypeScript 7.0.2**. Run `pnpm run typecheck` for strict harness checking and `pnpm run compiler:version` for its version. Node 24 executes the .ts scripts directly using type stripping; the compiler separately verifies types. B0 will add app configuration and extend typechecking to the application.
+All authored executable source is **TypeScript**, checked with pinned **TypeScript 7.0.2**. Run `pnpm run typecheck` for strict harness and application checking and `pnpm run compiler:version` for its version. Node 24 executes the .ts harness scripts directly using type stripping; the compiler separately verifies types.
 
-These checks establish contributor readiness, not a working product. There are no app dev/build commands yet.
+Start the development server:
+
+```text
+pnpm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). The landing page explains the setup milestone; it cannot record admissions or cash. Stop the server with Ctrl+C. To run the optimized local build instead, run `pnpm run build` followed by `pnpm run start` and open the same address. No environment file, database, credentials, or external service is required for this scaffold.
+
+These checks cover contributor setup and the landing-page scaffold. They do not establish ledger, permission, database, or pilot readiness.
 
 - [Harness and shared AI workflow](docs/HARNESS.md)
 - [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
@@ -46,7 +57,7 @@ The first pilot covers one entrance, a single shared door cash pool, USD cash co
 
 Start with [current context](docs/CONTEXT.md) and [the task workflow](docs/WORKFLOW.md). Live work is tracked in [GitHub issues](https://github.com/ryandils/encore/issues), not previous chats. Code changes include [task handoffs](docs/handoffs/README.md); agents follow the [context-upkeep skill](.agents/skills/encore-context-upkeep/SKILL.md).
 
-Next available work, if still Ready/unclaimed: [B0.1 app scaffold](https://github.com/ryandils/encore/issues/4). Conomos can independently take [L0 first contribution](https://github.com/ryandils/encore/issues/13).
+After [B0.1 app scaffold](https://github.com/ryandils/encore/issues/4) merges, recheck [B0.2 local database and seed](https://github.com/ryandils/encore/issues/5) for readiness and ownership. Conomos's independent learning task is [L0 first contribution](https://github.com/ryandils/encore/issues/13).
 
 ## Read in this order
 

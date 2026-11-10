@@ -1,6 +1,6 @@
 # Build plan and team handoffs
 
-This repository has product docs and a contributor harness, but no app yet. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
+This repository has product docs, a contributor harness, and a Next.js setup landing page. Database, authentication, and ledger implementation remain future work. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
 
 New contributors can complete [the L0 learning exercise](LEARNING_PATH.md) before B0. Read [the shared harness workflow](HARNESS.md) before claiming a product task.
 
