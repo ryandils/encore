@@ -169,3 +169,27 @@ This kit can be reviewed independently now. After prerequisites merge, the assig
 The production acceptance gates include: four intentional admissions are retained; one retried request creates one action; two devices converge; pending requests never masquerade as saved; unknown outcomes reconcile before retry and close; polling and stale thresholds are correct; stored amounts survive price changes; exits never refund; corrections preserve the audit history and replay constraints; closed nights reject new writes; staff cannot receive owner finance; and cross-venue requests are rejected server-side. Those tests belong to the dependent implementation tasks, not this design deliverable.
 
 Review this proposal for brand direction, mobile hierarchy, action placement, and state comprehension. Keep unresolved contract details with the B1 owner and record any accepted product change in the canonical docs through its own authorized implementation task.
+
+## 10. Exploratory patron discovery and bottom navigation
+
+The new [discovery concept](discover.html) proposes **Main feed · Profile · Settings** as a persistent bottom navigation. This is an explicit audience expansion: the current MVP serves venue owners and door staff; this concept serves people looking for a bar. It is authorized design exploration, not acceptance of a new production feature or a change to the MVP. The existing door console stays separate, with Exit left and Free entry right. No staff ledger, occupancy, financial, membership, or guest identity data feeds discovery.
+
+### Navigation and discovery
+
+Use three labeled destinations with icons, generous targets, a contrasting selected background, and a visible keyboard focus ring. Keep selection conveyed by more than color. Reserve space and respect the bottom safe area so the toolbar does not cover the last action. At large text sizes, let labels and content reflow. The review uses native radio controls rather than pretending they are fully implemented application routes; arrow keys select destinations. Production routes should expose their current destination semantically and preserve each screen's meaningful state.
+
+Main feed presents a chosen area and fictional bar cards, then lets a user inspect sample venue details. Search stays inside Main feed rather than consuming another bottom-nav slot. Cards use editorial artwork, venue name, category, and clearly illustrative distance. No live crowd levels, real hours, prices, popularity, ranking algorithm, reservations, or route guidance are implied. Sample addresses and venues are fictional.
+
+The location-state selector is a **review control**, not a permission setting. “Area set” shows three fabricated places around the fictional East Quarter. “Denied” explains that discovery can continue by selecting Manual search. “Manual search” shows fixed readonly example inputs and one fixed name match; expanding the no-results example demonstrates recovery copy. These are not actual filtering/geocoding or permission results.
+
+### Location choice and privacy
+
+In a future product, manual city/neighborhood entry must work without GPS. “Use my location” should appear only after the person chooses location-based discovery, with a short explanation before a browser permission prompt. Do not prompt on load. Denial, unavailable location, or timeout must retain the manual option and any entered query; never repeatedly prompt or claim an area was detected. Show the chosen reference area and qualify distances when accuracy is limited. Permission changes belong to the browser/device; do not represent a fake toggle as OS authorization.
+
+The preview never invokes geolocation, creates an account, stores searches/location history, or sends patron details. Settings explains these boundaries and shows a fixed sample area. Profile is a guest-first placeholder: no fabricated identity, follower count, favorites, or functional sign-in. Browsing without an account is a proposed default, not a shipped authorization rule.
+
+### Product decisions before implementation
+
+Decide whether patron discovery belongs in Encore's near-term product or a separately scoped later experiment. Confirm venue data source/licensing and update ownership, search/geocoding provider and privacy/retention rules, geographic coverage, ranking criteria, stale/unavailable data handling, and whether profiles provide enough value to require accounts. None is needed to review this static design. Do not reuse the staff state endpoint for a public discovery feed: the current architecture explicitly has no public occupancy endpoint.
+
+Production discovery needs its own authorized task and contracts. Existing #9 (staff door) and #10 (owner setup/closeout) are not discovery tasks. Keep Ryan's #8 contract work and #7 verification ownership intact. No new issue or claim is created by this design.

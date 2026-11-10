@@ -5,6 +5,8 @@ import { readFile } from "node:fs/promises";
 const files = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
+  ["/discover.html", ["discover.html", "text/html; charset=utf-8"]],
+  ["/discover.css", ["discover.css", "text/css; charset=utf-8"]],
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
   ["/GUIDELINES.md", ["GUIDELINES.md", "text/plain; charset=utf-8"]],
   ["/assets/encore-mark.svg", ["assets/encore-mark.svg", "image/svg+xml"]],

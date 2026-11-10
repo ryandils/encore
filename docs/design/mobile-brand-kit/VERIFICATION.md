@@ -34,3 +34,9 @@ The staged `pnpm run context:check --base origin/main` passed the structured han
 ## Follow-up: left exit / right entry
 
 Swapped the secondary action document order: Exit (−), No refund on the left; Free entry (+), $0 cover on the right. Refreshed both mobile evidence images. Chromium checks at 320/390/430 pixels passed label, left-to-right position, disabled illustrative-control, five-state selection, closed-state hiding, and no-overflow assertions. Doctor and repository checks passed again. Full typecheck was attempted again; the existing Prisma host limitation remains separately reported.
+
+## Follow-up: discovery and bottom navigation
+
+Main feed/Profile/Settings and area/denied/manual-search design states passed Chromium checks at 320/390/430/768px, including keyboard radio selection and no horizontal overflow. A 320px computed-text doubling check passed. Preview server still rejects `.env`; no page exceptions were observed. Independent review found no substantive issues. Refreshed evidence: [feed](evidence/discovery-feed.png), [denied](evidence/discovery-denied.png), [manual search](evidence/discovery-search.png), [settings](evidence/discovery-settings.png). These screenshots contain fictional data only.
+
+Doctor, repository check, and standalone preview strict TypeScript 7 check passed. Full typecheck was attempted and again blocked by the existing Prisma checksum host HTTP 403; no checksum bypass was used. Actual device location, filtering/geocoding, accounts, real bar data, and physical-phone usability remain unimplemented/unverified.

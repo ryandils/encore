@@ -8,6 +8,10 @@ node docs/design/mobile-brand-kit/preview.ts
 
 Then visit `http://127.0.0.1:4173`. Stop with Ctrl+C. Requires the repository's Node 24 baseline; no database, sign-in, package changes, or external requests. The server listens on loopback and serves only this review's explicit asset list. It does not serve the app or repository. If the port is occupied, stop the other preview first.
 
+## Discovery exploration
+
+Open [discover.html](discover.html) (or `/discover.html` on the preview server) for Main feed, Profile, and Settings, with synthetic location-based discovery and search states. This introduces a proposed patron audience beyond the current operator MVP; see section 10 of the guidelines for assumptions. Inputs and search results are fixed examples.
+
 ## Review
 
 - Explore the mobile door composition; select Saved, Pending, Stale, Failed, and Closed to inspect state treatments. These are fixed examples, not simulated transactions.
