@@ -9,6 +9,7 @@
       "scripts/typecheck.ts",
       "scripts/build.ts",
       "scripts/db*.ts",
+      "scripts/auth*.ts",
       "prisma/**/*.ts",
       "prisma.config.ts"
     ]

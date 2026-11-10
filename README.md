@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, one Next.js/React/Tailwind landing page labeled **Demo / setup milestone**, and local PostgreSQL/Prisma setup with two synthetic demo identities. It starts locally and has strict TypeScript 7 checks. **Authentication, the door ledger, owner dashboard, and deployment are not implemented.** The landing page does not use the database yet. The remaining B0 foundation work is described in [the build plan](docs/BUILD_PLAN.md).
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. **The door ledger, owner dashboard, venue/night authorization, and production authentication are not implemented.** The remaining foundation work is described in [the build plan](docs/BUILD_PLAN.md).
 
 ## Start here: Windows or macOS
 
@@ -48,9 +48,25 @@ pnpm run db:seed
 pnpm run db:verify
 ```
 
-`db:init` creates an ignored `.env` from the local-only placeholders in `.env.example` without overwriting an existing file. PostgreSQL listens on `127.0.0.1:54329`, using a dedicated `encore_local` database and user. The seed supplies labeled fake owner/staff identities; these are stored fixtures, not working login accounts or permission grants. No production credentials, customer data, or outbound email is needed. `db:verify` checks repeatable seeding and persistence across a database restart.
+`db:init` creates an ignored `.env` from the local-only placeholders in `.env.example` without overwriting an existing file. PostgreSQL listens on `127.0.0.1:54329`, using a dedicated `encore_local` database and user. The database seed supplies labeled fake owner/staff identities without passwords or permission grants. The separate authentication setup below turns them into local demo login accounts. No production credentials, customer data, or outbound email is needed. `db:verify` checks repeatable seeding and persistence across a database restart.
 
 Use `pnpm run db:down` to stop PostgreSQL while retaining its volume, and `pnpm run db:up` to resume it. To deliberately erase and rebuild only the dedicated local database, use `pnpm run db:reset --confirm-local-reset`, then `pnpm run db:seed`. Read the [reset boundaries and troubleshooting](docs/LOCAL_DATABASE.md) first; the reset is destructive and the commands reject production mode or a non-local target.
+
+## Try the synthetic sign-in demo
+
+After the database commands above, run:
+
+```text
+pnpm run auth:init
+pnpm run auth:seed
+pnpm run dev
+```
+
+Open [http://localhost:3000/demo/sign-in](http://localhost:3000/demo/sign-in). Sign in as `owner@encore-demo.invalid` or `staff@encore-demo.invalid` using the corresponding `DEMO_OWNER_PASSWORD` or `DEMO_STAFF_PASSWORD` from your ignored `.env`. `auth:init` generates a random signing secret and passwords without printing or replacing existing values. Read them locally in your editor; never share the file or include its values in a screenshot, issue, or PR. `auth:seed` preserves existing credential hashes and timestamps on repeat runs and rejects conflicts instead of resetting passwords.
+
+The demo supports sign-in, session-backed owner/staff navigation, and sign-out. It grants no venue access and records no admissions or cash. All authentication and demo routes are disabled with `NODE_ENV=production`, including `pnpm run start`; use `pnpm run dev` for this local demo. Real-user email verification, password recovery, and production setup remain prerequisites for a pilot.
+
+Run `pnpm run auth:verify` for the separate HTTP/PostgreSQL regression checks after authentication setup. See [local authentication setup and limits](docs/LOCAL_DATABASE.md).
 
 - [Harness and shared AI workflow](docs/HARNESS.md)
 - [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
@@ -75,7 +91,7 @@ The first pilot covers one entrance, a single shared door cash pool, USD cash co
 
 Start with [current context](docs/CONTEXT.md) and [the task workflow](docs/WORKFLOW.md). Live work is tracked in [GitHub issues](https://github.com/ryandils/encore/issues), not previous chats. Code changes include [task handoffs](docs/handoffs/README.md); agents follow the [context-upkeep skill](.agents/skills/encore-context-upkeep/SKILL.md).
 
-After [B0.2 local database and seed](https://github.com/ryandils/encore/issues/5) merges, recheck [B0.3 authentication and demo roles](https://github.com/ryandils/encore/issues/6) for readiness and ownership. Conomos's independent learning task is [L0 first contribution](https://github.com/ryandils/encore/issues/13).
+[B0.3 authentication and demo roles](https://github.com/ryandils/encore/issues/6) establishes the local sign-in foundation. Before taking [B0.4 platform verification](https://github.com/ryandils/encore/issues/7), confirm prerequisite merges and current ownership on GitHub. These links identify work, not a live status snapshot.
 
 ## Read in this order
 

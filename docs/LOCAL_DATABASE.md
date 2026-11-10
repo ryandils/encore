@@ -1,6 +1,6 @@
 # Local PostgreSQL and synthetic identities
 
-This setup is for disposable development data on your own machine. It supplies a PostgreSQL database, a versioned Prisma migration, and two labeled synthetic identities. It does not implement login, venue permissions, or the door ledger. The setup landing page still runs without a database or environment file.
+This setup is for disposable development data on your own machine. It supplies PostgreSQL, versioned Prisma migrations, two labeled synthetic identities, and optional local sign-in through Better Auth. It does not implement venue/night permissions or the door ledger. The public setup landing page still runs without a database or environment file.
 
 ## Install Docker on Windows or macOS
 
@@ -67,7 +67,36 @@ The checked-in Compose configuration pins PostgreSQL 17.7 Alpine by image digest
 
 The password is a public, disposable local placeholder, not a secret or a production credential. Leave the example values unchanged for this setup. Do not reuse them elsewhere or expose the service on a network interface. `.env` is ignored by Git; never paste it into a PR, screenshot, or issue. Commands load `.env`, while an already-set process environment value takes precedence. If a terminal contains an old `DATABASE_URL`, remove that override before following this guide.
 
-Seeded identities use reserved `.invalid` email addresses and visible synthetic labels. They have no password, session, or verified email and cannot log in. `DemoIdentity.role` describes a fixture; it grants no venue membership or staff assignment. There are no customer records or outbound messages.
+`db:seed` uses reserved `.invalid` email addresses and visible synthetic labels. It creates no password, session, or verified email. `DemoIdentity.role` describes a fixture; it grants no venue membership or staff assignment. There are no customer records or outbound messages.
+
+## Set up local demo sign-in
+
+After migrating and seeding the database, run:
+
+```text
+pnpm run auth:init
+pnpm run auth:seed
+pnpm run dev
+```
+
+`auth:init` requires the existing local `.env`. It appends only absent authentication settings: `BETTER_AUTH_URL` defaults to `http://localhost:3000`, `BETTER_AUTH_SECRET` is randomly generated, and separate random passwords are generated as `DEMO_OWNER_PASSWORD` and `DEMO_STAFF_PASSWORD`. Existing settings are validated and preserved. On Unix, the file is restricted to owner read/write permissions before secrets are appended. Values are never printed. Keep this ignored file private; open it locally in your editor to read the passwords.
+
+`auth:seed` uses the maintained library's password hashing and creates credential accounts for the two synthetic identities. Running it again preserves existing hashes and timestamps. Conflicting identities, accounts, or passwords fail instead of overwriting existing records. Editing a password in `.env` does not rotate a stored password; preserve the existing local values. After an intentionally authorized disposable database reset, run `db:seed` and `auth:seed` again to recreate the accounts.
+
+Open [http://localhost:3000/demo/sign-in](http://localhost:3000/demo/sign-in):
+
+| Synthetic email | Password setting in your local `.env` |
+| --- | --- |
+| `owner@encore-demo.invalid` | `DEMO_OWNER_PASSWORD` |
+| `staff@encore-demo.invalid` | `DEMO_STAFF_PASSWORD` |
+
+Successful login creates a database-backed session and opens the matching protected demo page. Refresh retains the session; sign-out invalidates it. The server derives the demo role from the authenticated fixture. The pages do not grant real venue access or record admissions/cash. Public signup is unavailable.
+
+Use the exact origin configured in `BETTER_AUTH_URL`; `localhost` and `127.0.0.1` are different browser origins. If port 3000 is occupied, stop the other server or configure a matching explicit HTTP loopback origin and development-server port. Restart the server after changing authentication settings.
+
+All authentication and demo routes reject `NODE_ENV=production`, including an optimized `pnpm run start` server. Use `pnpm run dev` for this local demo. Production authentication, real-user email verification and password recovery, provider configuration, and B4 venue/night authorization remain unimplemented. No email is sent by these commands.
+
+With the local database and demo credentials ready, run `pnpm run auth:verify` for separate HTTP/PostgreSQL regression checks. It starts its own development server, exercises sessions and rejection cases, and stops that test server afterward. Ordinary `pnpm run test` remains database-free. Native Windows/macOS Docker walkthroughs must be recorded separately from hosted application CI.
 
 ## Stop and resume without losing data
 
@@ -105,7 +134,8 @@ These checks prevent common configuration mistakes; a loopback address cannot pr
 | Missing or invalid `DATABASE_URL` | Run `db:init`. If `.env` already exists, compare it locally with `.env.example` and remove stale terminal overrides. Do not print or share a real connection string. |
 | A guard rejects the environment or target | Use the documented local values in a development terminal. Do not weaken the guard or replace its URL with production credentials. |
 | PostgreSQL is unavailable | Run `db:up`, then `db:status`. Wait for its healthcheck before migration or seed; check whether Docker Desktop stopped. |
-| Authentication fails | Check the local-only `.env` values against the example. PostgreSQL initializes credentials only when its volume is first created; editing credentials does not update an existing volume. Preserve any needed local data before deliberately rebuilding it. |
+| PostgreSQL authentication fails | Check the local-only `.env` values against the example. PostgreSQL initializes credentials only when its volume is first created; editing credentials does not update an existing volume. Preserve any needed local data before deliberately rebuilding it. |
+| Demo sign-in is unavailable or fails | Confirm `auth:init` and `auth:seed` completed, use the matching email/password from ignored `.env`, and open the configured origin through `pnpm run dev`. Production servers deliberately reject demo access. Never share a password or session cookie to diagnose this. |
 | A table is missing or seed fails before initialization | Run `db:generate`, then `db:migrate`, then `db:seed`. Generation creates client code; migration creates database tables. |
 | A migration fails | Check service health and the current branch, then inspect the checked-in migration. The wrapper withholds raw child-process output because it can include credentials; share only its safe failure summary. Do not mark a failed migration applied or delete shared migration history to hide the failure. |
 | Reset is refused | Supply the explicit acknowledgement only if this is the dedicated disposable local database. Other target/environment refusals must be corrected, not bypassed. |

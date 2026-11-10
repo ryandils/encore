@@ -9,7 +9,7 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
-    "types": ["node"],
+    "types": ["node", "bun-types/sqlite"],
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true
   },

@@ -1,6 +1,6 @@
 # Implementation direction and shared contracts
 
-The Next.js/React/Tailwind setup landing page, strict TypeScript 7 checks, and local PostgreSQL/Prisma identity storage exist. Authentication behavior, full domain models, ledger, and API sections below remain design contracts for later build-plan tasks.
+The Next.js/React/Tailwind setup landing page, strict TypeScript 7 checks, local PostgreSQL/Prisma storage, and Better Auth sessions for synthetic local accounts exist. Production authentication, full domain models, ledger, venue/night permissions, and the planned API sections below remain later build-plan work.
 
 ## Stack and structure
 
@@ -25,16 +25,27 @@ A future native client can reuse contracts and domain logic. Native UI is separa
 
 ## Implemented local identity storage
 
-B0.2 adds a minimal schema for repeatable local setup; it does not implement the domain model below. See [local database setup](LOCAL_DATABASE.md) for migrations, seed, reset boundaries, and restart verification.
+B0.2 establishes identity fixtures, and B0.3 adds the maintained authentication library's account, session, and verification storage. This does not implement the domain model below. See [local database setup](LOCAL_DATABASE.md) for migrations, seed, reset boundaries, and restart verification.
 
 | Model | Stored fields and constraints |
 | --- | --- |
-| `User` | String identity ID, name, unique email, `emailVerified` defaulting to false, optional image, creation/update timestamps. The shape prepares for Better Auth; no custom password fields or login behavior are present. |
+| `User` | String identity ID, name, unique email, `emailVerified` defaulting to false, optional image, creation/update timestamps. Better Auth identity with relations to accounts and sessions; passwords are not stored on this model. |
 | `DemoIdentity` | One profile per user (`userId` primary key and relation), `DemoRole` (`OWNER` or `STAFF`), and an explicit synthetic label. |
+| `Account` | Better Auth account/provider linkage and maintained password hash for credential accounts. |
+| `Session` | Better Auth persisted session token, user relation, and expiry. |
+| `Verification` | Better Auth verification storage; real-user verification/recovery flows remain unconfigured. |
 
-The seed uses stable synthetic IDs and reserved `.invalid` emails, writing both identities and their demo metadata in a transaction. Repeating it preserves identity IDs and creation timestamps. `DemoIdentity.role` is fixture metadata only: it must never substitute for `VenueMembership`, an active `NightAssignment`, or server authorization. B0.3 must integrate the maintained auth library and its account/session/verification storage; B1 adds the domain contracts and models.
+The seed uses stable synthetic IDs and reserved `.invalid` emails, writing both identities and their demo metadata in a transaction. Repeating it preserves identity IDs and creation timestamps. `DemoIdentity.role` is fixture metadata only: it must never substitute for `VenueMembership`, an active `NightAssignment`, or server authorization. B1 adds the domain contracts and models. The separate `auth:seed` command creates credential accounts with Better Auth hashing, preserves existing hashes/timestamps on repeats, and rejects conflicts. `db:seed` itself remains password-free.
 
 Prisma and its PostgreSQL adapter are pinned together in the manifest/lockfile. Generated TypeScript client output is untracked under `.generated/prisma`, outside `node_modules` so Node 24 can execute it with type stripping. Both typechecking and the build command generate the client first, so a fresh install does not depend on a prior command's generated output; generation requires no live database. Local migration/seed/reset commands reject production mode and targets outside the dedicated loopback database; reset additionally requires an explicit acknowledgement. The fixed local URL is a development boundary, not a production migration/deployment mechanism. The web landing page does not import the client, read the database, or expose seeded identities.
+
+## Implemented local authentication boundary
+
+Better Auth 1.7.20 uses the Prisma adapter for real email/password sessions. Its public declarations reference `bun:sqlite`; the pinned `bun-types` 1.4.4 development dependency supplies only `bun-types/sqlite` to the harness and app TypeScript configurations. Node remains the runtime, and strict checking with `skipLibCheck: false` stays enabled; Bun runtime globals are not introduced. A pure local-database target validator is shared by web and CLI code; filesystem/process CLI helpers are kept out of the web bundle. The lazy server factory requires an explicit HTTP loopback `BETTER_AUTH_URL`, generated `BETTER_AUTH_SECRET`, and the dedicated local database URL. No client-supplied role or actor is trusted. Production mode rejects all authentication and demo entry points before database access, including `next start`; this milestone does not provide production login.
+
+`/api/auth/[...all]` exposes the bounded local sign-in, sign-out, and session flow. Public signup is disabled; origin/CSRF checks and authentication rate limiting remain enabled. Cookie caching is disabled so server session reads consult the database. `/api/demo/session` returns only the authenticated synthetic identity and demo role; protected `/demo/owner` and `/demo/staff` navigation derives that role on the server. These checks protect the synthetic demo only and are not B4 venue membership or active-night assignment enforcement.
+
+`auth:init` generates a random local signing secret and distinct random owner/staff passwords into ignored `.env`, without printing or overwriting existing values. `auth:seed` hashes those passwords with the maintained library. No shared signing secret or login password is committed. Real-user email verification, password recovery, and a configured delivery provider are required before a pilot; no provider or outbound messaging is configured here.
 
 ## Planned domain entities
 
