@@ -15,6 +15,8 @@
 
 Use a **Status** field in the issue body: Ready → In progress → In review → Done, or Blocked. Tracking milestones use Planned until their child deliverables and acceptance are complete. No GitHub Project or custom status-label automation has been configured; this convention works with ordinary issues.
 
+For filtering, manually mirror the current body Status with one label: `status:planned`, `status:ready`, `status:in-progress`, `status:in-review`, `status:done`, or `status:blocked`. Update the mirror when maintaining an authorized issue, removing its previous status label while preserving unrelated labels. The body owns status, ownership, blockers, and evidence; a label is a convenience, not an implementation claim or an automatic state transition. `status:done` does not close an issue. Recheck active coordinators' latest updates before labeling their tasks.
+
 - Ready: acceptance defined, dependencies merged, unclaimed. Check actual dependencies, not just a possibly stale Status field.
 - In progress: record the human/account owner, distinct chat/task owner, branch, and narrow task being built.
 - In review: link the PR and its evidence; avoid claiming another task that changes the same contracts.
