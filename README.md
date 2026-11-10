@@ -18,6 +18,8 @@ npm run doctor
 npm run check
 ```
 
+TypeScript is pinned to **7.0.2**. Run `npm run compiler:version` to verify the local compiler; B0 will add the app tsconfig and real typecheck command.
+
 These checks establish contributor readiness, not a working product. There are no app dev/build commands yet.
 
 - [Harness and shared AI workflow](docs/HARNESS.md)
@@ -61,6 +63,6 @@ QR guest lists, discounts, opt-in marketing, digital re-entry, NFC payments, for
 
 ## Development direction
 
-Use a responsive TypeScript web app first: Next.js, PostgreSQL, Prisma, and maintained authentication tooling. See the architecture document for the intended shape and pilot gates. Future React Native clients may share domain types and APIs, but web screens do not automatically port to native.
+Use a responsive TypeScript 7 web app first: Next.js, PostgreSQL, Prisma, and maintained authentication tooling. See the architecture document for the intended shape and pilot gates. Future React Native clients may share domain types and APIs, but web screens do not automatically port to native.
 
 This repository is public. Do not commit credentials, personal contact details, actual venue/customer data, or the original group-chat screenshots. Use synthetic records. The package.json private flag prevents accidental npm publishing; it does not change GitHub visibility.

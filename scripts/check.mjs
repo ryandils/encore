@@ -21,6 +21,23 @@ for (const path of ['README.md', 'AGENTS.md', 'docs/MVP.md', 'docs/ARCHITECTURE.
   'docs/tasks/TEMPLATE.md', '.github/pull_request_template.md']) {
   if (!existsSync(join(root, path))) errors.push(`Missing required file: ${path}`);
 }
+// Verify the declared, locked, and installed compiler agree; do not invoke a global tsc.
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8'));
+const pinned = pkg.devDependencies?.typescript;
+if (!/^7\.\d+\.\d+$/.test(pinned ?? '')) {
+  errors.push('TypeScript must be pinned to an exact stable 7.x version in devDependencies.');
+}
+if (lock.packages?.['node_modules/typescript']?.version !== pinned
+  || lock.packages?.['']?.devDependencies?.typescript !== pinned) {
+  errors.push('TypeScript lockfile does not match package.json; update with npm install.');
+}
+try {
+  const installed = JSON.parse(readFileSync(join(root, 'node_modules/typescript/package.json'), 'utf8'));
+  if (installed.version !== pinned) errors.push('Installed TypeScript differs from the pin; run npm ci.');
+} catch {
+  errors.push('Local TypeScript is missing; run npm ci.');
+}
 for (const path of files) {
   const label = relative(root, path);
   const extension = extname(path);
@@ -55,6 +72,6 @@ if (errors.length) {
   errors.forEach(error => console.error(`FAIL ${error}`));
   process.exitCode = 1;
 } else {
-  console.log('PASS harness: required docs, inline local file links, JSON, and Node script syntax.');
+  console.log('PASS harness: required docs, inline local file links, JSON, Node script syntax, and the TypeScript 7 pin.');
   console.log('No application lint, typecheck, tests, build, remote links, or heading anchors were checked.');
 }

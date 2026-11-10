@@ -6,11 +6,11 @@ Here, "harness" means the shared instructions, task briefs, executable checks, a
 
 | Command | What it proves |
 | --- | --- |
-| `npm ci` | The committed dependency lock can be installed; there are no third-party harness dependencies today |
+| `npm ci` | The committed dependency lock can be installed; includes the pinned TypeScript 7.0.2 compiler and its platform package |
 | `npm run doctor` | Node 24/npm 11, Git clone, and expected setup files are present |
-| `npm run check` | Required docs exist, JSON parses, Node scripts parse, and simple inline relative file links resolve |
+| `npm run check` | Required docs exist, JSON parses, Node scripts parse, simple inline relative file links resolve, and the installed compiler matches the pinned TypeScript 7 dependency/lockfile |
 
-The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
+The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. The TypeScript 7 compiler is installed, but there is no app tsconfig or application typechecking yet. `npm run compiler:version` prints the compiler version. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
 
 CI runs the same baseline on Linux, Windows, and macOS for pull requests and main. It has read-only repository permissions. It runs repository checks, not Codex, and needs no model credentials. A green result is evidence for the checks actually run, not general approval to ship. Merge rules/branch protections are a separate GitHub setting; this workflow does not enable them.
 
