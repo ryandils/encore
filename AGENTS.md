@@ -41,7 +41,9 @@ Use TypeScript 7 in strict mode for all authored executable source: application 
 
 ## Cloud orchestration default
 
-Each Encore cloud chat defaults to an accountable lead orchestrator using multiple parallel subagents for useful independent work. Only the lead assigns agents and mutates Git/PRs; its coordinator alone updates its claimed issue. Use bounded assignments, exclusive file ownership, and independent review. Separate chats use isolated checkouts and distinct GitHub chat/task claims; subagents inside a chat share its checkout. Respect merged dependencies and available capacity; combine roles for narrow work rather than inventing tasks. Follow [the detailed ownership and validation workflow](docs/WORKFLOW.md) and [the cloud orchestrator prompt](.codex/prompts/cloud-orchestrator.md). These instructions do not launch chats or install a scheduler.
+For `$encore-orchestrator`, a plain-language request to use encore-orchestrator, or relevant Encore cloud implementation/investigation work, read and apply [.agents/skills/encore-orchestrator/SKILL.md](.agents/skills/encore-orchestrator/SKILL.md), even if the interface does not auto-discover it. Use it in the current chat; invocation does not require opening another chat. Examples: `$encore-orchestrator implement #5`, `$encore-orchestrator investigate #6`, or `Use encore-orchestrator to implement #5`.
+
+Each cloud chat defaults to an accountable lead using useful parallel subagents and independent review. Only the lead assigns agents and mutates Git/PRs; its coordinator alone updates its claimed issue. Follow [the detailed ownership and validation workflow](docs/WORKFLOW.md) for distinct claims, exclusive file ownership, merged dependencies, and capacity limits. The repository-local skill does not globally install commands, launch chats, or create a scheduler.
 
 ## Critical invariants
 

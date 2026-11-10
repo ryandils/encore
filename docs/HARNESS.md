@@ -39,11 +39,11 @@ Use `pnpm add -D <package>` to add development dependencies and commit pnpm-lock
 6. **Explain:** the learner can describe what changed, why, and one remaining limit. Agent explanations support this; they are not evidence that the learner understood.
 7. **Review:** have an independent reviewer inspect the integrated diff, then open a PR with verified results and limitations. Humans decide whether to merge. Issue closure, merge, deployment, and environment publication require explicit authorization. After a confirmed merge, everyone updates their local main.
 
-Prompt files in [.codex/prompts](../.codex/prompts/README.md) are copy/paste recipes. They are **not** automatically executed or special Codex commands. AGENTS.md is the persistent repository instruction entry point. No global Codex settings, permission bypasses, or shared credentials are required.
+The [encore-orchestrator skill](../.agents/skills/encore-orchestrator/SKILL.md) supports short requests in the current chat. Other files in [.codex/prompts](../.codex/prompts/README.md) remain copy/paste recipes; the old cloud prompt is a compatibility link to the skill. AGENTS.md explicitly routes relevant work to the skill even without automatic discovery. No global installation, permission bypasses, or shared credentials are required.
 
 ## Parallel cloud teams and ownership
 
-Use [the cloud orchestrator prompt](../.codex/prompts/cloud-orchestrator.md) with **encore cloud env**. Each chat has an accountable lead, useful parallel subagents, and independent review. [WORKFLOW.md](WORKFLOW.md) owns the detailed rules for isolated cloud checkouts, distinct GitHub claims, shared-checkout file ownership, serialized commands, and verified handoffs. These conventions do not launch chats or install a scheduler.
+Use `$encore-orchestrator implement #5` or `$encore-orchestrator investigate #6` in an Encore checkout containing [the skill](../.agents/skills/encore-orchestrator/SKILL.md). For cloud work select **encore cloud env**. Each chat has an accountable lead, useful parallel subagents, and independent review. [WORKFLOW.md](WORKFLOW.md) owns the detailed coordination rules; the skill does not launch chats or install a scheduler.
 
 ## Keeping contributors from colliding
 

@@ -1,41 +1,37 @@
-# Parallel cloud chats — orchestrator workflow
+# Encore orchestrator — repository-local skill
 
 ## Task
 
-Document the user-requested workflow for separate Encore cloud chats, with each chat's lead orchestrator coordinating multiple parallel subagents. This is a documentation deliverable, not implementation of the example product issues.
+Provide the user-requested Encore orchestration workflow as a repository-local skill in [PR #21](https://github.com/ryandils/encore/pull/21), so it can be invoked in the current chat without copying a long prompt or switching chats. This is a contributor-workflow deliverable, not implementation of the example product issues.
 
 ## Outcome
 
-Contributors can select **encore cloud env** and current `main` in a new chat, then fill in an issue and mode in the [cloud orchestrator prompt](../../.codex/prompts/cloud-orchestrator.md). Each chat receives one independent implementation or read-only investigation scope. No chats were launched by this change.
+In a checkout containing the change, send `$encore-orchestrator implement #5` or `$encore-orchestrator investigate #6`. The plain-language fallback is `Use encore-orchestrator to implement #5`. [AGENTS.md](../../AGENTS.md) explicitly routes relevant requests to the skill when automatic discovery is unavailable. The skill applies the shared coordination policy with parallel subagents and independent review.
+
+The skill reaches `main` only after PR #21 merges. No global installation, skill-picker behavior, new chat launch, or cross-chat handoff is claimed.
 
 ## Changes
 
-- Added a reusable launch prompt and linked it from the prompt index.
-- Expanded [cloud environment instructions](../CLOUD_ENVIRONMENT.md) with manual launch steps, capability limits, and an illustrative implementation/investigation split across #5, #6, and #8.
-- Recorded the saved environment's observed ready/runnable listing on November 10, 2026 without publishing configuration IDs or claiming new runtime startup success.
-- Updated [agent instructions](../../AGENTS.md), [workflow](../WORKFLOW.md), and [harness guidance](../HARNESS.md) with the shared coordination policy. The prompt refers to those canonical rules instead of maintaining a separate policy system.
-- Aligned the [context-upkeep skill](../../.agents/skills/encore-context-upkeep/SKILL.md) with coordinator-only issue updates and explicit authorization for issue closure.
+- Added [.agents/skills/encore-orchestrator/SKILL.md](../../.agents/skills/encore-orchestrator/SKILL.md) as the reusable entry point for implementation and read-only investigation.
+- Replaced the long [cloud prompt](../../.codex/prompts/cloud-orchestrator.md) with a short compatibility entry and invocation examples; its existing path still works.
+- Updated agent routing, the prompt index, and cloud/harness/context guidance to use the skill in the current chat. [WORKFLOW.md](../WORKFLOW.md) remains the canonical coordination policy rather than duplicating it across entry points.
+- Retained the parallel-cloud ownership rules and the [context-upkeep skill](../../.agents/skills/encore-context-upkeep/SKILL.md) alignment: each coordinator updates only its own issue, and issue closure requires explicit authorization.
+- Recorded the saved environment's observed ready/runnable listing on November 10, 2026 without publishing configuration IDs or claiming runtime startup success.
 
 ## Verification
 
-The lead orchestrator ran these checks successfully:
+The lead ran `corepack pnpm run doctor`, `corepack pnpm run typecheck`, `corepack pnpm run check`, `corepack pnpm run context:check --base origin/main`, and `git diff --cached --check` against the skill revision; all passed. The skill worker validated YAML name/description fields and seven local links; the lead independently read the frontmatter and the repository check resolved local links.
 
-- `corepack pnpm run doctor`
-- `corepack pnpm run typecheck`
-- `corepack pnpm run check`
-- `corepack pnpm run context:check --base origin/main`
-- `git diff --cached --check`
-
-Review fixes clarify distinguishable chat/account ownership, non-atomic GitHub claims, and read-only verification without staging, dependency installation, or generated-output changes. The independent reviewer confirmed no outstanding substantive findings; the skill's issue-closure conflict and the prompt's read-only-mode conflict are resolved. Application tests, build, and browser checks were not rerun because this change affects Markdown only.
+Independent review found no substantive issues: frontmatter/triggers are valid, coordination and read-only safeguards are preserved, context-upkeep and AGENTS.md fallback routing are explicit, and the former prompt is a short compatibility entry. Application tests, build, and browser checks were not rerun because application behavior/configuration is unchanged. Skill-picker discovery and actual invocation in another host have not been tested.
 
 ## Context impact
 
-[CONTEXT.md](../CONTEXT.md) now distinguishes the confirmed saved configuration listing from per-chat runtime verification. [CLOUD_ENVIRONMENT.md](../CLOUD_ENVIRONMENT.md) owns launch/setup guidance, while [WORKFLOW.md](../WORKFLOW.md), [HARNESS.md](../HARNESS.md), and [AGENTS.md](../../AGENTS.md) own contributor coordination rules. The [context-upkeep skill](../../.agents/skills/encore-context-upkeep/SKILL.md) now uses the same coordinator-only issue-update and explicitly authorized closure rules. GitHub remains the source of current issue ownership and readiness. Product behavior, schemas, dependency pins, and application commands are unchanged.
+[AGENTS.md](../../AGENTS.md) routes the skill explicitly. [CLOUD_ENVIRONMENT.md](../CLOUD_ENVIRONMENT.md) owns usage and checkout availability; [WORKFLOW.md](../WORKFLOW.md) retains ownership/validation policy. [HARNESS.md](../HARNESS.md), [CONTEXT.md](../CONTEXT.md), and the [prompt index](../../.codex/prompts/README.md) link to the skill instead of requiring the old long prompt. GitHub remains the source of issue ownership/readiness. Product behavior, schemas, dependency pins, and application commands are unchanged.
 
 ## Learning note
 
-A cloud chat has its own checkout, while its subagents share that checkout. Separate chats avoid filesystem collisions, but they can still duplicate an issue or change the same contract. GitHub claims help coordinate ownership but are not atomic locks; exclusive file assignments prevent workers inside one chat from overwriting each other.
+A repository-local skill packages reusable instructions; it is not a new service or permission grant. Explicit AGENTS.md routing lets an agent read those instructions even if an interface does not list the skill automatically. Subagents still share the current chat's checkout, so file ownership and GitHub coordination remain necessary.
 
 ## Next step
 
-After final independent review, submit the documentation PR for human review and merge. The new defaults reach `main` only after that PR merges; then launch each desired cloud chat explicitly with its issue and mode. The current session did not have chat-creation or cross-chat messaging tools, so no new chat launch or cross-chat handoff is claimed. Recheck live GitHub prerequisites before implementation; read-only investigations do not unblock dependent work.
+Human review and merge of PR #21 remain next. Use the one-line skill request in a checkout containing the change; after merge, update other checkouts from `main`. Recheck live GitHub prerequisites before any example implementation. No new chats, environment publication, product issue claims, or dependency unblocking result from adding the skill.

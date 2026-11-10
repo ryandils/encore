@@ -56,7 +56,7 @@ Subagents share the chat's filesystem/Git state. Implement one issue at a time; 
 
 The lead inspects the final diff and integrated repository/application checks; worker reports are evidence to verify. Resolve substantive independent-review findings before marking a PR ready. Report failed/unrun checks and external prerequisites; keep incomplete work in draft where appropriate. The coordinator links the PR and records the claimed issue's actual state. Handoff includes behavior, acceptance evidence, checks, resolved findings, limitations, and next eligible work.
 
-Use [the cloud orchestrator prompt](../.codex/prompts/cloud-orchestrator.md) to start a chat with these conventions. Prompt files do not create chats or schedule unattended work.
+Invoke [the encore-orchestrator skill](../.agents/skills/encore-orchestrator/SKILL.md) in the current chat: `$encore-orchestrator implement #5` or `$encore-orchestrator investigate #6`. Plain language such as `Use encore-orchestrator to implement #5` works through the explicit AGENTS.md routing when skill discovery is unavailable. The skill applies this policy; it does not create chats or schedule unattended work. Availability depends on the checkout containing its files.
 
 ## Every change carries context
 

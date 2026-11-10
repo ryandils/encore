@@ -26,22 +26,32 @@ The command performs a frozen install and runs doctor, compiler version, strict 
 
 Select the saved environment for Encore tasks. Changes to its saved configuration or publication are separate authorized settings operations; this bootstrap does not create, rename, share, or publish an environment. Conomos needs his own authorized access to the repository and saved environment; access/sharing depends on the account/workspace configuration. Each cloud chat must have its own isolated checkout.
 
-## Launch parallel chats
+## Use the orchestrator skill
 
-1. Open a new Codex chat, select `ryandils/encore`, choose **encore cloud env**, and start from current `main`.
-2. Copy [the cloud orchestrator prompt](../.codex/prompts/cloud-orchestrator.md). Fill in one existing issue and either `implement` or `read-only investigation` mode.
-3. Give that chat one independent scope. Its lead orchestrator coordinates multiple parallel subagents inside its checkout; agents in that chat share files and Git state.
-4. Repeat in a separate cloud chat for another independent scope. Verify each chat has its own checkout. Use GitHub claims and PRs to coordinate across chats, following [the workflow](WORKFLOW.md); local isolation does not remove dependency or contract conflicts.
+In the current Encore chat, invoke [encore-orchestrator](../.agents/skills/encore-orchestrator/SKILL.md) with one existing issue and a mode:
 
-The prompt is a reusable manual launch recipe. It does not install a scheduler, start chats, or grant cross-chat messaging access. If the current Codex interface exposes authorized chat-creation or messaging tools, an orchestrator may use them only within the user's explicit instructions and must report observed results. If those tools are unavailable, launch through the interface; do not report chats as created or coordinated without evidence.
+```text
+$encore-orchestrator implement #5
+$encore-orchestrator investigate #6
+```
+
+Plain-language fallback: `Use encore-orchestrator to implement #5`. AGENTS.md explicitly routes relevant requests to the skill even when automatic discovery is unavailable. You do not need to switch chats or copy a full prompt. Each invocation applies the existing scope/readiness rules; an investigation does not silently become implementation.
+
+The skill is available only in checkouts containing `.agents/skills/encore-orchestrator/SKILL.md`; `main` receives it after [PR #21](https://github.com/ryandils/encore/pull/21) merges. Before then, use a checkout containing that PR's change. No global installation or skill-picker behavior has been verified. The [old prompt location](../.codex/prompts/cloud-orchestrator.md) remains a short compatibility entry.
+
+## Optional parallel chats
+
+For separate independent scopes, explicitly open another Codex chat, select `ryandils/encore` and **encore cloud env**, and use the skill from a checkout containing it. After this change merges, use current `main`. Verify each chat has its own isolated checkout. Each lead coordinates parallel subagents inside that chat's shared checkout; use [the workflow](WORKFLOW.md) for GitHub claims and dependency boundaries.
+
+The skill does not start chats, install a scheduler, or grant cross-chat messaging access. If the interface exposes chat-creation or messaging tools, an orchestrator may use them only within explicit user instructions and must report observed results. If unavailable, launch through the interface; do not claim unobserved creation or coordination.
 
 An illustrative launch set is:
 
-| Chat scope | Mode | Boundary |
+| Scope | Skill request | Boundary |
 | --- | --- | --- |
-| [B0.2 local database and seed, #5](https://github.com/ryandils/encore/issues/5) | `implement` | Only after a fresh GitHub check confirms merged prerequisites and no active claim or overlapping PR. |
-| [B0.3 authentication and demo roles, #6](https://github.com/ryandils/encore/issues/6) | `read-only investigation` | Inspect authentication dependencies and acceptance; do not implement before #5 merges. |
-| [B1 contracts and ledger, #8](https://github.com/ryandils/encore/issues/8) | `read-only investigation` | Examine acceptance and proposed contracts; do not edit canonical contracts or schemas before B0 merges. |
+| [B0.2 local database and seed, #5](https://github.com/ryandils/encore/issues/5) | `$encore-orchestrator implement #5` | Only after a fresh GitHub check confirms merged prerequisites and no active claim or overlapping PR. |
+| [B0.3 authentication and demo roles, #6](https://github.com/ryandils/encore/issues/6) | `$encore-orchestrator investigate #6` | Read-only acceptance/dependency investigation; do not implement before #5 merges. |
+| [B1 contracts and ledger, #8](https://github.com/ryandils/encore/issues/8) | `$encore-orchestrator investigate #8` | Read-only contract/acceptance investigation; do not edit canonical contracts or schemas before B0 merges. |
 
 These examples assign distinct modes, not live issue statuses or standing claims. Check GitHub each time. An investigation returns findings and a proposed plan in its chat; it cannot silently become implementation when a dependency changes. No cloud chats are launched merely by adding or reading this guide.
 
