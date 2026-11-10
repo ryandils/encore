@@ -6,7 +6,7 @@
 
 ## Outcome
 
-This draft adds the workflow for creating a dedicated local PostgreSQL service, applying checked-in Prisma migrations, and seeding two labeled synthetic identities repeatedly. Service startup is verified; the complete Prisma setup/seed/persistence path remains unverified because engine downloads are blocked. The [local database guide](../LOCAL_DATABASE.md) gives Windows/macOS setup, stop/resume, explicit destructive reset, and troubleshooting instructions. The setup landing page remains disconnected from the database and starts without credentials.
+This change adds the workflow for creating a dedicated local PostgreSQL service, applying checked-in Prisma migrations, and seeding two labeled synthetic identities repeatedly. Hosted Ubuntu CI verified migration, two seeds, exact identity/timestamp preservation across PostgreSQL restart, and confirmed reset/reseed. The cloud checkout itself remains unable to download the Prisma engine. The [local database guide](../LOCAL_DATABASE.md) gives Windows/macOS setup, stop/resume, explicit destructive reset, and troubleshooting instructions. The setup landing page remains disconnected from the database and starts without credentials.
 
 ## Changes
 
@@ -18,7 +18,7 @@ This draft adds the workflow for creating a dedicated local PostgreSQL service, 
 
 ## Verification
 
-This change is intended for a **draft PR** while Prisma engine access blocks required verification. Evidence below was recorded on Linux with Node 24.22.1, pnpm 12.18.0, and TypeScript 7.0.2. Commands use `corepack pnpm` for the pinned manager. A passing baseline or raw SQL probe does not replace the outstanding Prisma acceptance checks.
+The PR remains in draft pending all required CI checks. Hosted runners can access Prisma; this cloud checkout cannot. Evidence below was recorded on Linux with Node 24.22.1, pnpm 12.18.0, and TypeScript 7.0.2. Commands use `corepack pnpm` for the pinned manager. A passing baseline or raw SQL probe does not replace the outstanding Prisma acceptance checks.
 
 | Check | Current evidence |
 | --- | --- |
@@ -29,7 +29,7 @@ This change is intended for a **draft PR** while Prisma engine access blocks req
 | `corepack pnpm run db:init`, `run db:up`, and `run db:status` | Passed: example environment initialized and pinned Compose PostgreSQL reported healthy on loopback port `54329`. Status also passed after local Docker-endpoint validation/pinning was added. |
 | Migration SQL probe | The lead executed the migration's type/table/index/foreign-key DDL inside `BEGIN`/`ROLLBACK` through `psql` in the running Compose PostgreSQL service. SQL execution passed and persisted no schema. This is not Prisma migration acceptance. |
 | `corepack pnpm run db:generate`, `run db:migrate`, and `run typecheck` | Blocked by HTTP 403 on proxy CONNECT to `binaries.prisma.sh`; required engines could not be downloaded. No pass claimed. |
-| Fresh Prisma migration, seed twice, restart persistence, and permitted reset | Unverified pending engine access. The SQL probe and service health do not establish these behaviors. |
+| Fresh Prisma migration, seed twice, restart persistence, and permitted reset | Passed on hosted Ubuntu in [run 42886895816](https://github.com/ryandils/encore/actions/runs/42886895816), head 11397f2: generated client, healthy PostgreSQL, two seeds and exact-record persistence across restart (two total users), acknowledged reset/remigration, reseed, and shutdown. These were not run in the cloud checkout. |
 | `corepack pnpm run build` | Attempted; stopped during Prisma generation with the same engine-host HTTP 403. No build pass claimed. |
 | `corepack pnpm run context:test` | Both context-gate regression tests passed. |
 | Staged context and whitespace checks | After staging the handoff, corepack pnpm run context:check --base origin/main and git diff --cached --check both passed. The gate checks structure, not acceptance truth. |
@@ -37,7 +37,7 @@ This change is intended for a **draft PR** while Prisma engine access blocks req
 
 Windows/macOS Docker Desktop flows are documented but have not been executed locally in this Linux chat. UI code is unchanged; no new browser check is claimed. Local identity persistence does not establish authentication, permissions, ledger concurrency, two-device behavior, backup/restore, deployment, or pilot readiness.
 
-Current setup limitation: the pinned PostgreSQL image pulled successfully, but Prisma engine generation encountered HTTP 403 on the proxy CONNECT request to `binaries.prisma.sh`. The required host is documented; engine checksums remain enabled. Generation-dependent verification is pending network access or actual hosted-CI evidence, not reported as passing.
+Current setup limitation: the pinned PostgreSQL image pulled successfully, but Prisma engine generation encountered HTTP 403 on the proxy CONNECT request to `binaries.prisma.sh`. The required host is documented; engine checksums remain enabled. Hosted CI provides the database integration evidence above. Its initial baseline jobs exposed that Next.js augments ProcessEnv with required NODE_ENV; guard helpers now accept explicit optional environment dictionaries so missing-environment tests remain valid. Strict typecheck/build verification of that correction is pending the next run.
 
 ## Context impact
 
@@ -53,4 +53,4 @@ A migration versions the database's structure; a seed supplies predictable fake 
 
 ## Next step
 
-Keep the PR in draft and issue #5 in its actual blocked/incomplete state until Prisma engine access allows client generation, strict typechecking/build, and real migration/seed/restart/reset verification. Finish independent review, then seek human review/merge of B0.2. The coordinator will link the draft PR and actual evidence on issue #5. [B0.3 authentication and demo roles](https://github.com/ryandils/encore/issues/6) must wait for this prerequisite to merge and recheck ownership before starting; B1 remains responsible for full domain contracts/models. The local URL guard cannot detect a manually forwarded tunnel, and this development workflow is not a production migration or backup procedure.
+Keep the PR in draft and issue #5 in its actual incomplete state until the corrected cross-platform typecheck/build checks pass. The local cloud runtime still needs binaries.prisma.sh allowed for future Prisma work; hosted CI has supplied real migration/seed/restart/reset evidence. Finish independent review, then seek human review/merge of B0.2. The coordinator will link the draft PR and actual evidence on issue #5. [B0.3 authentication and demo roles](https://github.com/ryandils/encore/issues/6) must wait for this prerequisite to merge and recheck ownership before starting; B1 remains responsible for full domain contracts/models. The local URL guard cannot detect a manually forwarded tunnel, and this development workflow is not a production migration or backup procedure.

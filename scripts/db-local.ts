@@ -7,7 +7,7 @@ export const root = fileURLToPath(new URL('../', import.meta.url));
 export class LocalDatabaseError extends Error {}
 
 /** Restrict development writes to the dedicated, loopback-only Encore database. */
-export function validateLocalDatabase(environment: NodeJS.ProcessEnv): string {
+export function validateLocalDatabase(environment: Readonly<Record<string, string | undefined>>): string {
   if (environment.NODE_ENV === 'production') {
     throw new LocalDatabaseError('Local database commands are unavailable in production.');
   }
@@ -83,7 +83,7 @@ export function runChecked(command: string, args: string[], purpose: string, env
 
 /** Docker context selection takes precedence over DOCKER_HOST, as in Docker CLI. */
 export function resolveLocalDockerEndpoint(
-  environment: NodeJS.ProcessEnv,
+  environment: Readonly<Record<string, string | undefined>>,
   inspectContext: (context: string | undefined) => string,
 ): string {
   const endpoint = (environment.DOCKER_CONTEXT
