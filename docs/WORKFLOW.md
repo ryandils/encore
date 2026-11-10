@@ -16,12 +16,47 @@
 Use a **Status** field in the issue body: Ready → In progress → In review → Done, or Blocked. Tracking milestones use Planned until their child deliverables and acceptance are complete. No GitHub Project or custom status-label automation has been configured; this convention works with ordinary issues.
 
 - Ready: acceptance defined, dependencies merged, unclaimed. Check actual dependencies, not just a possibly stale Status field.
-- In progress: record the owner, branch, and narrow task being built.
+- In progress: record the human/account owner, distinct chat/task owner, branch, and narrow task being built.
 - In review: link the PR and its evidence; avoid claiming another task that changes the same contracts.
-- Done: confirmed merge and acceptance; close the deliverable issue. Close a parent only after all children and milestone acceptance pass.
+- Done: confirmed merge and acceptance. Issue closure requires explicit authorization; close a parent only after all children and milestone acceptance pass and closure is authorized.
 - Blocked: name the concrete unmet issue/capability. After merge, recheck dependents and mark Ready only when every prerequisite is met.
 
-Agents working an assigned task may maintain that task's issue status and evidence. Human decisions remain for scope changes, merge and production deployment unless already explicitly authorized. No background process selects or starts work; a user/Codex session initiates each task.
+The coordinator for an authorized task maintains only that task's issue status and evidence. Do not create issues, close issues, merge PRs, deploy, or publish environments without explicit authorization. Avoid automatic issue-closing keywords in PR descriptions unless closure is authorized. Human decisions remain for consequential scope changes. No background process selects or starts work; a user/Codex session initiates each task.
+
+## Cloud orchestration
+
+Use **encore cloud env** for authorized cloud work. Each chat has an isolated checkout, accountable lead orchestrator, and one issue/task branch. Separate chats may proceed in parallel on independent work within available capacity. The environment supplies startup configuration, not ownership coordination or a scheduler.
+
+After orientation, run GitHub triage and local investigation in parallel. Inspect issues, comments, open PRs, actual code, and merged prerequisites. The coordinator recommends ready work; the lead selects it. Immediately before claiming, recheck ownership and overlap, then record a distinct chat/task owner and branch alongside the account owner. An assignee alone is not a lock when chats share an account. Preserve discussion and claims; if ownership is contested, stop overlapping work and resolve the assignment without overwriting another claim. GitHub updates are not atomic locks.
+
+Dependencies must merge before dependent implementation starts. Do not build competing scaffolds or use unmerged contracts to keep chats busy. Read-only preparation for blocked work is allowed, but is not an implementation claim. If GitHub cannot be read, report the access failure and continue local investigation until ownership can be verified.
+
+### Team inside each chat
+
+The lead uses multiple parallel subagents where work is independent. Only the lead assigns/spawns agents. Combine roles for small tasks and parallelize useful investigation/review rather than manufacturing edits.
+
+| Role | Responsibility and permissions |
+| --- | --- |
+| Lead orchestrator | Selects the issue, assigns agents, integrates results, owns all Git mutations and PR creation/updates, and verifies final acceptance. |
+| Coordinator | Inspects GitHub readiness/ownership/dependencies/overlaps, records the lead's assignment map, and alone updates this chat's claimed issue after lead authorization. Other chats retain their own issue writers. |
+| Investigation workers | Inspect bounded implementation/acceptance/test questions in parallel, read-only unless explicitly reassigned. |
+| Implementation workers | Edit only their assigned exclusive files/directories and return acceptance evidence; request reassignment before editing outside their scope. |
+| Independent reviewer | Reviews the combined diff for correctness, security, regressions, and acceptance coverage; prefer an agent who authored none of the changes. Reports findings to the lead. |
+
+Assignments specify outcome, context, dependencies, named files, read/write permissions, and expected checks. Stay within host limits. Workers return changes/files, acceptance coverage, exact checks/results, and risks or integration needs; they do not post duplicate GitHub updates or spawn agents.
+
+### Shared-checkout safety and handoff
+
+Subagents share the chat's filesystem/Git state. Implement one issue at a time; only the lead may switch branches, stage, commit, stash, push, or perform other Git mutations. Additional worktrees require an explicit user request.
+
+- Assign each edited file/directory to one worker. Give shared interfaces, dependency manifests/lockfiles, and common configuration one owner; finish required contracts before dependent edits.
+- Assign canonical docs and the required handoff to one owner. Never revert another worker's edits; request reassignment when ownership must change.
+- Serialize dependency installation and commands that mutate the same generated outputs or fixtures. Read-only investigation can continue independently.
+- Stop workers from editing before changing branches or integrating conflicting work. Before the next issue, finish the current handoff, preserve all changes, and establish the next branch from the appropriate merged base.
+
+The lead inspects the final diff and integrated repository/application checks; worker reports are evidence to verify. Resolve substantive independent-review findings before marking a PR ready. Report failed/unrun checks and external prerequisites; keep incomplete work in draft where appropriate. The coordinator links the PR and records the claimed issue's actual state. Handoff includes behavior, acceptance evidence, checks, resolved findings, limitations, and next eligible work.
+
+Use [the cloud orchestrator prompt](../.codex/prompts/cloud-orchestrator.md) to start a chat with these conventions. Prompt files do not create chats or schedule unattended work.
 
 ## Every change carries context
 

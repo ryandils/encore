@@ -33,11 +33,15 @@ Use TypeScript 7 in strict mode for all authored executable source: application 
 - Inspect git status, branches, open PRs, and recent commits before starting.
 - Work on one build-plan task per branch, for example feat/b2-door-console.
 - Claim the task in the team's GitHub issue/PR workflow before overlapping work. Do not assume the suggested people or tasks are automatically assigned.
-- Use your own branch/worktree. Never discard another person's changes or force-push shared branches.
+- Use the cloud chat's existing isolated checkout and one task branch. Do not create additional worktrees unless the user explicitly requests them. Never discard another person's changes or force-push shared branches.
 - B0 lands once. B1 establishes shared contracts before B2 and B3 work in parallel.
 - Keep changes focused. Document API/schema changes and migrations in the same PR.
-- Open a PR with the task ID, behavior, verification performed, and remaining limitations. Humans review and merge; do not merge or deploy merely because a task is done.
+- Open a PR with the task ID, behavior, verification performed, and remaining limitations. Do not create new issues, close issues, merge PRs, deploy, or publish environments without explicit authorization. Avoid automatic issue-closing keywords in PR descriptions unless issue closure is explicitly authorized.
 - Do not add integrations, dependencies, or unrelated features just to make a demo look complete.
+
+## Cloud orchestration default
+
+Each Encore cloud chat defaults to an accountable lead orchestrator using multiple parallel subagents for useful independent work. Only the lead assigns agents and mutates Git/PRs; its coordinator alone updates its claimed issue. Use bounded assignments, exclusive file ownership, and independent review. Separate chats use isolated checkouts and distinct GitHub chat/task claims; subagents inside a chat share its checkout. Respect merged dependencies and available capacity; combine roles for narrow work rather than inventing tasks. Follow [the detailed ownership and validation workflow](docs/WORKFLOW.md) and [the cloud orchestrator prompt](.codex/prompts/cloud-orchestrator.md). These instructions do not launch chats or install a scheduler.
 
 ## Critical invariants
 

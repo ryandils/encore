@@ -8,7 +8,7 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 - Windows/macOS quick start, task/PR templates, and learning prompts. PRs #1 and #2 established this foundation.
 - Repository-local context-upkeep skill and per-change handoff gate, merged in PR #15.
 - One Next.js App Router/React/Tailwind scaffold with a phone-first landing page explicitly labeled as a demo/setup milestone; strict TypeScript 7 app checks and real lint/test/build commands alongside the harness.
-- Tested cloud checkout bootstrap: `pnpm run cloud:setup`; saved environment creation/publication remains a settings step, not a confirmed resource.
+- Tested cloud checkout bootstrap: `pnpm run cloud:setup`. The saved **encore cloud env** configuration was observed ready/runnable for this repository on `main` on November 10, 2026; each new runtime still needs verification. [Cloud launch instructions](CLOUD_ENVIRONMENT.md) and a reusable prompt define separate scoped chats whose orchestrators use parallel subagents. These docs do not launch chats or install a scheduler.
 
 ## Not implemented
 

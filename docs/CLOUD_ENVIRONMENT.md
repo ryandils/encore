@@ -1,6 +1,6 @@
 # encore cloud env
 
-This is the reproducible configuration for the proposed saved Codex Cloud environment. The repository bootstrap is tested independently from saved-environment creation. No saved environment is claimed by this document.
+The saved Codex Cloud environment **encore cloud env** was listed as ready and runnable for `ryandils/encore` on `main` on November 10, 2026. That observation confirms the saved configuration was available then; it does not prove a new chat has started or its runtime checks have passed. Recheck availability when launching. The repository bootstrap is verified separately in each checkout.
 
 ## Configuration
 
@@ -24,7 +24,26 @@ Corepack reads packageManager and obtains the pinned pnpm version without requir
 
 The command performs a frozen install and runs doctor, compiler version, strict typechecking, repository checks and context-gate regression tests. It stops on failures. It does not need production secrets or send messages. Enable network access for GitHub checkout, registry.npmjs.org (including redirected package downloads), and any required runtime download host used by the selected image. The package manifest is the source of truth for the manager pin.
 
-Review/save/publish the environment through Codex settings after the setup succeeds. Then select the saved environment for future Encore tasks. This bootstrap does not create, rename, share, or publish an environment through an API. Conomos needs his own authorized access to the repository and saved environment; access/sharing depends on the account/workspace configuration. Each task should have its own checkout, not a shared live working directory.
+Select the saved environment for Encore tasks. Changes to its saved configuration or publication are separate authorized settings operations; this bootstrap does not create, rename, share, or publish an environment. Conomos needs his own authorized access to the repository and saved environment; access/sharing depends on the account/workspace configuration. Each cloud chat must have its own isolated checkout.
+
+## Launch parallel chats
+
+1. Open a new Codex chat, select `ryandils/encore`, choose **encore cloud env**, and start from current `main`.
+2. Copy [the cloud orchestrator prompt](../.codex/prompts/cloud-orchestrator.md). Fill in one existing issue and either `implement` or `read-only investigation` mode.
+3. Give that chat one independent scope. Its lead orchestrator coordinates multiple parallel subagents inside its checkout; agents in that chat share files and Git state.
+4. Repeat in a separate cloud chat for another independent scope. Verify each chat has its own checkout. Use GitHub claims and PRs to coordinate across chats, following [the workflow](WORKFLOW.md); local isolation does not remove dependency or contract conflicts.
+
+The prompt is a reusable manual launch recipe. It does not install a scheduler, start chats, or grant cross-chat messaging access. If the current Codex interface exposes authorized chat-creation or messaging tools, an orchestrator may use them only within the user's explicit instructions and must report observed results. If those tools are unavailable, launch through the interface; do not report chats as created or coordinated without evidence.
+
+An illustrative launch set is:
+
+| Chat scope | Mode | Boundary |
+| --- | --- | --- |
+| [B0.2 local database and seed, #5](https://github.com/ryandils/encore/issues/5) | `implement` | Only after a fresh GitHub check confirms merged prerequisites and no active claim or overlapping PR. |
+| [B0.3 authentication and demo roles, #6](https://github.com/ryandils/encore/issues/6) | `read-only investigation` | Inspect authentication dependencies and acceptance; do not implement before #5 merges. |
+| [B1 contracts and ledger, #8](https://github.com/ryandils/encore/issues/8) | `read-only investigation` | Examine acceptance and proposed contracts; do not edit canonical contracts or schemas before B0 merges. |
+
+These examples assign distinct modes, not live issue statuses or standing claims. Check GitHub each time. An investigation returns findings and a proposed plan in its chat; it cannot silently become implementation when a dependency changes. No cloud chats are launched merely by adding or reading this guide.
 
 ## First task
 

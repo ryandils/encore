@@ -12,7 +12,7 @@ Apply this skill at task start and before a PR/handoff. It is repository-local; 
 1. Read AGENTS.md, docs/CONTEXT.md, docs/WORKFLOW.md, and the task issue. Open the canonical product/architecture docs relevant to the task.
 2. Inspect the actual branch, git status, current code and open PRs. Inspect recent merged handoffs relevant to the touched subsystem; do not load all history by default.
 3. Recheck issue dependencies and ownership on GitHub before claiming a Ready task. If GitHub is unavailable, report that coordination is unverified; do not invent task state.
-4. Record the task claim and branch in the issue when authorized. This project's task workflow authorizes updating the claimed task's status, dependencies and handoff links, not sending unrelated messages.
+4. The chat's coordinator records the authorized task claim and branch and is the sole writer of that task's issue updates. This workflow authorizes maintaining its status, dependencies and handoff links, not unrelated messages or issue closure; other agents report findings to the coordinator.
 
 ## Keep a small durable context
 
@@ -40,8 +40,8 @@ Do not rewrite unrelated docs to satisfy a checkbox. In the handoff's Context im
 1. Complete the smallest authorized deliverable and run actual checks. Record commands/results, fixture versus real integration, missing evidence and blockers. Do not turn planned checks into claimed results.
 2. Add the change handoff and update impacted docs in the same PR. Give Conomos a short plain-language explanation, how to try the result, and one concept to learn.
 3. Run pnpm run doctor, pnpm run check, pnpm run context:check --base origin/main, and appropriate app checks when present. Context checking compares committed changes plus the staged/unstaged working tree to the merge base; new handoff files may be staged before checking.
-4. Set the claimed issue to In review with its PR link. The PR may use Closes #N for its own completed deliverable. Do not close a parent milestone just because one child shipped.
-5. Humans review/merge unless explicitly authorized otherwise. After a confirmed merge, close/update the task and unblock dependent tasks only when all their prerequisites are satisfied. If tools cannot do so, report the exact pending synchronization in the handoff.
+4. The coordinator sets the claimed issue to In review with its PR link when ready. Issue closure and automatic-closing PR keywords require explicit authorization. Never close a parent milestone merely because one child shipped.
+5. Humans review/merge unless explicitly authorized otherwise. After a confirmed merge, the coordinator records evidence/status for its task; closure still requires explicit authorization. Recheck all prerequisites before recommending dependent tasks as Ready, and leave other chats' issue updates with their coordinators. Report any pending synchronization in the handoff.
 
 ## Limits
 
