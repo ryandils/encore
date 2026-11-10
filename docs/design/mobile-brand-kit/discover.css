@@ -1,0 +1,83 @@
+.discovery { background:#09090c; }
+.discovery-shell { max-width:480px; margin:auto; background:#000; min-height:100dvh; }
+.discovery-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:24px 20px 16px; }
+.discovery-header a { min-height:48px; display:flex; align-items:center; }
+.concept-badge { font-size:11px; letter-spacing:1px; color:#c0c0c0; text-align:right; }
+.discovery-disclaimer { background:#15151c; color:#c0c0c0; margin:0; padding:12px 20px; font-size:13px; }
+.view-picker,.location-picker { min-width:0; border:0; padding:0; margin:0; }
+.visually-hidden,.view-input,.location-picker>input { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.discovery main { padding:32px 20px 16px; }
+.discovery h1 { font-size:52px; line-height:1.04; letter-spacing:-2px; margin-bottom:28px; overflow-wrap:anywhere; }
+.discovery h1 span { color:#00a1ff; }
+.discovery .eyebrow { font-size:11px; letter-spacing:1.2px; color:#c0c0c0; margin-bottom:14px; }
+.discovery h2 { font-size:22px; line-height:1.2; letter-spacing:-.5px; }
+.discovery h3 { font-size:22px; letter-spacing:-.6px; }
+.location-picker legend { color:#c0c0c0; font-size:13px; margin-bottom:10px; }
+.location-picker>label { display:inline-flex; align-items:center; justify-content:center; min-height:48px; border:1px solid #777; border-radius:24px; padding:10px 12px; margin:0 4px 16px 0; font-size:13px; cursor:pointer; }
+#area-state:checked+label,#denied-state:checked+label,#manual-state:checked+label { color:#000; background:#fff; border-color:#fff; }
+.location-context { display:flex; align-items:center; gap:12px; border:1px solid #777; border-radius:12px; padding:16px; margin:0 0 22px; }
+.location-icon { font-size:30px; color:#00a1ff; }
+.location-context strong { font-size:15px; }
+.location-context p { font-size:13px; color:#c0c0c0; line-height:1.4; margin:6px 0 0; }
+.location-denied,.location-manual { border:1px solid #c0c0c0; border-radius:12px; padding:18px; margin-bottom:24px; }
+.location-denied { background:#fff; color:#000; }
+.location-denied strong { font-size:18px; }
+.location-denied p { margin:10px 0; }
+.location-denied .fine { color:#333; }
+.manual-action,.return-action { display:flex; align-items:center; justify-content:center; min-height:56px; background:#0000ff; color:white; border:1px solid #a0a0ff; border-radius:8px; padding:12px; text-align:center; font-size:16px; font-weight:700; cursor:pointer; }
+.discovery input[readonly] { width:100%; min-width:0; background:transparent; color:white; border:1px solid #777; border-radius:8px; min-height:56px; padding:14px; font-size:18px; }
+.location-manual>label,.search-sample>label { display:block; font-size:16px; font-weight:700; margin-bottom:10px; }
+.location-manual>p,.search-sample>p { font-size:13px; color:#c0c0c0; margin-top:10px; }
+.search-field { position:relative; }
+.search-field span { position:absolute; left:16px; top:12px; font-size:26px; color:#c0c0c0; }
+.search-field input[readonly] { padding-left:46px; }
+.list-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:28px 0 18px; flex-wrap:wrap; }
+.list-heading>span { font-size:10px; letter-spacing:.8px; color:#c0c0c0; }
+.venue-card { border:1px solid #555; border-radius:16px; overflow:hidden; margin-bottom:16px; background:#101014; }
+.venue-art { min-height:160px; position:relative; overflow:hidden; background:#0000ff; color:white; display:flex; align-items:center; justify-content:center; }
+.venue-art.north { background:repeating-linear-gradient(90deg,transparent 0 38px,#ffffff18 38px 39px),#0000ff; }
+.venue-art.north>span { font-size:88px; letter-spacing:-12px; font-weight:800; transform:skewY(-8deg); padding-right:12px; }
+.venue-art.north>span>span { color:#fff; opacity:.75; }
+.venue-art small { position:absolute; bottom:14px; left:16px; font-size:9px; letter-spacing:2px; }
+.venue-info { padding:18px; min-width:0; }
+.venue-title { display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.venue-title>span { font-size:14px; color:#c0c0c0; }
+.venue-info p { color:#c0c0c0; font-size:14px; margin:8px 0 0; }
+.venue-info .venue-description { color:white; font-size:16px; margin-top:16px; }
+.venue-info details { margin-top:18px; border-top:1px solid #555; }
+.venue-info summary { min-height:52px; padding-top:16px; font-size:14px; font-weight:700; cursor:pointer; }
+.venue-info summary span { float:right; }
+.compact { display:grid; grid-template-columns:76px minmax(0,1fr); }
+.compact .venue-art { min-height:100%; font-size:36px; font-weight:700; }
+.violet { background:#5820c7; }.silver { background:#c0c0c0; color:#000; }
+.compact h3 { font-size:20px; }.compact .venue-info { padding:14px; }
+.fine { font-size:13px; color:#c0c0c0; line-height:1.5; }
+.location-denied,.location-manual,.manual-results,.profile-panel,.settings-panel { display:none; }
+.location-picker:has(#denied-state:checked) .location-denied,.location-picker:has(#manual-state:checked) .location-manual,.location-picker:has(#manual-state:checked) .manual-results { display:block; }
+.location-picker:has(#denied-state:checked) .location-context,.location-picker:has(#denied-state:checked) .browse-results,.location-picker:has(#denied-state:checked) .search-sample,.location-picker:has(#manual-state:checked) .location-context,.location-picker:has(#manual-state:checked) .browse-results { display:none; }
+.view-picker:has(#profile-view:checked) .feed-panel,.view-picker:has(#settings-view:checked) .feed-panel { display:none; }
+.view-picker:has(#profile-view:checked) .profile-panel,.view-picker:has(#settings-view:checked) .settings-panel { display:block; }
+.bottom-navigation { position:sticky; bottom:0; z-index:2; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid #777; background:#0d0d12; padding:8px 12px max(12px,env(safe-area-inset-bottom)); gap:8px; }
+.bottom-navigation label { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-height:64px; color:#c0c0c0; border:1px solid transparent; border-radius:10px; font-size:13px; cursor:pointer; padding:8px 4px; text-align:center; overflow-wrap:anywhere; }
+.bottom-navigation svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.7; }
+#feed-view:checked~.bottom-navigation label[for="feed-view"],#profile-view:checked~.bottom-navigation label[for="profile-view"],#settings-view:checked~.bottom-navigation label[for="settings-view"] { color:white; background:#0000ff; border-color:#a0a0ff; }
+.view-input:focus-visible~.bottom-navigation label { outline:none; }
+#feed-view:focus-visible~.bottom-navigation label[for="feed-view"],#profile-view:focus-visible~.bottom-navigation label[for="profile-view"],#settings-view:focus-visible~.bottom-navigation label[for="settings-view"],.location-picker input:focus-visible+label { outline:3px solid #00a1ff; outline-offset:2px; }
+.discovery input[readonly]:focus-visible { outline:3px solid #00a1ff; outline-offset:3px; }
+.concept-footer { display:flex; flex-direction:column; padding:20px; gap:8px; }
+.concept-footer a { display:flex; align-items:center; min-height:48px; color:#00a1ff; font-size:14px; }
+.concept-card,.empty-example { border:1px solid #777; padding:20px; border-radius:12px; margin:24px 0; }
+.concept-card p,.empty-example p { margin:14px 0 0; color:#c0c0c0; }
+.empty-example summary { min-height:48px; cursor:pointer; font-weight:700; }
+.empty-example h3 { margin-top:16px; }.profile-monogram { width:96px; height:96px; border-radius:50%; background:#5820c7; color:white; font-size:52px; font-weight:800; display:grid; place-items:center; margin-bottom:28px; }
+.profile-panel>p:not(.eyebrow) { color:#c0c0c0; margin-top:12px; }
+.discovery dl>div { display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:16px 0; border-bottom:1px solid #555; font-size:14px; }
+.discovery dd { white-space:normal; }
+.profile-panel,.settings-panel { min-height:65dvh; }
+@media(max-width:360px) { .discovery main { padding-inline:16px; }.discovery h1 { font-size:46px; }.location-picker>label { padding:10px; font-size:12px; }.compact { grid-template-columns:60px minmax(0,1fr); } }
+@media(prefers-reduced-motion:reduce) { .discovery { scroll-behavior:auto; } }
+/* Keep venue discovery visible in the first phone viewport. */
+.discovery main { padding-top:20px; }
+.discovery h1 { font-size:44px; margin-bottom:20px; }
+.search-sample { display:none; }
+.location-picker:has(#manual-state:checked) .search-sample { display:block; }
