@@ -43,7 +43,8 @@ describe('synthetic door adapter', () => {
     const demo = setup();
     const command = paid();
     const first = data(await demo.api.recordEvent(demo.nightId, command));
-    (first.state.presets as { amountCents: number }[])[1].amountCents = 7;
+    // Deliberately mutate a returned object to verify runtime isolation without casting the readonly array.
+    Object.assign(first.state.presets[1], { amountCents: 7 });
     expect(data(await demo.api.recordEvent(demo.nightId, command)).state.presets[1].amountCents).toBe(1000);
     expect(data(await demo.api.doorState(demo.nightId)).presets[1].amountCents).toBe(1000);
   });

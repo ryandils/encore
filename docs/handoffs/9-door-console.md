@@ -27,6 +27,10 @@ Local Linux, Node 24.22.1, pnpm 12.18.0, TypeScript 7.0.2:
 - Standard `cloud:setup` / `typecheck` and `build` stop at Prisma generation: HTTP 403 fetching the engine checksum from `binaries.prisma.sh`. The enforced environment allowlist omits that host. No checksum or network-policy bypass was used. Optimized production HTTP verification cannot run locally without the build; its new guard assertion awaits CI.
 - Context gate and final whitespace validation are recorded in the PR after staging this handoff.
 
+### CI follow-up
+
+The initial GitHub run rejected a test-only cast from a readonly preset array to a mutable array (TS4104). The isolation test now deliberately mutates the selected returned object with `Object.assign`, retaining its original detached-receipt assertions without weakening the shared contract. No application behavior changed. The focused correction is being revalidated by CI.
+
 ## Context impact
 
 README documents the new route and its limitations; CONTEXT distinguishes the working synthetic UI from absent live endpoints; ARCHITECTURE describes the adapter/controller boundary and B4 obligations. B3 has a separate issue/chat: preserve its independent sections when reconciling these canonical docs. The issue remains the live ownership/status record.
