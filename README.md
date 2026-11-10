@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, and one Next.js/React/Tailwind landing page labeled **Demo / setup milestone**. It starts locally and has strict TypeScript 7 checks. **There is no database, authentication, door ledger, owner dashboard, or deployment yet.** The remaining B0 foundation work is described in [the build plan](docs/BUILD_PLAN.md).
+This repository contains the MVP specification, contributor harness, one Next.js/React/Tailwind landing page labeled **Demo / setup milestone**, and local PostgreSQL/Prisma setup with two synthetic demo identities. It starts locally and has strict TypeScript 7 checks. **Authentication, the door ledger, owner dashboard, and deployment are not implemented.** The landing page does not use the database yet. The remaining B0 foundation work is described in [the build plan](docs/BUILD_PLAN.md).
 
 ## Start here: Windows or macOS
 
@@ -32,7 +32,25 @@ pnpm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The landing page explains the setup milestone; it cannot record admissions or cash. Stop the server with Ctrl+C. To run the optimized local build instead, run `pnpm run build` followed by `pnpm run start` and open the same address. No environment file, database, credentials, or external service is required for this scaffold.
 
-These checks cover contributor setup and the landing-page scaffold. They do not establish ledger, permission, database, or pilot readiness.
+These checks cover contributor setup, the landing-page scaffold, and database-command guards. Real PostgreSQL verification is a separate command below; none of these checks establishes ledger, permission, or pilot readiness.
+
+## Local PostgreSQL and synthetic seed
+
+Install and start Docker Desktop using the [Windows/macOS database guide](docs/LOCAL_DATABASE.md), then run these commands one line at a time from the repository root:
+
+```text
+pnpm run db:init
+pnpm run db:up
+pnpm run db:generate
+pnpm run db:migrate
+pnpm run db:seed
+pnpm run db:seed
+pnpm run db:verify
+```
+
+`db:init` creates an ignored `.env` from the local-only placeholders in `.env.example` without overwriting an existing file. PostgreSQL listens on `127.0.0.1:54329`, using a dedicated `encore_local` database and user. The seed supplies labeled fake owner/staff identities; these are stored fixtures, not working login accounts or permission grants. No production credentials, customer data, or outbound email is needed. `db:verify` checks repeatable seeding and persistence across a database restart.
+
+Use `pnpm run db:down` to stop PostgreSQL while retaining its volume, and `pnpm run db:up` to resume it. To deliberately erase and rebuild only the dedicated local database, use `pnpm run db:reset --confirm-local-reset`, then `pnpm run db:seed`. Read the [reset boundaries and troubleshooting](docs/LOCAL_DATABASE.md) first; the reset is destructive and the commands reject production mode or a non-local target.
 
 - [Harness and shared AI workflow](docs/HARNESS.md)
 - [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
@@ -57,7 +75,7 @@ The first pilot covers one entrance, a single shared door cash pool, USD cash co
 
 Start with [current context](docs/CONTEXT.md) and [the task workflow](docs/WORKFLOW.md). Live work is tracked in [GitHub issues](https://github.com/ryandils/encore/issues), not previous chats. Code changes include [task handoffs](docs/handoffs/README.md); agents follow the [context-upkeep skill](.agents/skills/encore-context-upkeep/SKILL.md).
 
-After [B0.1 app scaffold](https://github.com/ryandils/encore/issues/4) merges, recheck [B0.2 local database and seed](https://github.com/ryandils/encore/issues/5) for readiness and ownership. Conomos's independent learning task is [L0 first contribution](https://github.com/ryandils/encore/issues/13).
+After [B0.2 local database and seed](https://github.com/ryandils/encore/issues/5) merges, recheck [B0.3 authentication and demo roles](https://github.com/ryandils/encore/issues/6) for readiness and ownership. Conomos's independent learning task is [L0 first contribution](https://github.com/ryandils/encore/issues/13).
 
 ## Read in this order
 

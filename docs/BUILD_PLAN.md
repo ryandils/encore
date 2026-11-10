@@ -1,6 +1,6 @@
 # Build plan and team handoffs
 
-This repository has product docs, a contributor harness, and a Next.js setup landing page. Database, authentication, and ledger implementation remain future work. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
+This repository has product docs, a contributor harness, a Next.js setup landing page, and local PostgreSQL/Prisma setup with synthetic identity fixtures. Authentication and ledger implementation remain future work. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
 
 New contributors can complete [the L0 learning exercise](LEARNING_PATH.md) before B0. Read [the shared harness workflow](HARNESS.md) before claiming a product task.
 
@@ -47,7 +47,7 @@ Suggested lead: Ryan. Depends on B0.
 
 - Implement pure event projection and money/traffic calculations.
 - Define schemas, request/response types, error codes, and fixtures for B2/B3.
-- Create initial Prisma models/migrations and transactional command interfaces.
+- Extend the B0 identity schema with domain Prisma models/migrations and transactional command interfaces.
 - Lock the API contract to ARCHITECTURE.md or update it with a concrete reason.
 
 Done: tests cover admissions at multiple prices, free entry, exits, reversals, opening occupancy, invalid negative occupancy, money math, peak/buckets, and the MVP acceptance scenario. B2/B3 have shared types and synthetic fixtures.

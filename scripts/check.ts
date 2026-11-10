@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const errors: string[] = [];
-const skipped = new Set(['.git', 'node_modules', '.next', 'coverage', 'dist', 'out', '.vercel']);
+const skipped = new Set(['.git', 'node_modules', '.next', '.generated', 'coverage', 'dist', 'out', '.vercel']);
 const files: string[] = [];
 function walk(dir: string) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {

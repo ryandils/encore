@@ -1,0 +1,39 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../.generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Identity storage only. Better Auth integration and its other models belong to B0.3.
+model User {
+  id            String        @id
+  name          String
+  email         String        @unique
+  emailVerified Boolean       @default(false)
+  image         String?
+  createdAt     DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(3)
+  demoIdentity  DemoIdentity?
+
+  @@map("user")
+}
+
+enum DemoRole {
+  OWNER
+  STAFF
+}
+
+// Synthetic fixture metadata, never an authorization or venue-membership grant.
+model DemoIdentity {
+  userId String   @id
+  role   DemoRole
+  label  String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("demo_identity")
+}

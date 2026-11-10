@@ -31,3 +31,24 @@ jobs:
       - run: pnpm run context:check
         env:
           CONTEXT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+  database:
+    name: Local PostgreSQL migration and persistence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run db:init
+      - run: pnpm run db:generate
+      - run: pnpm run db:up
+      - run: pnpm run db:verify
+      - run: pnpm run db:reset --confirm-local-reset
+      - run: pnpm run db:seed
+      - run: pnpm run db:down
+        if: always()
