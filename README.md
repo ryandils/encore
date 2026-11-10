@@ -6,7 +6,24 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification and agent handoff documents. **No application, dependencies, deployment, or working integrations exist yet.** The first implementation task is B0 in [the build plan](docs/BUILD_PLAN.md). There are no install or run commands until that task lands.
+This repository contains the MVP specification and an executable contributor harness. **No Encore application, deployment, or working integrations exist yet.** The first app implementation task is B0 in [the build plan](docs/BUILD_PLAN.md).
+
+## Start here: Windows or macOS
+
+Follow [the quick start](docs/QUICKSTART.md) to install Git, Node 24.x/npm 11.x, clone the repo, and connect Codex. Both operating systems use the same commands from the repository root:
+
+```text
+npm ci
+npm run doctor
+npm run check
+```
+
+These checks establish contributor readiness, not a working product. There are no app dev/build commands yet.
+
+- [Harness and shared AI workflow](docs/HARNESS.md)
+- [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
+- [Copy/paste Codex prompts](.codex/prompts/README.md)
+- [Task brief template](docs/tasks/TEMPLATE.md)
 
 ## The weekend MVP
 
@@ -28,11 +45,11 @@ The first pilot covers one entrance, a single shared door cash pool, USD cash co
 
 ## Start with Codex
 
-Connect this private repository to each collaborator's GitHub/Codex account. Each person needs repository access and must authorize their own Codex integration; these docs do not grant access.
+Connect this public repository to each collaborator's GitHub/Codex account. Each person needs repository access and must authorize their own Codex integration; these docs do not grant access.
 
 Paste this into a fresh Codex chat:
 
-> Read AGENTS.md, README.md, and docs/BUILD_PLAN.md. Inspect the actual repository and current open PRs. Implement the next unclaimed task whose dependencies are merged. State which task you are taking, create a task branch, implement only its acceptance criteria, run the relevant checks, and open a PR with a handoff. Do not implement the whole roadmap.
+> Read AGENTS.md, README.md, and docs/HARNESS.md. Explain what is implemented, inspect branch/status and open PRs if accessible, and run the harness checks. I am learning: suggest one small available task with acceptance criteria, but do not edit files yet.
 
 One person takes B0 first. After B1 defines and tests the contracts, the proposed Ryan, Mike, and Conomos workstreams can proceed without independently scaffolding three applications.
 
@@ -46,4 +63,4 @@ QR guest lists, discounts, opt-in marketing, digital re-entry, NFC payments, for
 
 Use a responsive TypeScript web app first: Next.js, PostgreSQL, Prisma, and maintained authentication tooling. See the architecture document for the intended shape and pilot gates. Future React Native clients may share domain types and APIs, but web screens do not automatically port to native.
 
-Keep this repository private. Do not commit credentials, customer data, or the original group-chat screenshots.
+This repository is public. Do not commit credentials, personal contact details, actual venue/customer data, or the original group-chat screenshots. Use synthetic records. The package.json private flag prevents accidental npm publishing; it does not change GitHub visibility.
