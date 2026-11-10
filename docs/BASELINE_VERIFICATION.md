@@ -1,6 +1,6 @@
 # Common demo baseline verification
 
-Use this rehearsal to verify [B0.4](https://github.com/ryandils/encore/issues/7) from a fresh checkout on native Windows PowerShell and macOS Terminal. It connects installation, local PostgreSQL, synthetic owner/staff sign-in, and shutdown. Record each platform separately using the template below; successful hosted CI is not an interactive Docker Desktop/browser walkthrough.
+Use this rehearsal to verify [B0.4](https://github.com/ryandils/encore/issues/7) from a fresh checkout on native Windows PowerShell and macOS Terminal. It connects installation, local PostgreSQL, synthetic owner/staff sign-in, and shutdown. Record each platform and environment separately using the template below. Windows acceptance may combine native contributor setup/Docker evidence with the dedicated hosted Windows automated browser check described below; that combination does not claim a physical interactive walkthrough or macOS acceptance.
 
 This is a local synthetic demo. It does not verify venue permissions, admissions, cash reconciliation, deployment, or pilot readiness. Never use real patrons or venue records.
 
@@ -103,6 +103,21 @@ Read the passwords locally in your editor from ignored `.env`. Never paste them,
 
 Check the form and both demo screens at a narrow phone width such as 390px: labels and actions remain readable, the page has no horizontal overflow, and keyboard focus is visible. Record the browser/version and viewport used. This is an interactive walkthrough, distinct from HTTP integration checks. Avoid rapid repeated sign-in attempts; the demo retains real authentication rate limiting.
 
+### Automated browser option
+
+After completing database/authentication setup in section 3, stop any other `pnpm run dev` server in the checkout and unset `DEBUG`/`PWDEBUG` in the terminal, then run:
+
+```text
+pnpm exec playwright install chromium
+pnpm run browser:verify
+```
+
+The first command downloads Chromium for pinned Playwright 1.65.0. It is optional for ordinary contributor checks; browser verification needs either this download or a compatible preinstalled Chromium selected by `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. Record the browser version printed by the verifier, especially when using that override. Do not run `auth:verify` and `browser:verify` concurrently: each starts a development server in the same checkout.
+
+`browser:verify` starts a temporary loopback development server, reads the existing generated demo passwords locally, and drives the actual browser forms. It verifies the owner journey at 390px and staff journey at 320px, incorrect-password feedback, session refresh, server-derived role redirects, UI sign-out, anonymous rejection, keyboard focus, controls at least 44px in each dimension, no horizontal overflow, and no uncaught page errors. It closes its browser/server afterward and saves no screenshots or traces. Nonempty `DEBUG` or `PWDEBUG` settings are refused before browser loading/server startup because debug output can expose local passwords. This is automated Chromium evidence; it does not claim a person used the page or a physical phone was tested.
+
+The dedicated **Hosted Windows browser and PostgreSQL** CI job runs this sequence on `windows-2025`, with native PostgreSQL 17 installed by a commit-pinned setup action at the same guarded loopback port/database. It does not install or test Docker Desktop and does not run the Compose restart verifier. Native setup/Docker evidence comes from the separately recorded Windows rehearsal, not from this job. A passing job can supply the Windows UI portion without waiting for a physical Windows laptop walkthrough. Record its run URL, tested commit, browser version, and actual result alongside the native results. A pending job is not acceptance evidence.
+
 ## 5. Stop and resume without erasing data
 
 Stop the development server with Ctrl+C, then run:
@@ -129,10 +144,11 @@ Copy this template into the task's evidence update after testing. Record actual 
 
 ```text
 Platform: Windows/macOS; OS version; CPU architecture
+Environment/evidence: native contributor machine / hosted Windows browser / local automated browser / physical interactive walkthrough
 Shell: native PowerShell/macOS Terminal and version
 Commit: full Git SHA
 Starting state: fresh clone + new volume / own existing checkout + matching .env + existing volume / blocked missing settings
-Tools: Git, Node, pnpm, TypeScript, Docker client/server, Compose versions
+Tools: Git, Node, pnpm, TypeScript; Docker client/server and Compose versions for native setup, or PostgreSQL/Playwright versions for hosted browser
 Browser and viewport: name/version, width
 Date tested: date and timezone
 
@@ -141,7 +157,8 @@ Lint + unit tests + build: pass/fail/not run
 Production HTTP verification: pass/fail/not run
 Database init/up/generate/migrate/repeated seed/restart verification: pass/fail/not run
 Authentication init/repeated seed/HTTP verification: pass/fail/not run
-Interactive owner + staff login/refresh/logout/protected redirects: pass/fail/not run
+Owner + staff login/refresh/logout/protected redirects: pass/fail/not run; automated or interactive
+Automated browser command/run URL and tested commit, if used:
 Narrow-phone layout and keyboard focus: pass/fail/not run
 Stop/resume + database/auth verification: pass/fail/not run
 Final shutdown and clean Git status: pass/fail/not run
@@ -149,4 +166,4 @@ Failures, safe error summaries, workarounds, and unrun steps:
 Hosted CI run URL and commit, if inspected separately:
 ```
 
-The [B0.4 handoff](handoffs/7-demo-baseline.md) records the evidence available for this change; [issue #7](https://github.com/ryandils/encore/issues/7) owns its current acceptance status. Windows/macOS hosted application jobs, Ubuntu database/authentication checks, Linux cloud results, and native interactive results must remain distinct. B0.4 requires real results from both native platforms before its walkthrough acceptance can be called complete.
+The [initial B0.4 handoff](handoffs/7-demo-baseline.md), [native Windows evidence](handoffs/7-windows-verification.md), and [hosted Windows browser handoff](handoffs/7-hosted-windows-browser.md) record separate stages; [issue #7](https://github.com/ryandils/encore/issues/7) owns current acceptance status. For Windows, the user-authorized route combines the recorded native install/Docker results with a successful hosted Windows automated UI run. Preserve each source’s tested commit and limitations; no physical Windows walkthrough is implied. macOS setup and browser acceptance remain a separate requirement. Keep the overall B0.4 PR draft until its remaining acceptance evidence is complete; hosted macOS build success alone does not supply that evidence.

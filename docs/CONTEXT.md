@@ -5,7 +5,7 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 ## Implemented
 
 - Contributor harness: Node 24/pnpm 12.18.0, TypeScript 7.0.2 pinned, strict .ts harness scripts/tests, JavaScript-source guard, portable setup/document checks, and Windows/macOS/Linux CI.
-- A [common demo baseline rehearsal](BASELINE_VERIFICATION.md) connects contributor checks, local database/auth setup, and browser steps with a safe platform evidence template. Production HTTP smoke checks complement builds in the three-OS CI matrix; native Docker Desktop/browser evidence remains separate.
+- A [common demo baseline rehearsal](BASELINE_VERIFICATION.md) connects contributor checks, local database/auth setup, and browser steps with a safe platform evidence template. Production HTTP smoke checks complement builds in the three-OS CI matrix. A dedicated hosted Windows job uses native PostgreSQL and Chromium to automate the real demo forms and phone layout; native Docker Desktop, automated browser, and physical interactive evidence remain separately identified.
 - Windows/macOS quick start, task/PR templates, and learning prompts. PRs #1 and #2 established this foundation.
 - Repository-local context-upkeep skill and per-change handoff gate, merged in PR #15.
 - One Next.js App Router/React/Tailwind scaffold with a phone-first landing page explicitly labeled as a demo/setup milestone; strict TypeScript 7 app checks and real lint/test/build commands alongside the harness.

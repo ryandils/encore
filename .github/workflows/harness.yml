@@ -58,3 +58,33 @@ jobs:
       - run: pnpm run auth:verify
       - run: pnpm run db:down
         if: always()
+  windows-browser:
+    name: Hosted Windows browser and PostgreSQL
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install chromium
+      # Native PostgreSQL on a disposable runner; this is not Docker Desktop evidence.
+      - uses: ikalnytskyi/action-setup-postgres@325155bfd7807b2a21ac9c2c7bb9b9a6eacc44df # v9
+        with:
+          postgres-version: '17'
+          username: encore_local
+          password: encore_local_only
+          database: encore_local
+          port: '54329'
+      - run: pnpm run db:init
+      - run: pnpm run db:generate
+      - run: pnpm run db:migrate
+      - run: pnpm run db:seed
+      - run: pnpm run auth:init
+      - run: pnpm run auth:seed
+      - run: pnpm run browser:verify

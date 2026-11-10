@@ -69,6 +69,15 @@ The demo supports sign-in, session-backed owner/staff navigation, and sign-out. 
 
 Stop `pnpm run dev` with Ctrl+C before running `pnpm run auth:verify` for the separate HTTP/PostgreSQL regression checks after authentication setup; the verifier starts its own development server in this checkout. See [local authentication setup and limits](docs/LOCAL_DATABASE.md).
 
+To automate the real Chromium sign-in forms after local database/authentication setup, stop any development server and unset `DEBUG`/`PWDEBUG` in that terminal, then run:
+
+```text
+pnpm exec playwright install chromium
+pnpm run browser:verify
+```
+
+The browser download is needed only for this optional check. It checks owner/staff forms, refresh and sign-out, protected redirects, and phone-sized controls at 390px/320px. It starts and stops its own development server and saves no screenshots or traces. The [baseline guide](docs/BASELINE_VERIFICATION.md) separates local Docker Desktop evidence from the hosted Windows browser job, which uses native PostgreSQL on its disposable runner.
+
 - [Harness and shared AI workflow](docs/HARNESS.md)
 - [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
 - [Codex skills and prompt recipes](.codex/prompts/README.md)
