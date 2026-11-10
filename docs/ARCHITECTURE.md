@@ -4,7 +4,9 @@ This is a design contract, not a description of existing code.
 
 ## Stack and structure
 
-Use Next.js App Router, React, strict TypeScript, Tailwind CSS, PostgreSQL, Prisma, and Better Auth for server-managed email/password sessions. Pin supported compatible versions in B0; do not scatter independent scaffolds. No custom password cryptography. Email verification and password recovery need a configured provider before a real pilot; local demo must work with seeded fake accounts and no external services.
+Use Next.js App Router, React, strict TypeScript 7 (pinned to 7.0.2), Tailwind CSS, PostgreSQL, Prisma, and Better Auth for server-managed email/password sessions. Pin supported compatible versions in B0; do not scatter independent scaffolds. No custom password cryptography. Email verification and password recovery need a configured provider before a real pilot; local demo must work with seeded fake accounts and no external services.
+
+B0 must preserve the TypeScript 7 baseline, add a strict tsconfig, and verify the chosen Next.js and library versions with the installed compiler. Do not silently fall back to TypeScript 5/6 if scaffolding selects older defaults.
 
 Suggested layout:
 

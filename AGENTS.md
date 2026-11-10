@@ -10,6 +10,10 @@ Read README.md, docs/MVP.md, docs/ARCHITECTURE.md, and docs/BUILD_PLAN.md before
 
 This repository has a contributor harness, not an Encore application. Read docs/HARNESS.md and use npm run doctor / npm run check. B0 extends the existing Node 24/npm 11 manifest, lockfile, scripts, and CI with actual app tooling; it must not overwrite the harness or claim it verifies app behavior. Update README.md with commands that actually work.
 
+## TypeScript requirement
+
+Use TypeScript 7 in strict mode for application code. The project pins typescript 7.0.2 in devDependencies and the lockfile. Preserve the 7.x baseline when scaffolding B0; do not accept a generator's older compiler. Validate framework/library compatibility and report a concrete blocker rather than silently downgrading.
+
 ## Learning and cross-platform collaboration
 
 - Follow docs/QUICKSTART.md for the shared Windows/macOS baseline. Repository scripts must work in native PowerShell and macOS terminals; prefer Node APIs over shell-specific commands.

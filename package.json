@@ -3,9 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "description": "Encore contributor harness; application scaffold pending B0",
-  "engines": { "node": ">=24 <25", "npm": ">=11 <12" },
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11 <12"
+  },
   "scripts": {
     "doctor": "node scripts/doctor.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "compiler:version": "tsc --version"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
   }
 }

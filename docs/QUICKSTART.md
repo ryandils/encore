@@ -73,11 +73,13 @@ git status
 git rev-parse HEAD
 ```
 
-- `npm ci` installs exactly what the lockfile describes; the harness currently has no third-party dependencies.
+- `npm ci` installs exactly what the lockfile describes; the repository includes the pinned TypeScript 7.0.2 compiler and its platform package.
 - `doctor` checks Node/npm/Git and repository prerequisites. Every required line should say `OK`.
 - `check` validates the starter harness and local document links. Look for `PASS harness`.
 - `git status` should show a clean working tree before your first edit.
 - `git rev-parse HEAD` prints the commit fingerprint. Send Ryan that fingerprint and your check results to confirm you're on the same baseline. Don't send environment files or tokens.
+
+Run `npm run compiler:version` to confirm `Version 7.0.2`. B0 will add actual application typechecking; printing the compiler version does not typecheck an app.
 
 Passing these checks does **not** mean Encore is implemented or ready for customers.
 
