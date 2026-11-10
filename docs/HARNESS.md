@@ -6,21 +6,23 @@ Here, "harness" means the shared instructions, task briefs, executable checks, a
 
 | Command | What it proves |
 | --- | --- |
-| `npm ci` | The committed dependency lock can be installed; includes TypeScript 7.0.2, its platform package, and Node 24 type definitions |
-| `npm run doctor` | Node 24/npm 11, Git clone, and expected setup files are present |
-| `npm run check` | Required docs exist, JSON parses, authored JavaScript files are rejected, simple inline relative file links resolve, and the installed compiler matches the pinned TypeScript 7 dependency/lockfile |
+| `pnpm install --frozen-lockfile` | The committed dependency lock can be installed; includes TypeScript 7.0.2, its platform package, and Node 24 type definitions |
+| `pnpm run doctor` | Node 24/pnpm 12.18.0, Git clone, and expected setup files are present |
+| `pnpm run check` | Required docs exist, JSON parses, authored JavaScript files are rejected, simple inline relative file links resolve, and the installed compiler matches the pinned TypeScript 7 dependency; frozen installation validates the pnpm lockfile |
 
-| `npm run typecheck` | Strict TypeScript 7 checks for all harness scripts/tests using tsconfig.harness.json; no JavaScript input or emitted files |
+| `pnpm run typecheck` | Strict TypeScript 7 checks for all harness scripts/tests using tsconfig.harness.json; no JavaScript input or emitted files |
 
-The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. All harness scripts/tests are .ts and have a strict harness tsconfig; there is still no app tsconfig or application typechecking. Node 24 executes erasable TypeScript without a transpiler dependency, but that execution alone does not validate types. `npm run compiler:version` prints the compiler version. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
+The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. All harness scripts/tests are .ts and have a strict harness tsconfig; there is still no app tsconfig or application typechecking. Node 24 executes erasable TypeScript without a transpiler dependency, but that execution alone does not validate types. `pnpm run compiler:version` prints the compiler version. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
 
 CI runs the same baseline on Linux, Windows, and macOS for pull requests and main. It has read-only repository permissions. It runs repository checks, not Codex, and needs no model credentials. A green result is evidence for the checks actually run, not general approval to ship. Merge rules/branch protections are a separate GitHub setting; this workflow does not enable them.
 
 ## Context upkeep
 
-Follow [WORKFLOW.md](WORKFLOW.md) and the [repository skill](../.agents/skills/encore-context-upkeep/SKILL.md). Read [current context](CONTEXT.md) at task start. Update affected canonical docs and add a new [handoff](handoffs/TEMPLATE.md) for non-document changes. After staging it, run `npm run context:check -- --base origin/main`; `npm run context:test` exercises the gate against temporary Git repositories.
+Follow [WORKFLOW.md](WORKFLOW.md) and the [repository skill](../.agents/skills/encore-context-upkeep/SKILL.md). Read [current context](CONTEXT.md) at task start. Update affected canonical docs and add a new [handoff](handoffs/TEMPLATE.md) for non-document changes. After staging it, run `pnpm run context:check --base origin/main`; `pnpm run context:test` exercises the gate against temporary Git repositories.
 
 CI runs the gate against the PR base or pre-push commit. It checks that a new handoff has filled sections, not whether its statements are true or GitHub issues are synchronized. No background bot is installed and branch protections are not configured by this workflow.
+
+Use `pnpm add -D <package>` to add development dependencies and commit pnpm-lock.yaml. Do not generate package-lock.json. A frozen install intentionally rejects manifest/lock drift. npm remains only an optional way to bootstrap the pinned pnpm executable.
 
 ## One task, one reviewable change
 
@@ -45,7 +47,7 @@ Prompt files in [.codex/prompts](../.codex/prompts/README.md) are copy/paste rec
 
 ## Extending the harness at B0
 
-Keep Node/npm baseline and npm commands portable. Implement scripts using Node or cross-platform tooling, not `rm`, `cp`, `export`, shell-specific chaining, or hard-coded macOS paths. Add app checks to CI and document local database setup on both operating systems. B0 can introduce supported dev dependencies and update the lockfile; don't use `npm ci` to add dependencies.
+Keep Node/pnpm baseline and pnpm commands portable. Implement scripts using Node or cross-platform tooling, not `rm`, `cp`, `export`, shell-specific chaining, or hard-coded macOS paths. Add app checks to CI and document local database setup on both operating systems. B0 can introduce supported dev dependencies and update the lockfile; don't use `pnpm install --frozen-lockfile` to add dependencies.
 
 Doctor should report required prerequisites honestly. If database or credentials become required for an app task, distinguish them from optional services. Don't make harness checks demand production secrets or send real emails. A fixture-only UI must be labeled.
 

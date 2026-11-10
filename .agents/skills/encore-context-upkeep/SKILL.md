@@ -39,7 +39,7 @@ Do not rewrite unrelated docs to satisfy a checkbox. In the handoff's Context im
 
 1. Complete the smallest authorized deliverable and run actual checks. Record commands/results, fixture versus real integration, missing evidence and blockers. Do not turn planned checks into claimed results.
 2. Add the change handoff and update impacted docs in the same PR. Give Conomos a short plain-language explanation, how to try the result, and one concept to learn.
-3. Run npm run doctor, npm run check, npm run context:check -- --base origin/main, and appropriate app checks when present. Context checking compares committed changes plus the staged/unstaged working tree to the merge base; new handoff files may be staged before checking.
+3. Run pnpm run doctor, pnpm run check, pnpm run context:check --base origin/main, and appropriate app checks when present. Context checking compares committed changes plus the staged/unstaged working tree to the merge base; new handoff files may be staged before checking.
 4. Set the claimed issue to In review with its PR link. The PR may use Closes #N for its own completed deliverable. Do not close a parent milestone just because one child shipped.
 5. Humans review/merge unless explicitly authorized otherwise. After a confirmed merge, close/update the task and unblock dependent tasks only when all their prerequisites are satisfied. If tools cannot do so, report the exact pending synchronization in the handoff.
 

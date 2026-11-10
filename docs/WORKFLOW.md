@@ -30,9 +30,9 @@ Read [.agents/skills/encore-context-upkeep/SKILL.md](../.agents/skills/encore-co
 Run locally after staging your new handoff:
 
 ```text
-npm run doctor
-npm run check
-npm run context:check -- --base origin/main
+pnpm run doctor
+pnpm run check
+pnpm run context:check --base origin/main
 ```
 
 The context gate compares changes since the merge base (including staged/unstaged work) and requires a newly added, non-template handoff with filled sections. Fetch origin when your reference is stale. New handoffs must be staged or committed to appear in Git's diff. CI fetches history and passes the PR base SHA or pre-push SHA explicitly. A missing/invalid base fails with instructions, never silently passes.

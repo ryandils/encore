@@ -11,7 +11,7 @@ Acceptance criteria:
 - Describe paid admission, free admission, and exit in your own words.
 - Give the expected occupancy and cover for four $10 entries and one exit: 3 people and $40.
 - Name one thing the MVP does not do, and one question you'd ask a door operator.
-- No personal details or actual venue data. `npm run doctor` and `npm run check` pass.
+- No personal details or actual venue data. `pnpm run doctor` and `pnpm run check` pass.
 - Conomos can explain branch, commit, push, and PR to Ryan using this change as the example.
 
 Start from a clean checkout. If `git status` shows unfinished work, do not run the branch-changing steps until you understand it.
@@ -25,8 +25,8 @@ git switch -c docs/conomos-first-deliverable
 Ask Codex to explain the exercise and help draft the file; read it and edit at least one sentence yourself. Use the editor to create missing directories. Then:
 
 ```text
-npm run doctor
-npm run check
+pnpm run doctor
+pnpm run check
 git status
 git diff
 git add docs/learning/conomos-first-deliverable.md
@@ -46,8 +46,8 @@ After Ryan merges, return to your local clone:
 ```text
 git switch main
 git pull --ff-only
-npm ci
-npm run check
+pnpm install --frozen-lockfile
+pnpm run check
 ```
 
 Don't delete the learning branch until its PR is merged. If a pull fails, inspect why; don't use a force/reset shortcut.
