@@ -18,7 +18,8 @@ function walk(dir) {
 walk(root);
 for (const path of ['README.md', 'AGENTS.md', 'docs/MVP.md', 'docs/ARCHITECTURE.md',
   'docs/BUILD_PLAN.md', 'docs/QUICKSTART.md', 'docs/HARNESS.md', 'docs/LEARNING_PATH.md',
-  'docs/tasks/TEMPLATE.md', '.github/pull_request_template.md']) {
+  'docs/tasks/TEMPLATE.md', '.github/pull_request_template.md', 'docs/CONTEXT.md',
+  'docs/WORKFLOW.md', '.agents/skills/encore-context-upkeep/SKILL.md', 'docs/handoffs/TEMPLATE.md']) {
   if (!existsSync(join(root, path))) errors.push(`Missing required file: ${path}`);
 }
 // Verify the declared, locked, and installed compiler agree; do not invoke a global tsc.

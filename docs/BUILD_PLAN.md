@@ -1,8 +1,26 @@
 # Build plan and team handoffs
 
-This repository has product docs and a contributor harness, but no app yet. Task status below is a baseline, not live coordination; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
+This repository has product docs and a contributor harness, but no app yet. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
 
 New contributors can complete [the L0 learning exercise](LEARNING_PATH.md) before B0. Read [the shared harness workflow](HARNESS.md) before claiming a product task.
+
+## Live issue index
+
+These links identify work; GitHub issue bodies own current Status, claims and PR links. The milestone descriptions below are scope references, not a duplicate status board.
+
+| Milestone | Issue | Prerequisite |
+| --- | --- | --- |
+| B0 foundation | [#3](https://github.com/ryandils/encore/issues/3) | Existing harness |
+| B0.1 app scaffold and TS7 checks | [#4](https://github.com/ryandils/encore/issues/4) | None |
+| B0.2 local DB and seed | [#5](https://github.com/ryandils/encore/issues/5) | B0.1 |
+| B0.3 auth and demo roles | [#6](https://github.com/ryandils/encore/issues/6) | B0.2 |
+| B0.4 common setup verification | [#7](https://github.com/ryandils/encore/issues/7) | B0.3 |
+| B1 contracts and ledger | [#8](https://github.com/ryandils/encore/issues/8) | B0 |
+| B2 door screen | [#9](https://github.com/ryandils/encore/issues/9) | B1 |
+| B3 owner screens | [#10](https://github.com/ryandils/encore/issues/10) | B1 |
+| B4 shared backend | [#11](https://github.com/ryandils/encore/issues/11) | B1/B2/B3 |
+| B5 pilot | [#12](https://github.com/ryandils/encore/issues/12) | B4 |
+| L0 Conomos learning exercise | [#13](https://github.com/ryandils/encore/issues/13) | Independent |
 
 ## Dependency order
 
@@ -12,7 +30,7 @@ B2/B3 may build against B1's documented synthetic fixtures while B4 finishes bac
 
 ## B0 — One working scaffold
 
-Suggested lead: Ryan or whichever founder starts first. Status: unstarted.
+Suggested lead: Ryan or whichever founder starts first.
 
 - Extend the existing harness with a single Next.js/TypeScript/Tailwind app using the structure in ARCHITECTURE.md; do not replace its package/CI baseline.
 - Preserve Node 24.x/npm 11.x, the pinned TypeScript 7.0.2 compiler, and the npm lockfile; pin compatible application dependencies. Add strict tsconfig and validate framework compatibility with TypeScript 7.
@@ -25,7 +43,7 @@ Done: another contributor can clone, install, start the database, migrate, seed,
 
 ## B1 — Domain and API contracts
 
-Suggested lead: Ryan. Status: unstarted. Depends on B0.
+Suggested lead: Ryan. Depends on B0.
 
 - Implement pure event projection and money/traffic calculations.
 - Define schemas, request/response types, error codes, and fixtures for B2/B3.
@@ -36,7 +54,7 @@ Done: tests cover admissions at multiple prices, free entry, exits, reversals, o
 
 ## B2 — Door console
 
-Suggested lead: Conomos. Status: unstarted. Depends on B1.
+Suggested lead: Conomos. Depends on B1.
 
 - Build phone-first door screen: three cover buttons, free entry, exit, occupancy, recent actions, undo.
 - Show price labels, save feedback, pending/failed requests, stale state, and retry.
@@ -48,7 +66,7 @@ Done: narrow-phone browser check; four admissions and one exit work quickly; off
 
 ## B3 — Owner setup and closeout
 
-Suggested lead: Mike. Status: unstarted. Depends on B1.
+Suggested lead: Mike. Depends on B1.
 
 - Build venue setup, cover presets, open-night form, and staff invite/revoke UI.
 - Build owner summary: counts, peak occupancy, arrival buckets, cover totals by price.
@@ -59,7 +77,7 @@ Done: the full acceptance scenario can be exercised against contract fixtures, p
 
 ## B4 — Shared backend and permissions
 
-Suggested lead: Ryan; integrate with B2/B3 owners. Status: unstarted. Depends on B1; completes after B2/B3.
+Suggested lead: Ryan; integrate with B2/B3 owners. Depends on B1; completes after B2/B3.
 
 - Implement server routes, real persistence, sessions, membership checks, assignments, and invite acceptance.
 - Serialize writes and closing, enforce idempotency, and preserve the audit ledger.
@@ -71,7 +89,7 @@ Done: two separately authenticated devices converge; events survive reload; retr
 
 ## B5 — Pilot readiness
 
-Suggested lead: all three. Status: unstarted. Depends on B4.
+Suggested lead: all three. Depends on B4.
 
 - Follow PILOT.md, including physical backup, dedicated cash pool, and permission checks.
 - Record actual browser/device results, configured services, and any operational limitations.

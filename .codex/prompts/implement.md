@@ -11,3 +11,6 @@ Verify with npm run check and the actual app checks when they exist.
 Inspect the diff, explain the result, and open a focused PR with evidence.
 Don't merge or deploy. Separate fixture behavior from working integrations.
 Finish with what changed, why, verification results, limits, and next task.
+
+Read docs/CONTEXT.md and docs/WORKFLOW.md; apply the repository context-upkeep skill.
+Update impacted docs, add the change handoff, run the context gate, and synchronize the claimed task issue before handing off.

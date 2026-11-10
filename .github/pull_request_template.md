@@ -24,3 +24,10 @@ Any change to MVP scope or architecture, and why:
 One implementation choice and why:
 One limitation or question for the reviewer:
 Harness commands and results (separate from app checks):
+
+## Durable context
+
+Linked issue and status:
+New handoff path (required for code/tooling/configuration changes):
+Canonical docs updated, or specific reason none changed:
+Context gate command/result:

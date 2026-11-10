@@ -101,6 +101,10 @@ checks if this environment supports them, and explain their results.
 Do not edit files or start B0 yet. Never claim a check ran if it did not.
 ```
 
+## Staying current
+
+Read [current context](CONTEXT.md), then your issue and its linked handoff/PR. Agents follow the [context workflow](WORKFLOW.md) to keep those records current. For code/tooling changes, add and stage a handoff and run `npm run context:check -- --base origin/main`. A documentation-only L0 exercise does not require an additional handoff file.
+
 ## 6. Make your first contribution
 
 Follow [the learning path](LEARNING_PATH.md). Start with L0, a small documentation PR; it does not depend on the app scaffold. The goal is to understand a change and its evidence, not to have AI generate a whole application.

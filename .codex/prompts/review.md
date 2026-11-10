@@ -6,3 +6,5 @@ demo claims, OS-specific commands, secrets, and scope drift where relevant.
 Run the relevant checks if possible and report exactly what ran.
 List actionable findings with file/line references; distinguish them from questions.
 Tell me what evidence is still missing. Don't merge or deploy.
+
+Read docs/CONTEXT.md and docs/WORKFLOW.md; apply the repository context-upkeep skill.
