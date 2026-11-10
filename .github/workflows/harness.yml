@@ -28,6 +28,7 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run test
       - run: pnpm run build
+      - run: pnpm run production:verify
       - run: pnpm run context:check
         env:
           CONTEXT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -53,5 +54,7 @@ jobs:
       - run: pnpm run auth:verify
       - run: pnpm run db:reset --confirm-local-reset
       - run: pnpm run db:seed
+      - run: pnpm run auth:seed
+      - run: pnpm run auth:verify
       - run: pnpm run db:down
         if: always()

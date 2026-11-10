@@ -32,7 +32,8 @@
     "db:validate": "prisma validate",
     "auth:init": "node scripts/auth-init.ts",
     "auth:seed": "node scripts/auth-seed.ts",
-    "auth:verify": "node tests/auth.integration.ts"
+    "auth:verify": "node tests/auth.integration.ts",
+    "production:verify": "node tests/production.integration.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.1",
