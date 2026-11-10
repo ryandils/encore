@@ -33,7 +33,7 @@ B2/B3 may build against B1's documented synthetic fixtures while B4 finishes bac
 Suggested lead: Ryan or whichever founder starts first.
 
 - Extend the existing harness with a single Next.js/TypeScript/Tailwind app using the structure in ARCHITECTURE.md; do not replace its package/CI baseline.
-- Preserve Node 24.x/npm 11.x, the pinned TypeScript 7.0.2 compiler, and the npm lockfile; pin compatible application dependencies. Add strict tsconfig and validate framework compatibility with TypeScript 7.
+- Preserve Node 24.x/npm 11.x, the pinned TypeScript 7.0.2 compiler, and the npm lockfile; pin compatible application dependencies. Preserve strict tsconfig.harness.json, add strict app configuration and extend typecheck coverage; authored source must remain .ts/.tsx. Validate framework compatibility with TypeScript 7.
 - Add actual app lint, typecheck, test, build, and seed scripts, plus CI alongside the existing contributor checks. Keep Windows/macOS commands portable.
 - Provide local PostgreSQL setup, an .env.example with placeholders, and actual setup commands in README.md.
 - Build a labeled demo shell with synthetic owner/staff accounts and no outbound messages.

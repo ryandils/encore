@@ -16,9 +16,10 @@ Follow [the quick start](docs/QUICKSTART.md) to install Git, Node 24.x/npm 11.x,
 npm ci
 npm run doctor
 npm run check
+npm run typecheck
 ```
 
-TypeScript is pinned to **7.0.2**. Run `npm run compiler:version` to verify the local compiler; B0 will add the app tsconfig and real typecheck command.
+All authored executable source is **TypeScript**, checked with pinned **TypeScript 7.0.2**. Run `npm run typecheck` for strict harness checking and `npm run compiler:version` for its version. Node 24 executes the .ts scripts directly using type stripping; the compiler separately verifies types. B0 will add app configuration and extend typechecking to the application.
 
 These checks establish contributor readiness, not a working product. There are no app dev/build commands yet.
 

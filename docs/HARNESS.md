@@ -6,11 +6,13 @@ Here, "harness" means the shared instructions, task briefs, executable checks, a
 
 | Command | What it proves |
 | --- | --- |
-| `npm ci` | The committed dependency lock can be installed; includes the pinned TypeScript 7.0.2 compiler and its platform package |
+| `npm ci` | The committed dependency lock can be installed; includes TypeScript 7.0.2, its platform package, and Node 24 type definitions |
 | `npm run doctor` | Node 24/npm 11, Git clone, and expected setup files are present |
-| `npm run check` | Required docs exist, JSON parses, Node scripts parse, simple inline relative file links resolve, and the installed compiler matches the pinned TypeScript 7 dependency/lockfile |
+| `npm run check` | Required docs exist, JSON parses, authored JavaScript files are rejected, simple inline relative file links resolve, and the installed compiler matches the pinned TypeScript 7 dependency/lockfile |
 
-The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. The TypeScript 7 compiler is installed, but there is no app tsconfig or application typechecking yet. `npm run compiler:version` prints the compiler version. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
+| `npm run typecheck` | Strict TypeScript 7 checks for all harness scripts/tests using tsconfig.harness.json; no JavaScript input or emitted files |
+
+The link checker skips fenced examples and external URLs; it does not validate heading anchors or implement a complete Markdown parser. None of these commands checks product behavior, permissions, money math, or a database. All harness scripts/tests are .ts and have a strict harness tsconfig; there is still no app tsconfig or application typechecking. Node 24 executes erasable TypeScript without a transpiler dependency, but that execution alone does not validate types. `npm run compiler:version` prints the compiler version. B0 must add genuine app lint/typecheck/test/build commands without replacing these with success stubs.
 
 CI runs the same baseline on Linux, Windows, and macOS for pull requests and main. It has read-only repository permissions. It runs repository checks, not Codex, and needs no model credentials. A green result is evidence for the checks actually run, not general approval to ship. Merge rules/branch protections are a separate GitHub setting; this workflow does not enable them.
 

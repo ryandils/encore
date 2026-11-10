@@ -4,9 +4,9 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 ## Implemented
 
-- Contributor harness: Node 24/npm 11, TypeScript 7.0.2 pinned, portable setup/document checks, and Windows/macOS/Linux CI.
+- Contributor harness: Node 24/npm 11, TypeScript 7.0.2 pinned, strict .ts harness scripts/tests, JavaScript-source guard, portable setup/document checks, and Windows/macOS/Linux CI.
 - Windows/macOS quick start, task/PR templates, and learning prompts. PRs #1 and #2 established this foundation.
-- Repository-local context-upkeep skill and per-change handoff gate (introduced with this change; check the branch/PR before assuming it is on main).
+- Repository-local context-upkeep skill and per-change handoff gate, merged in PR #15.
 
 ## Not implemented
 
@@ -14,7 +14,7 @@ No Next.js app, database, auth integration, door UI, owner dashboard, deployed s
 
 ## Durable decisions
 
-- Phone-first web MVP; TypeScript 7 with strict app settings added in B0. Preserve Node 24/npm 11 and one shared scaffold.
+- Phone-first web MVP; All authored code is TypeScript 7; B0 extends the existing strict harness checks to application code. Preserve Node 24/npm 11 and one shared scaffold.
 - Target cash-cover venues: record admissions/exits and reconcile recorded cover against counted cash. USD integer cents; immutable prices; no silent duplicate events or cross-venue access.
 - One entrance and one separate door cash pool for the first pilot. Anonymous counting requires no patron PII.
 - Payments, SMS, QR discounts, digital re-entry, forecasting and native apps remain deferred.

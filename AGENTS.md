@@ -18,7 +18,7 @@ This repository has a contributor harness, not an Encore application. Read docs/
 
 ## TypeScript requirement
 
-Use TypeScript 7 in strict mode for application code. The project pins typescript 7.0.2 in devDependencies and the lockfile. Preserve the 7.x baseline when scaffolding B0; do not accept a generator's older compiler. Validate framework/library compatibility and report a concrete blocker rather than silently downgrading.
+Use TypeScript 7 in strict mode for all authored executable source: application code, scripts, tests, and supported tool configs. Use .ts/.tsx, not .js/.jsx/.mjs/.cjs. Generated output and installed dependencies are not authored source. The project pins typescript 7.0.2 in devDependencies and the lockfile. Preserve the 7.x baseline when scaffolding B0; do not accept a generator's older compiler. Validate framework/library compatibility and report a concrete blocker rather than silently downgrading.
 
 ## Learning and cross-platform collaboration
 
@@ -61,7 +61,7 @@ Phone-first, thumb-sized controls, readable in a dark venue, explicit labels, an
 
 When implementation exists, run the repository's actual lint, typecheck, relevant tests, and build. Prioritize tests for money math, event projection, concurrent writes, idempotency, permissions, and close/reconcile behavior. UI changes need a narrow-phone browser check. Report commands and results honestly; distinguish local/demo behavior from a real two-device backend test.
 
-Run npm run doctor and npm run check for every task. These verify contributor setup and documentation, not application behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
+Run npm run doctor, npm run check, and npm run typecheck for every task. These verify contributor setup and documentation, not application behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
 
 ## Completion handoff
 

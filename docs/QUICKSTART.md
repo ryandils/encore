@@ -69,13 +69,15 @@ From the `encore` folder:
 npm ci
 npm run doctor
 npm run check
+npm run typecheck
 git status
 git rev-parse HEAD
 ```
 
-- `npm ci` installs exactly what the lockfile describes; the repository includes the pinned TypeScript 7.0.2 compiler and its platform package.
+- `npm ci` installs exactly what the lockfile describes; the repository includes the TypeScript 7.0.2 compiler, its platform package, and Node 24 type definitions.
 - `doctor` checks Node/npm/Git and repository prerequisites. Every required line should say `OK`.
 - `check` validates the starter harness and local document links. Look for `PASS harness`.
+- `typecheck` verifies harness scripts/tests with strict TypeScript 7. Node 24 runs .ts files directly, so Windows needs no extra transpiler tool.
 - `git status` should show a clean working tree before your first edit.
 - `git rev-parse HEAD` prints the commit fingerprint. Send Ryan that fingerprint and your check results to confirm you're on the same baseline. Don't send environment files or tokens.
 

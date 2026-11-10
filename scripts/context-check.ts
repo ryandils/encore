@@ -4,12 +4,12 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const headings = ['Task', 'Outcome', 'Changes', 'Verification', 'Context impact', 'Learning note', 'Next step'];
-export function requiresHandoff(path) {
+export function requiresHandoff(path: string) {
   return path !== 'README.md' && !(path.startsWith('docs/') && path.endsWith('.md'));
 }
-export function validateHandoff(content, template) {
+export function validateHandoff(content: string, template: string) {
   if (content.trim() === template.trim()) return ['Replace the copied template with actual evidence.'];
-  const errors = [];
+  const errors: string[] = [];
   for (const heading of headings) {
     const marker = `## ${heading}`;
     const lines = content.split(/\r?\n/);
@@ -22,8 +22,8 @@ export function validateHandoff(content, template) {
   }
   return errors;
 }
-export function checkContext({ root, base }) {
-  function git(args) {
+export function checkContext({ root, base }: { root: string; base: string }) {
+  function git(args: string[]) {
     const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
     if (r.status !== 0) throw new Error(r.stderr?.trim() || r.error?.message || 'Git command failed.');
     return r.stdout.trim();
@@ -59,7 +59,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.log(result.required ? `PASS context handoff: ${result.handoffs.join(', ')}` : 'PASS context: docs-only or no changes.');
     console.log('Presence/structure verified only; review accuracy and canonical-doc impact in the PR.');
   } catch (error) {
-    console.error(`FAIL context: ${error.message}\nFetch the base ref/history, stage new handoffs, and retry. No context update was generated.`);
+    console.error(`FAIL context: ${error instanceof Error ? error.message : String(error)}\nFetch the base ref/history, stage new handoffs, and retry. No context update was generated.`);
     process.exitCode = 1;
   }
 }
