@@ -21,6 +21,9 @@ model User {
   demoIdentity  DemoIdentity?
   sessions      Session[]
   accounts      Account[]
+  memberships   VenueMembership[]
+  doorEvents    DoorEvent[]
+  reconciliations Reconciliation[]
 
   @@map("user")
 }
@@ -86,4 +89,162 @@ model DemoIdentity {
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("demo_identity")
+}
+
+// B1 persistence contracts. B4 supplies authorization and transactional commands.
+enum VenueRole {
+  OWNER
+  STAFF
+}
+
+enum NightStatus {
+  OPEN
+  CLOSED
+}
+
+enum DoorEventType {
+  ADMISSION
+  EXIT
+  REVERSAL
+}
+
+model Venue {
+  id          String            @id @db.Uuid
+  name        String
+  timezone    String
+  capacity    Int
+  memberships VenueMembership[]
+  nights      Night[]
+  presets     CoverPreset[]
+
+  @@map("venue")
+}
+
+model VenueMembership {
+  venueId     String            @db.Uuid
+  userId      String
+  role        VenueRole
+  venue       Venue             @relation(fields: [venueId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  assignments NightAssignment[]
+
+  @@id([venueId, userId])
+  @@index([userId])
+  @@map("venue_membership")
+}
+
+model Night {
+  id                String           @id @db.Uuid
+  venueId           String           @db.Uuid
+  label             String
+  status            NightStatus      @default(OPEN)
+  openedAt          DateTime          @db.Timestamptz(3)
+  closedAt          DateTime?         @db.Timestamptz(3)
+  capacity          Int
+  timezone          String
+  startingOccupancy Int               @default(0)
+  openingFloatCents Int               @default(0)
+  currency          String           @default("USD")
+  version           Int               @default(0)
+  venue             Venue            @relation(fields: [venueId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  assignments       NightAssignment[]
+  invites           StaffInvite[]
+  events            DoorEvent[]
+  reconciliation    Reconciliation?
+
+  @@unique([id, venueId])
+  @@index([venueId])
+  // SQL migration adds a partial unique index for one OPEN night per venue.
+  @@map("night")
+}
+
+model CoverPreset {
+  venueId     String @db.Uuid
+  slot        Int
+  label       String
+  amountCents Int
+  venue       Venue  @relation(fields: [venueId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([venueId, slot])
+  @@map("cover_preset")
+}
+
+model NightAssignment {
+  nightId    String          @db.Uuid
+  venueId    String          @db.Uuid
+  userId     String
+  startsAt   DateTime        @db.Timestamptz(3)
+  endsAt     DateTime         @db.Timestamptz(3)
+  revokedAt  DateTime?        @db.Timestamptz(3)
+  night      Night           @relation(fields: [nightId, venueId], references: [id, venueId], onDelete: Restrict, onUpdate: Restrict)
+  membership VenueMembership @relation(fields: [venueId, userId], references: [venueId, userId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([nightId, userId])
+  @@index([venueId, userId])
+  @@map("night_assignment")
+}
+
+model StaffInvite {
+  id            String    @id @db.Uuid
+  venueId       String    @db.Uuid
+  nightId       String    @db.Uuid
+  tokenHash     String    @unique
+  intendedEmail String
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt     DateTime  @db.Timestamptz(3)
+  consumedAt    DateTime? @db.Timestamptz(3)
+  revokedAt     DateTime? @db.Timestamptz(3)
+  night         Night     @relation(fields: [nightId, venueId], references: [id, venueId], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([nightId, venueId])
+  @@map("staff_invite")
+}
+
+model DoorEvent {
+  id               String        @id @db.Uuid
+  venueId          String        @db.Uuid
+  nightId          String        @db.Uuid
+  actorId          String
+  requestId        String        @db.Uuid
+  sequence         Int
+  type             DoorEventType
+  amountCents      Int
+  targetEventId    String?       @unique @db.Uuid
+  reason           String?
+  recordedAt       DateTime      @db.Timestamptz(3)
+  requestPayload   Json
+  responseSnapshot Json
+  night            Night         @relation(fields: [nightId, venueId], references: [id, venueId], onDelete: Restrict, onUpdate: Restrict)
+  actor            User          @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  target           DoorEvent?    @relation("EventReversal", fields: [targetEventId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  reversal         DoorEvent?    @relation("EventReversal")
+
+  @@unique([id, nightId, venueId])
+  @@unique([nightId, sequence])
+  @@unique([nightId, requestId])
+  @@index([actorId])
+  // SQL adds a composite target FK preventing cross-night/venue reversals.
+  @@map("door_event")
+}
+
+model Reconciliation {
+  nightId           String   @id @db.Uuid
+  venueId           String   @db.Uuid
+  requestId         String   @db.Uuid
+  countedCashCents   Int
+  expectedCoverCents Int
+  expectedDrawerCents Int
+  floatCents        Int
+  varianceCents     Int
+  notes             String
+  closedBy          String
+  closedAt          DateTime @db.Timestamptz(3)
+  requestPayload    Json
+  responseSnapshot  Json
+  night             Night    @relation(fields: [nightId, venueId], references: [id, venueId], onDelete: Restrict, onUpdate: Restrict)
+  closer            User     @relation(fields: [closedBy], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([nightId, venueId])
+  @@index([closedBy])
+  @@map("reconciliation")
 }

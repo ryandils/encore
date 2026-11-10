@@ -1,6 +1,6 @@
 # Build plan and team handoffs
 
-This repository has product docs, a contributor harness, a Next.js setup landing page, local PostgreSQL/Prisma storage, and Better Auth sessions for synthetic local owner/staff demo accounts. Production authentication, full venue/night authorization, and ledger implementation remain future work. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
+This repository has product docs, a contributor harness, a Next.js setup landing page, local PostgreSQL/Prisma storage, and Better Auth sessions for synthetic local owner/staff demo accounts. Pure ledger calculations, shared API contracts/fixtures, and domain database models are present. Production authentication, full venue/night authorization, and live ledger endpoints remain future work. This document defines milestone scope; use current GitHub issues/PRs to claim work and track completion. Suggested owners are workstream suggestions, not assignments or collaborator invitations.
 
 New contributors can complete [the L0 learning exercise](LEARNING_PATH.md) before B0. Read [the shared harness workflow](HARNESS.md) before claiming a product task.
 
@@ -45,7 +45,7 @@ Done: another contributor can clone, install, start the database, migrate, seed,
 
 Suggested lead: Ryan. Depends on B0.
 
-- Implement pure event projection and money/traffic calculations.
+- Implement pure event projection and money/traffic calculations. The source modules under `src/domain` are independent of the web framework and database.
 - Define schemas, request/response types, error codes, and fixtures for B2/B3.
 - Extend the B0 identity schema with domain Prisma models/migrations and transactional command interfaces.
 - Lock the API contract to ARCHITECTURE.md or update it with a concrete reason.

@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. **The door ledger, owner dashboard, venue/night authorization, and production authentication are not implemented.** The remaining foundation work is described in [the build plan](docs/BUILD_PLAN.md).
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. **Live door endpoints, door/owner screens, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -33,7 +33,13 @@ pnpm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The landing page explains the setup milestone; it cannot record admissions or cash. Stop the server with Ctrl+C. To run the optimized local build instead, run `pnpm run build` followed by `pnpm run start` and open the same address. No environment file, database, credentials, or external service is required for this scaffold.
 
-These checks cover contributor setup, the landing-page scaffold, and database-command guards. The production HTTP check starts its own temporary server after the build and verifies that the public setup page loads while demo/authentication routes remain disabled, without a database. Real PostgreSQL verification is a separate command below; none of these checks establishes ledger, permission, or pilot readiness.
+These checks cover contributor setup, the landing-page scaffold, database/authentication guards, and pure ledger and API-contract behavior. The production HTTP check starts its own temporary server after the build and verifies that the public setup page loads while demo/authentication routes remain disabled, without a database. Real PostgreSQL verification is a separate command below; pure ledger results do not establish live multi-device writes, permission enforcement, or pilot readiness.
+
+## Shared ledger contracts for B2/B3
+
+`src/domain/ledger.ts` exposes pure projections and closeout calculations. `src/domain/contracts.ts` supplies the shared command/result types and parsers; `src/domain/fixtures.ts` exposes `createLedgerFixtures()` with fresh, explicitly synthetic examples for the documented $10/$15 scenario. Consumers must display its synthetic label and must not imply that fixture state is saved or shared between devices.
+
+Run `pnpm run test` for the database-free ledger and contract cases. With local PostgreSQL running and migrations applied, run `pnpm run ledger:verify` for database constraint checks. See [architecture and contract boundaries](docs/ARCHITECTURE.md) and [local database verification](docs/LOCAL_DATABASE.md). No live ledger API or door/owner UI is added by these modules.
 
 ## Local PostgreSQL and synthetic seed
 

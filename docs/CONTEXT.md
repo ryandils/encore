@@ -10,13 +10,14 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 - Repository-local context-upkeep skill and per-change handoff gate, merged in PR #15.
 - One Next.js App Router/React/Tailwind scaffold with a phone-first landing page explicitly labeled as a demo/setup milestone; strict TypeScript 7 app checks and real lint/test/build commands alongside the harness.
 - Local PostgreSQL through Docker Compose, Prisma migrations, guarded local database commands, and repeatable synthetic owner/staff identity fixtures. See [local setup](LOCAL_DATABASE.md).
+- B1 pure ledger projections and reconciliation math, shared API contracts and labeled synthetic fixtures for B2/B3, and domain Prisma models with database constraints. These are shared building blocks; the demo still cannot record live admissions or cash.
 - Better Auth email/password sessions for a synthetic local demo, with protected owner/staff navigation and sign-out. Separate `auth:init`/`auth:seed` commands generate local secrets and create credential accounts; fixture roles select demo pages only and grant no venue membership or night assignment. All auth/demo entry points reject production mode.
 - Tested cloud checkout bootstrap: `pnpm run cloud:setup`. The saved **encore cloud env** configuration was observed ready/runnable for this repository on `main` on November 10, 2026; each new runtime still needs verification.
 - Repository-local issue inventory, prioritization, and orchestration skills are explicitly routed by AGENTS.md in the current chat. Inventory/recommendations remain read-only; implementation requires an action request and current readiness evidence. [Cloud instructions](CLOUD_ENVIRONMENT.md) contain the invocation table. Skills are available in checkouts containing their files; no global installation, new chat launch, or scheduler is implied.
 
 ## Not implemented
 
-No door ledger/UI, owner dashboard, venue/night authorization, or production authentication exists yet. Real-user email verification and recovery require future provider configuration. The demo cannot record admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
+No live ledger endpoints, door UI, owner dashboard, venue/night authorization, or production authentication exists yet. Real-user email verification and recovery require future provider configuration. The demo cannot record admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
 
 ## Durable decisions
 

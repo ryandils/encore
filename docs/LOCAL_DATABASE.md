@@ -1,6 +1,6 @@
 # Local PostgreSQL and synthetic identities
 
-This setup is for disposable development data on your own machine. It supplies PostgreSQL, versioned Prisma migrations, two labeled synthetic identities, and optional local sign-in through Better Auth. It does not implement venue/night permissions or the door ledger. The public setup landing page still runs without a database or environment file.
+This setup is for disposable development data on your own machine. It supplies PostgreSQL, versioned Prisma migrations, two labeled synthetic identities, and optional local sign-in through Better Auth. B1 adds domain tables and constraints; it does not implement venue/night permissions or live ledger endpoints. The public setup landing page still runs without a database or environment file.
 
 ## Install Docker on Windows or macOS
 
@@ -68,6 +68,20 @@ The checked-in Compose configuration pins PostgreSQL 17.7 Alpine by image digest
 The password is a public, disposable local placeholder, not a secret or a production credential. Leave the example values unchanged for this setup. Do not reuse them elsewhere or expose the service on a network interface. `.env` is ignored by Git; never paste it into a PR, screenshot, or issue. Commands load `.env`, while an already-set process environment value takes precedence. If a terminal contains an old `DATABASE_URL`, remove that override before following this guide.
 
 `db:seed` uses reserved `.invalid` email addresses and visible synthetic labels. It creates no password, session, or verified email. `DemoIdentity.role` describes a fixture; it grants no venue membership or staff assignment. There are no customer records or outbound messages.
+
+## Verify B1 domain storage
+
+After `db:up` and `db:migrate`, run:
+
+```text
+pnpm run ledger:verify
+```
+
+This separate integration command uses the same guarded local database URL. It does not migrate, seed, restart, or reset the database. It creates uniquely named synthetic records inside one transaction, checks actual PostgreSQL constraint failures with savepoints, then rolls back its writes and checks cleanup. It also rolls back on a failed assertion. Existing authentication users, sessions, and fixtures are preserved.
+
+The checks cover membership/preset uniqueness, one open night per venue, tenant/night relations, event sequence/request/reversal uniqueness, event shapes and money ranges, original admission prices after preset changes, restricted deletion of referenced audit data, and reconciliation arithmetic. Raw database errors are withheld because they can contain record or credential data.
+
+The domain migration creates empty venue/night/ledger tables; the identity and credential seeds still create only the existing synthetic authentication fixtures. `createLedgerFixtures()` supplies in-memory B2/B3 examples, not database records or access grants. Schema constraints do not implement append-only permissions, locked commands, retry responses, negative-occupancy replay, or live two-device behavior; B4 must enforce those through the server. Pure ledger replay and contract cases run separately with `pnpm run test`.
 
 ## Set up local demo sign-in
 

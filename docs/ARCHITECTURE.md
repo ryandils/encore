@@ -1,6 +1,6 @@
 # Implementation direction and shared contracts
 
-The Next.js/React/Tailwind setup landing page, strict TypeScript 7 checks, local PostgreSQL/Prisma storage, and Better Auth sessions for synthetic local accounts exist. Production authentication, full domain models, ledger, venue/night permissions, and the planned API sections below remain later build-plan work.
+The Next.js/React/Tailwind setup landing page, strict TypeScript 7 checks, local PostgreSQL/Prisma storage, and Better Auth sessions for synthetic local accounts exist. B1 adds pure ledger projections, shared API contracts/fixtures, and domain database models. Production authentication, live domain routes, transactional commands, and venue/night permission enforcement remain later build-plan work.
 
 ## Stack and structure
 
@@ -25,7 +25,7 @@ A future native client can reuse contracts and domain logic. Native UI is separa
 
 ## Implemented local identity storage
 
-B0.2 establishes identity fixtures, and B0.3 adds the maintained authentication library's account, session, and verification storage. This does not implement the domain model below. See [local database setup](LOCAL_DATABASE.md) for migrations, seed, reset boundaries, and restart verification.
+B0.2 establishes identity fixtures, and B0.3 adds the maintained authentication library's account, session, and verification storage. B1 extends that storage with the domain models below while preserving the authentication models and existing migrations. See [local database setup](LOCAL_DATABASE.md) for migrations, seed, reset boundaries, and restart verification.
 
 | Model | Stored fields and constraints |
 | --- | --- |
@@ -47,25 +47,33 @@ Better Auth 1.7.20 uses the Prisma adapter for real email/password sessions. Its
 
 `auth:init` generates a random local signing secret and distinct random owner/staff passwords into ignored `.env`, without printing or overwriting existing values. `auth:seed` hashes those passwords with the maintained library. No shared signing secret or login password is committed. Real-user email verification, password recovery, and a configured delivery provider are required before a pilot; no provider or outbound messaging is configured here.
 
-## Planned domain entities
+## Domain entities and persistence boundary
 
 | Entity | Key fields |
 | --- | --- |
 | User | auth-library identity; no hand-built password fields |
 | Venue | id, name, timezone, capacity |
 | VenueMembership | venueId, userId, role OWNER or STAFF; unique pair |
-| Night | id, venueId, label, status OPEN/CLOSED, openedAt, closedAt, startingOccupancy, openingFloatCents, currency USD, version |
+| Night | id, venueId, label, status OPEN/CLOSED, openedAt, closedAt, startingOccupancy, openingFloatCents, currency USD, version, capacity/timezone snapshots |
 | CoverPreset | venueId, slot 1..3, label, amountCents; unique venue/slot |
 | NightAssignment | nightId, userId, startsAt, endsAt, revokedAt |
 | StaffInvite | tokenHash, venueId, nightId, intendedEmail, expiresAt, consumedAt, revokedAt |
-| DoorEvent | id, venueId, nightId, actorId, requestId, sequence, type, amountCents, targetEventId, reason, recordedAt |
-| Reconciliation | nightId unique, countedCashCents, expectedCoverCents, floatCents, varianceCents, notes, closedBy, closedAt |
+| DoorEvent | id, venueId, nightId, actorId, requestId, sequence, type, amountCents, targetEventId, reason, recordedAt, requestPayload, responseSnapshot |
+| Reconciliation | nightId unique, requestId, countedCashCents, expectedCoverCents, floatCents, expectedDrawerCents, varianceCents, notes, closedBy, closedAt, requestPayload, responseSnapshot |
 
-Staff invitations bind to the intended account email. Verify email ownership through the maintained auth flow before granting a real assignment; demo identities cannot bypass this in production. Invite consumption and assignment creation must be atomic. Staff authorization requires both venue membership and an active, unrevoked night assignment. Expiry uses server time. Owners may revoke access immediately.
+The `20261110220000_domain_ledger` migration adds these tables without replacing the existing identity/authentication migrations or seeding live domain data. Domain IDs use PostgreSQL UUID columns; auth-library user IDs remain strings. A night snapshots the venue capacity and timezone so later venue edits do not reinterpret historical turns or arrival buckets.
+
+Database constraints enforce one OPEN night per venue, unique membership/preset slots, one reconciliation per night, unique event sequence/request IDs and reversal targets, same-night/venue reversal links, valid event shapes, nonnegative money/counts, USD, and reconciliation arithmetic. Domain/audit foreign keys restrict cascading deletion. The partial OPEN-night index, extra same-night reversal foreign key, and SQL CHECK constraints live in the migration; retain them when evolving Prisma. The database does not validate complete event replay, authorize actors, or enforce append-only access by itself. Those runtime responsibilities remain B4 work.
+
+`DoorEvent` and `Reconciliation` retain `requestPayload` and `responseSnapshot` JSON objects for B4 to save the validated original command and original result in the same transaction. These columns are storage contracts, not a working idempotency implementation. Do not store session secrets or invite tokens in receipts. B4 must validate their exact structure and financial visibility before persistence or replay.
+
+Staff invitations bind to the intended account email. Verify email ownership through the maintained auth flow before granting a real assignment; demo identities cannot bypass this in production. Invite consumption and assignment creation must be atomic. Staff authorization requires both venue membership and an active, unrevoked night assignment. Assignments have a required end time later than their start time; B4 must choose and enforce that bounded interval when an invite is accepted. Expiry uses server time. Owners may revoke access immediately.
 
 ## Ledger contract
 
-Types:
+`src/domain/types.ts` exports `NightLedgerInput`, the discriminated `DoorEvent` union, `LedgerProjection`, and `ReconciliationProjection`. `projectLedger(input, events)` and `reconcileLedger(input, events, countedCashCents)` in `src/domain/ledger.ts` are pure functions: they do not authenticate, authorize, persist, or accept a live command.
+
+Stored event types:
 
 - ADMISSION: occupancy delta +1 and an immutable nonnegative amountCents (0 means free).
 - EXIT: occupancy delta -1, amountCents 0.
@@ -73,13 +81,17 @@ Types:
 
 MVP corrections reverse whole actions. To fix a wrong price, reverse and re-enter. Never reverse a reversal or reverse a target twice. Projections treat a reversed target as absent in its original sequence, then recompute peak and history. Reject any correction producing a negative occupancy anywhere in the effective sequence. Permit correction above capacity with a visible warning.
 
-A server transaction locks the Night row, rechecks permission/status, validates the command, assigns the next monotonic sequence, inserts the event, and increments version. Serialize close under the same lock. Add uniqueness constraints for (nightId, sequence), (nightId, requestId), and reversal target. State is an event-derived projection, never a client-side overwritable total.
+The B4 runtime must implement this transaction boundary: lock the Night row, recheck permission/status, validate the command, assign the next monotonic sequence, insert the event, and increment version. Serialize close under the same lock. The schema supplies uniqueness constraints for `(nightId, sequence)`, `(nightId, requestId)`, and reversal target. It does not implement this transaction or make direct SQL writes append-only. State is an event-derived projection, never a client-side overwritable total.
+
+The pure validator accepts canonical lowercase UUIDs for domain/request IDs and opaque nonempty strings for authentication user IDs. Currency is USD. Amounts, float, capacity, sequence, and counts use PostgreSQL-compatible signed 32-bit integer bounds; nonnegative fields are limited to 0–2,147,483,647, and sequences start above zero. Projection totals are checked for overflow. Variance can be negative. API timestamps use valid UTC ISO strings with seconds and optional millisecond precision.
+
+Server sequence controls replay and peak occupancy, even if recorded timestamps move backward. Input arrays may be unordered; duplicate IDs, request IDs, sequences, and mixed venue/night histories are rejected. Validation checks each accepted prefix as well as every reversal's recomputed effective history, so a later correction cannot hide an earlier impossible negative count. Starting occupancy contributes to occupancy and peak only, never revenue. Above-capacity counts remain valid and set a warning flag; capacity zero produces `null` turns. Arrival buckets retain UTC identity and an explicit venue offset, keeping repeated daylight-saving quarter-hours distinct.
 
 Retries must return the original result for an identical request ID and payload; a different payload with the same ID is a conflict. Authenticate/authorize before returning stored retry results. Idempotency lookup precedes the closed-night rejection so an already committed command can still be acknowledged after closing; no new event can be added after close.
 
 ## API shape
 
-B1 turns these into exported TypeScript contracts shared by B2/B3. Field validation and authoritative calculations live on the server.
+B1 exports TypeScript contracts and synthetic fixtures shared by B2/B3. The routes below are contract definitions, not registered HTTP endpoints. B4 must run field validation and authoritative calculations on the server.
 
 - POST /api/venues: create venue and owner membership atomically.
 - POST /api/venues/:venueId/nights: open night; prevent multiple open nights per venue.
@@ -92,6 +104,14 @@ B1 turns these into exported TypeScript contracts shared by B2/B3. Field validat
 - GET /api/nights/:nightId/summary: owner financial/traffic summary.
 - POST /api/nights/:nightId/close: owner-only countedCashCents and notes, idempotent requestId.
 - GET /api/nights/:nightId/export: owner-only CSV.
+
+`src/domain/contracts.ts` exports `LedgerApi`, its command/result types, stable `ApiErrorCode` values, and runtime command parsers. Parsers reject unsupported fields rather than accepting client-supplied actors, roles, or computed totals. `DoorState` exposes the current night, occupancy, presets, scoped recent actions, and sync time. `OwnerSummary` additionally carries float, financial/traffic projections, and reconciliation; it must not be returned to staff.
+
+A paid `ADMISSION` command sends `presetSlot` and `expectedAmountCents`, not an authoritative price. B4 reads that preset under the night transaction and rejects a stale expectation with `STALE_PRESET`. `FREE_ADMISSION` is a separate command that becomes a stored `ADMISSION` with zero cents. EXIT carries no money; REVERSAL identifies its target and reason. A new intentional tap gets a new UUID request ID. `eventRequestPayload` and `closeRequestPayload` produce canonical comparison strings for validated retry inputs, including night scope; they do not grant authorization.
+
+`createLedgerFixtures()` in `src/domain/fixtures.ts` creates fresh labeled examples of the venue/night, original and edited presets, effective event history, staff state, owner summary, closeout, commands, invitation/assignment responses, and CSV response. Every consumer must show `SYNTHETIC_FIXTURE_LABEL`. The reserved `.invalid` invite URL and example token are inert; these fixtures are not seeded credentials, real assignments, or a functioning `LedgerApi` adapter. They demonstrate the $55 cover / $155 drawer / -$5 variance acceptance scenario without claiming live persistence or authorization.
+
+`src/server/ledger-contract.ts` exports the internal `TransactionalLedgerCommands` interface. An authenticated server supplies its user context; it is not constructed from request-body identity fields. Besides membership/night assignment enforcement, B4 must enforce staff undo eligibility: their own latest uncorrected action, no more than 60 seconds old, while the night is open. Owner corrections still require a reason. The interface does not register routes or execute a transaction.
 
 Use integer cents, UUIDs, server UTC timestamps, and venue timezone for display. Reject nonintegers, negative admission amounts, and unsupported currency. Error responses include a stable code and user-readable message; distinguish unauthenticated, forbidden, validation, duplicate-payload conflict, and closed-night failures. Return authoritative version and state after successful writes.
 
