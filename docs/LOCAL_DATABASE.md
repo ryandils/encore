@@ -4,7 +4,7 @@ This setup is for disposable development data on your own machine. It supplies P
 
 ## Install Docker on Windows or macOS
 
-Complete the Node 24/pnpm 12.18.0 [quick start](QUICKSTART.md) first.
+Complete the Node 24/pnpm 12.18.0 [quick start](QUICKSTART.md) first. Use [common demo baseline verification](BASELINE_VERIFICATION.md) to rehearse the complete setup and record separate native Windows/macOS results.
 
 | Platform | Setup |
 | --- | --- |
@@ -96,7 +96,7 @@ Use the exact origin configured in `BETTER_AUTH_URL`; `localhost` and `127.0.0.1
 
 All authentication and demo routes reject `NODE_ENV=production`, including an optimized `pnpm run start` server. Use `pnpm run dev` for this local demo. Production authentication, real-user email verification and password recovery, provider configuration, and B4 venue/night authorization remain unimplemented. No email is sent by these commands.
 
-With the local database and demo credentials ready, run `pnpm run auth:verify` for separate HTTP/PostgreSQL regression checks. It starts its own development server, exercises sessions and rejection cases, and stops that test server afterward. Ordinary `pnpm run test` remains database-free. Native Windows/macOS Docker walkthroughs must be recorded separately from hosted application CI.
+With the local database and demo credentials ready, stop any `pnpm run dev` server in this checkout with Ctrl+C, then run `pnpm run auth:verify` for separate HTTP/PostgreSQL regression checks. It starts its own development server, exercises sessions and rejection cases, and stops that test server afterward. Ordinary `pnpm run test` remains database-free. Native Windows/macOS Docker walkthroughs must be recorded separately from hosted application CI.
 
 ## Stop and resume without losing data
 
@@ -117,6 +117,8 @@ pnpm run db:reset --confirm-local-reset
 pnpm run db:seed
 pnpm run db:verify
 ```
+
+If you use the synthetic sign-in demo, run `pnpm run auth:seed` afterward as well, retaining your existing ignored `.env`. The identity seed alone does not recreate credential accounts. No reset is needed for the ordinary baseline rehearsal.
 
 Without `--confirm-local-reset`, reset fails before doing the destructive work. Database commands reject `NODE_ENV=production`, remote hosts, a different database/user/port, and connection options that could redirect the target or schema. The accepted URL uses a loopback hostname, port `54329`, database/user `encore_local`, and only the supported `public` schema setting.
 

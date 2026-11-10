@@ -80,6 +80,7 @@ pnpm run typecheck
 pnpm run lint
 pnpm run test
 pnpm run build
+pnpm run production:verify
 git status
 git rev-parse HEAD
 ```
@@ -89,6 +90,7 @@ git rev-parse HEAD
 - `check` validates the starter harness and local document links. Look for `PASS harness`.
 - `typecheck` verifies the harness and application with strict TypeScript 7. Node 24 runs erasable .ts harness files directly; the app tooling handles React's TSX.
 - `lint`, `test`, and `build` check source conventions, exercise the landing page and local database/authentication guards, and create the optimized Next.js build. They do not start PostgreSQL.
+- `production:verify` starts a temporary optimized server after the build and checks the public page plus production demo/auth denial. It needs no Docker or credentials.
 - `git status` should show a clean working tree before your first edit.
 - `git rev-parse HEAD` prints the commit fingerprint. Send Ryan that fingerprint and your check results to confirm you're on the same baseline. Don't send environment files or tokens.
 
@@ -98,7 +100,9 @@ To preview the landing page, run `pnpm run dev`, then open [http://localhost:300
 
 Passing these checks does **not** mean the door ledger is implemented or ready for customers. No environment file or account is needed for this setup page.
 
-For database work, continue with [local PostgreSQL setup](LOCAL_DATABASE.md). Its `db:init`, `db:up`, `db:generate`, `db:migrate`, `db:seed`, and `db:verify` commands work the same way in native PowerShell and macOS Terminal. Keep `.env` private and use only the supplied synthetic records in this development database. To try real local sign-in after database setup, run `pnpm run auth:init`, `pnpm run auth:seed`, and `pnpm run dev`; follow the authentication section in that guide. Demo passwords are generated into ignored `.env` and are never printed. The demo deliberately rejects production mode, so `pnpm run start` serves only the public setup page.
+For database work, continue with [local PostgreSQL setup](LOCAL_DATABASE.md). Its `db:init`, `db:up`, `db:generate`, `db:migrate`, `db:seed`, and `db:verify` commands use the same syntax in native PowerShell and macOS Terminal. Keep `.env` private and use only the supplied synthetic records in this development database. To try real local sign-in after database setup, run `pnpm run auth:init`, `pnpm run auth:seed`, and `pnpm run dev`; follow the authentication section in that guide. Demo passwords are generated into ignored `.env` and are never printed. The demo deliberately rejects production mode, so `pnpm run start` serves only the public setup page.
+
+For a complete clone-to-sign-in rehearsal, follow [common demo baseline verification](BASELINE_VERIFICATION.md), including both fake roles, refresh/sign-out, database restart, and the evidence template. After database/auth setup, an optional automated Chromium check uses `pnpm exec playwright install chromium` and `pnpm run browser:verify`; stop any other development server and unset `DEBUG`/`PWDEBUG` first. Ordinary installation and contributor checks do not require this browser download. Hosted builds alone do not establish browser behavior; the dedicated hosted Windows browser job supplies automated UI evidence separately from native Docker Desktop results. A physical interactive walkthrough and macOS acceptance remain separate evidence.
 
 ## 5. Connect your AI coding tool
 

@@ -10,7 +10,7 @@ This repository contains the MVP specification, contributor harness, Next.js/Rea
 
 ## Start here: Windows or macOS
 
-Follow [the quick start](docs/QUICKSTART.md) to install Git, Node 24.x/pnpm 12.18.0, clone the repo, and connect Codex. Both operating systems use the same commands from the repository root:
+Follow [the quick start](docs/QUICKSTART.md) to install Git, Node 24.x/pnpm 12.18.0, clone the repo, and connect Codex. For the full clone-to-sign-in rehearsal and a safe results template, use [common demo baseline verification](docs/BASELINE_VERIFICATION.md). Both operating systems use the same commands from the repository root:
 
 ```text
 pnpm install --frozen-lockfile
@@ -20,6 +20,7 @@ pnpm run typecheck
 pnpm run lint
 pnpm run test
 pnpm run build
+pnpm run production:verify
 ```
 
 All authored executable source is **TypeScript**, checked with pinned **TypeScript 7.0.2**. Run `pnpm run typecheck` for strict harness and application checking and `pnpm run compiler:version` for its version. Node 24 executes the .ts harness scripts directly using type stripping; the compiler separately verifies types.
@@ -32,7 +33,7 @@ pnpm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The landing page explains the setup milestone; it cannot record admissions or cash. Stop the server with Ctrl+C. To run the optimized local build instead, run `pnpm run build` followed by `pnpm run start` and open the same address. No environment file, database, credentials, or external service is required for this scaffold.
 
-These checks cover contributor setup, the landing-page scaffold, and database-command guards. Real PostgreSQL verification is a separate command below; none of these checks establishes ledger, permission, or pilot readiness.
+These checks cover contributor setup, the landing-page scaffold, and database-command guards. The production HTTP check starts its own temporary server after the build and verifies that the public setup page loads while demo/authentication routes remain disabled, without a database. Real PostgreSQL verification is a separate command below; none of these checks establishes ledger, permission, or pilot readiness.
 
 ## Local PostgreSQL and synthetic seed
 
@@ -66,7 +67,16 @@ Open [http://localhost:3000/demo/sign-in](http://localhost:3000/demo/sign-in). S
 
 The demo supports sign-in, session-backed owner/staff navigation, and sign-out. It grants no venue access and records no admissions or cash. All authentication and demo routes are disabled with `NODE_ENV=production`, including `pnpm run start`; use `pnpm run dev` for this local demo. Real-user email verification, password recovery, and production setup remain prerequisites for a pilot.
 
-Run `pnpm run auth:verify` for the separate HTTP/PostgreSQL regression checks after authentication setup. See [local authentication setup and limits](docs/LOCAL_DATABASE.md).
+Stop `pnpm run dev` with Ctrl+C before running `pnpm run auth:verify` for the separate HTTP/PostgreSQL regression checks after authentication setup; the verifier starts its own development server in this checkout. See [local authentication setup and limits](docs/LOCAL_DATABASE.md).
+
+To automate the real Chromium sign-in forms after local database/authentication setup, stop any development server and unset `DEBUG`/`PWDEBUG` in that terminal, then run:
+
+```text
+pnpm exec playwright install chromium
+pnpm run browser:verify
+```
+
+The browser download is needed only for this optional check. It checks owner/staff forms, refresh and sign-out, protected redirects, and phone-sized controls at 390px/320px. It starts and stops its own development server and saves no screenshots or traces. The [baseline guide](docs/BASELINE_VERIFICATION.md) separates local Docker Desktop evidence from the hosted Windows browser job, which uses native PostgreSQL on its disposable runner.
 
 - [Harness and shared AI workflow](docs/HARNESS.md)
 - [Conomos's first PR and learning path](docs/LEARNING_PATH.md)
