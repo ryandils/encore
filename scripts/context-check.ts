@@ -53,7 +53,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const root = fileURLToPath(new URL('../', import.meta.url));
   try {
     if (args.length && (args.length !== 2 || args[0] !== '--base')) {
-      throw new Error('Usage: npm run context:check -- --base <ref-or-sha>');
+      throw new Error('Usage: pnpm run context:check --base <ref-or-sha>');
     }
     const result = checkContext({ root, base: args[1] || process.env.CONTEXT_BASE || 'origin/main' });
     console.log(result.required ? `PASS context handoff: ${result.handoffs.join(', ')}` : 'PASS context: docs-only or no changes.');

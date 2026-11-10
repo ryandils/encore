@@ -5,7 +5,7 @@
   "description": "Encore contributor harness; application scaffold pending B0",
   "engines": {
     "node": ">=24 <25",
-    "npm": ">=11 <12"
+    "pnpm": "12.18.0"
   },
   "scripts": {
     "doctor": "node scripts/doctor.ts",
@@ -13,11 +13,13 @@
     "compiler:version": "tsc --version",
     "context:check": "node scripts/context-check.ts",
     "context:test": "node --test scripts/context-check.test.ts",
-    "typecheck": "tsc --project tsconfig.harness.json"
+    "typecheck": "tsc --project tsconfig.harness.json",
+    "cloud:setup": "node scripts/cloud-setup.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
     "typescript": "7.0.2"
   },
-  "type": "module"
+  "type": "module",
+  "packageManager": "pnpm@12.18.0"
 }

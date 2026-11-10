@@ -23,20 +23,24 @@ for (const path of ['README.md', 'AGENTS.md', 'docs/MVP.md', 'docs/ARCHITECTURE.
 }
 // Verify the declared, locked, and installed compiler agree; do not invoke a global tsc.
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8'));
 const pinned = pkg.devDependencies?.typescript;
 if (!/^7\.\d+\.\d+$/.test(pinned ?? '')) {
   errors.push('TypeScript must be pinned to an exact stable 7.x version in devDependencies.');
 }
-if (lock.packages?.['node_modules/typescript']?.version !== pinned
-  || lock.packages?.['']?.devDependencies?.typescript !== pinned) {
-  errors.push('TypeScript lockfile does not match package.json; update with npm install.');
+if (!/^pnpm@\d+\.\d+\.\d+$/.test(pkg.packageManager ?? '')
+  || pkg.engines?.pnpm !== pkg.packageManager.replace('pnpm@', '')) {
+  errors.push('Pin one exact pnpm version in packageManager and engines.pnpm.');
 }
+if (!existsSync(join(root, 'pnpm-lock.yaml'))) errors.push('Missing pnpm-lock.yaml; run pnpm install.');
+for (const obsolete of ['package-lock.json', 'yarn.lock', 'bun.lock', 'bun.lockb']) {
+  if (existsSync(join(root, obsolete))) errors.push(`Remove competing lockfile: ${obsolete}`);
+}
+// pnpm install --frozen-lockfile validates manifest/lock consistency before CI checks.
 try {
   const installed = JSON.parse(readFileSync(join(root, 'node_modules/typescript/package.json'), 'utf8'));
-  if (installed.version !== pinned) errors.push('Installed TypeScript differs from the pin; run npm ci.');
+  if (installed.version !== pinned) errors.push('Installed TypeScript differs from the pin; run pnpm install --frozen-lockfile.');
 } catch {
-  errors.push('Local TypeScript is missing; run npm ci.');
+  errors.push('Local TypeScript is missing; run pnpm install --frozen-lockfile.');
 }
 for (const path of files) {
   const label = relative(root, path);
@@ -72,5 +76,5 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   console.log('PASS harness: required docs, inline local file links, JSON, TypeScript-only source policy, and the TypeScript 7 pin.');
-  console.log('Run npm run typecheck for strict harness types. No application behavior, build, remote links, or heading anchors were checked.');
+  console.log('Run pnpm run typecheck for strict harness types. No application behavior, build, remote links, or heading anchors were checked.');
 }

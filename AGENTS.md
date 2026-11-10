@@ -10,11 +10,11 @@ Read README.md, docs/MVP.md, docs/ARCHITECTURE.md, and docs/BUILD_PLAN.md before
 
 For every repository task, read docs/CONTEXT.md and docs/WORKFLOW.md and apply [.agents/skills/encore-context-upkeep/SKILL.md](.agents/skills/encore-context-upkeep/SKILL.md) at start and before handoff. This is required even if your Codex interface does not auto-discover skills.
 
-Update impacted canonical docs in the same PR, add a new per-change handoff for code/tooling/configuration changes, and maintain the claimed issue's status/evidence. Run npm run context:check -- --base origin/main after staging the new handoff. Do not invent verification, auto-close parent milestones, or silently duplicate task status in multiple docs. If GitHub access is unavailable, explicitly report pending coordination.
+Update impacted canonical docs in the same PR, add a new per-change handoff for code/tooling/configuration changes, and maintain the claimed issue's status/evidence. Run pnpm run context:check --base origin/main after staging the new handoff. Do not invent verification, auto-close parent milestones, or silently duplicate task status in multiple docs. If GitHub access is unavailable, explicitly report pending coordination.
 
 ## Repository state
 
-This repository has a contributor harness, not an Encore application. Read docs/HARNESS.md and use npm run doctor / npm run check. B0 extends the existing Node 24/npm 11 manifest, lockfile, scripts, and CI with actual app tooling; it must not overwrite the harness or claim it verifies app behavior. Update README.md with commands that actually work.
+This repository has a contributor harness, not an Encore application. Read docs/HARNESS.md and use pnpm run doctor / pnpm run check. B0 extends the existing Node 24/pnpm 12.18.0 manifest, lockfile, scripts, and CI with actual app tooling; it must not overwrite the harness or claim it verifies app behavior. Update README.md with commands that actually work.
 
 ## TypeScript requirement
 
@@ -61,7 +61,7 @@ Phone-first, thumb-sized controls, readable in a dark venue, explicit labels, an
 
 When implementation exists, run the repository's actual lint, typecheck, relevant tests, and build. Prioritize tests for money math, event projection, concurrent writes, idempotency, permissions, and close/reconcile behavior. UI changes need a narrow-phone browser check. Report commands and results honestly; distinguish local/demo behavior from a real two-device backend test.
 
-Run npm run doctor, npm run check, and npm run typecheck for every task. These verify contributor setup and documentation, not application behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
+Run pnpm run doctor, pnpm run check, and pnpm run typecheck for every task. These verify contributor setup and documentation, not application behavior. Never use real patron data or send real texts to test. This MVP has no outbound messaging.
 
 ## Completion handoff
 

@@ -10,16 +10,16 @@ This repository contains the MVP specification and an executable contributor har
 
 ## Start here: Windows or macOS
 
-Follow [the quick start](docs/QUICKSTART.md) to install Git, Node 24.x/npm 11.x, clone the repo, and connect Codex. Both operating systems use the same commands from the repository root:
+Follow [the quick start](docs/QUICKSTART.md) to install Git, Node 24.x/pnpm 12.18.0, clone the repo, and connect Codex. Both operating systems use the same commands from the repository root:
 
 ```text
-npm ci
-npm run doctor
-npm run check
-npm run typecheck
+pnpm install --frozen-lockfile
+pnpm run doctor
+pnpm run check
+pnpm run typecheck
 ```
 
-All authored executable source is **TypeScript**, checked with pinned **TypeScript 7.0.2**. Run `npm run typecheck` for strict harness checking and `npm run compiler:version` for its version. Node 24 executes the .ts scripts directly using type stripping; the compiler separately verifies types. B0 will add app configuration and extend typechecking to the application.
+All authored executable source is **TypeScript**, checked with pinned **TypeScript 7.0.2**. Run `pnpm run typecheck` for strict harness checking and `pnpm run compiler:version` for its version. Node 24 executes the .ts scripts directly using type stripping; the compiler separately verifies types. B0 will add app configuration and extend typechecking to the application.
 
 These checks establish contributor readiness, not a working product. There are no app dev/build commands yet.
 
@@ -37,6 +37,10 @@ These checks establish contributor readiness, not a working product. There are n
 5. The owner closes the night, enters counted door cash, and sees expected cover, cash variance, peak occupancy, and arrival traffic.
 
 The first pilot covers one entrance, a single shared door cash pool, USD cash cover, and online operation. The schema must isolate venues even though the first pilot uses one. Anonymous walk-ins require no phone, name, or account.
+
+## Cloud environment
+
+[Cloud setup instructions](docs/CLOUD_ENVIRONMENT.md) define **encore cloud env**. From the checked-out repository root on Node 24, run `corepack pnpm run cloud:setup`. The command installs frozen dependencies and verifies the harness; it does not create or publish a saved Codex environment.
 
 ## Project context and live work
 
