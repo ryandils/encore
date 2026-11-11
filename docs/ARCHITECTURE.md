@@ -155,6 +155,10 @@ For the first pilot: encrypted transport, persistent managed database, backup/re
 
 This UI is a rehearsal for B3, not a server API implementation. Refresh discards state, and separate tabs/devices and the B2 door fixture do not synchronize. B4 must replace local operations with authorized, transactional persistence before operational use. No schema, migration, authentication, or package changes are required by this rehearsal.
 
+## Shared CSV formatting boundary
+
+`src/domain/csv-export.ts` provides a pure CSV formatter over a scoped owner summary and ledger history. It quotes fields, escapes embedded quotes, and neutralizes formula-like text while preserving integer-cent numeric values. The existing synthetic owner export reuses it with the synthetic flag and filename preserved. Formatting is not authorization: future HTTP exports must derive the owner from a verified session and load only that owner's venue/night records. No protected export endpoint, production data access, or pilot acceptance is introduced by this extraction.
+
 ## B4 transactional kernel boundary
 
 `PostgresLedgerService` implements internal `record`/`close` commands plus `doorState` and owner-only `summary` using the existing `pg` dependency and domain tables. Each operation locks the night row, checks venue membership and an active staff assignment, then evaluates server time after permission locks. Membership/assignment locks protect the authorization decision through commit. All future assignment and preset mutation services must use a compatible lock order: night first, then permission/preset rows.
