@@ -28,6 +28,8 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - Local authenticated venue/night setup, preset changes and staff invitation/assignment APIs persist through PostgreSQL. Invites require a verified intended account, store token hashes and support pending cancellation; no invitation email or acceptance page is provided.
 
+- A separate `/nights/[nightId]/door` local persisted rehearsal uses authenticated ledger APIs, validates acknowledgements and gates refresh recovery of unresolved request IDs through per-tab storage. The fixture demo remains separate; production and physical-device acceptance are not provided.
+
 ## Not implemented
 
 No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.

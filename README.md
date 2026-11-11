@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. **Live door endpoints, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. Local ledger/setup/access APIs enforce venue/night authorization. A separate persisted door rehearsal connects real local sessions to PostgreSQL; production authentication and operational pilot readiness remain outstanding. See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -157,14 +157,22 @@ This repository is public. Do not commit credentials, personal contact details, 
 
 `src/server/ledger-service.ts` supplies internal PostgreSQL commands and authorized reads, using the existing domain schema. With the disposable local database running and migrated, run `pnpm run ledger:service:verify` for synthetic permission, retry, concurrent-write and close-race checks. The verifier creates uniquely named records and removes its own records afterward.
 
-The kernel itself is a server foundation; the separate local HTTP boundary below exposes it without a live screen adapter. Callers must supply a user ID from a verified server session. Production authentication and recovery, CSV endpoints, live screens and real two-device convergence remain outstanding under #11; #12 is not ready.
+The kernel itself is a server foundation; the separate local HTTP boundary below exposes it, with a separate local persisted door adapter described below. Callers must supply a user ID from a verified server session. Production authentication and recovery, CSV endpoints, persisted owner/setup screens and real two-device convergence remain outstanding under #11; #12 is not ready.
 
 ## Local authenticated ledger API (B4 slice)
 
-After local database/auth setup, `pnpm run dev` exposes session-protected night reads and event/close commands under `/api/nights/[nightId]`. Venue membership and active staff assignment are enforced by the server kernel; synthetic login navigation roles do not grant access. Venue/night provisioning and staff access routes are described below; no live screen adapter is added. The routes reject production mode. Run `pnpm run ledger:http:verify` with local PostgreSQL migrated, identities seeded and `auth:init`/`auth:seed` complete for real HTTP/session regression checks. The verifier starts and stops a temporary development server and removes its own synthetic domain records and sessions without resetting the database.
+After local database/auth setup, `pnpm run dev` exposes session-protected night reads and event/close commands under `/api/nights/[nightId]`. Venue membership and active staff assignment are enforced by the server kernel; synthetic login navigation roles do not grant access. Venue/night provisioning and staff access routes are described below; the separate persisted door client is also described below. The routes reject production mode. Run `pnpm run ledger:http:verify` with local PostgreSQL migrated, identities seeded and `auth:init`/`auth:seed` complete for real HTTP/session regression checks. The verifier starts and stops a temporary development server and removes its own synthetic domain records and sessions without resetting the database.
 
 ## Local venue and invitation API
 
 The local API also supports creating venues, opening nights, changing presets, issuing/canceling staff invites, accepting an invite with a verified intended account, and revoking assignments. All routes share the local session/origin/body-limit safeguards and reject production. Invitation responses contain a secret fragment link once; there is no email delivery or acceptance page yet. Unverified accounts cannot accept an invitation, including seeded demo accounts whose verification flag is false.
 
-Run `pnpm run venue:access:verify` for isolated PostgreSQL transaction/permission tests and `pnpm run venue:http:verify` after local auth setup for real HTTP/cookie checks. Both create only synthetic task records and remove their own records; they never reset the database or send messages. Account verification/recovery configuration, live screens and real two-device acceptance remain outstanding.
+Run `pnpm run venue:access:verify` for isolated PostgreSQL transaction/permission tests and `pnpm run venue:http:verify` after local auth setup for real HTTP/cookie checks. Both create only synthetic task records and remove their own records; they never reset the database or send messages. Account verification/recovery configuration, persisted owner/setup screens and real two-device acceptance remain outstanding.
+
+## Persisted local door rehearsal
+
+With local database/auth setup and an authorized night assignment, open `/nights/<night-id>/door` using `pnpm run dev`. This separate page uses the session-protected HTTP API, shares acknowledged state with other authorized local sessions, and retains database history across reloads. It is visibly synthetic/local-only and returns 404 in production. The in-memory `/demo/door` remains unchanged.
+
+A submitted request is journaled in this tab before transport. Reload after an unknown outcome blocks new actions until retrying the original UUID recovers its acknowledgement. Disabled/corrupt storage pauses recording instead of sending an untracked action. Closing the tab or clearing storage can lose the local recovery record; do not leave while a request is unresolved. This is not an offline queue or a production durability claim.
+
+`pnpm run door:browser:verify` exercises separate synthetic browser sessions at 320px against local PostgreSQL, including shared counts, reload recovery and revocation. It is automated browser evidence, not a physical two-device or venue rehearsal.
