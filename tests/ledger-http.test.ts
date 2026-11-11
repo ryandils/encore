@@ -45,6 +45,27 @@ describe('ledger HTTP trust boundary', () => {
     expect(service.record).toHaveBeenCalledWith({ authenticatedUserId: 'verified-user', nightId }, expect.objectContaining({ type: 'FREE_ADMISSION' }));
     expect(response.headers.get('cache-control')).toContain('no-store');
   });
+  it.each(['events', 'summary', 'export', 'venues'] as const)('denies stale account expectation before %s accesses a service', async (operation) => {
+    const { handle, dependencies } = setup();
+    const request = operation === 'events' ? write(undefined, { 'X-Encore-Expected-User': 'previous-user' })
+      : new Request(`${origin}/api/owner`, { headers: { 'X-Encore-Expected-User': 'previous-user' } });
+    const result = await handle(operation, request, nightId);
+    expect(result.status).toBe(403);
+    expect(result.headers.get('cache-control')).toContain('no-store');
+    expect(await result.json()).toEqual({ ok: false, error: { code: 'FORBIDDEN', message: 'The signed-in account changed. Reload this workspace before continuing.' } });
+    expect(dependencies.service).not.toHaveBeenCalled();
+  });
+  it('accepts a matching expected account without granting it authority and denies a later cookie switch', async () => {
+    const { handle, dependencies, service } = setup();
+    const id = 'verified:user/é';
+    dependencies.session.mockResolvedValue({ user: { id } });
+    const headers = { 'X-Encore-Expected-User': encodeURIComponent(id) };
+    expect((await handle('events', write(undefined, headers), nightId)).status).toBe(200);
+    expect(service.record).toHaveBeenCalledWith({ authenticatedUserId: id, nightId }, expect.anything());
+    dependencies.session.mockResolvedValue({ user: { id: 'different-cookie-user' } });
+    expect((await handle('events', write(undefined, headers), nightId)).status).toBe(403);
+    expect(service.record).toHaveBeenCalledTimes(1);
+  });
   it.each([{ actorId: 'attacker' }, { role: 'OWNER' }, { venueId: randomUUID() }])('rejects client authority fields %s', async (extra) => {
     const { handle, dependencies } = setup();
     expect((await handle('events', write({ type: 'FREE_ADMISSION', requestId: randomUUID(), ...extra }), nightId)).status).toBe(400);

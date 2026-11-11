@@ -1,0 +1,8 @@
+.workspace { overflow-wrap: anywhere; }
+.workspace > button { margin: 12px 0 20px; }
+.workspace select { width: 100%; min-width: 0; box-sizing: border-box; min-height: 48px; padding: 12px; border: 1px solid #43516a; border-radius: 9px; background: #080f1c; color: #f1f5f9; font-size: 16px; }
+.workspace form > fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 16px; }
+.workspace a { color: #fde68a; }
+.workspace p a { display: inline-flex; min-height: 44px; min-width: 44px; align-items: center; }
+.workspace select:focus-visible { outline: 3px solid #fcd34d; outline-offset: 3px; }
+.workspace fieldset:disabled { opacity: .6; }

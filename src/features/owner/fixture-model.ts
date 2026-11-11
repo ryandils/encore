@@ -1,10 +1,11 @@
+export { dollarsToCents } from './money-input.ts';
 import { formatNightCsv } from '../../domain/csv-export.ts';
 import type { AssignmentView, CloseCommand, CoverPreset, CreateInviteCommand, CreateVenueCommand, OpenNightCommand, OwnerSummary, PresetSlot, PresetsCommand, VenueView } from '../../domain/contracts.ts';
 import { parseCloseCommand, parseCreateInviteCommand, parseCreateVenueCommand, parseOpenNightCommand, parsePresetsCommand } from '../../domain/contracts.ts';
 import { createLedgerFixtures } from '../../domain/fixtures.ts';
 import { projectLedger, reconcileLedger } from '../../domain/ledger.ts';
 import type { DoorEvent, NightLedgerInput } from '../../domain/types.ts';
-import { assertNonnegativeInt, assertUtcTimestamp } from '../../domain/validation.ts';
+import { assertUtcTimestamp } from '../../domain/validation.ts';
 
 /** Browser-local rehearsal only. These functions grant no real venue or staff access. */
 export interface OwnerFixtureNight {
@@ -37,13 +38,6 @@ function openNight(state: OwnerFixtureState): OwnerFixtureNight {
 }
 export function createOwnerFixture(): OwnerFixtureState {
   return { venue: null, presets: createLedgerFixtures().originalPresets, active: null, history: [], invites: [], assignments: [] };
-}
-export function dollarsToCents(value: string): number {
-  if (!/^\d+(?:\.\d{1,2})?$/.test(value.trim())) throw new Error('Enter a nonnegative USD amount with at most two decimal places.');
-  const [whole, fraction = ''] = value.trim().split('.');
-  const cents = Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
-  assertNonnegativeInt(cents, 'amount');
-  return cents;
 }
 export function configureVenue(state: OwnerFixtureState, command: CreateVenueCommand): OwnerFixtureState {
   if (state.venue) throw new Error('This rehearsal already has a venue. Reset the demo to configure another.');

@@ -101,6 +101,9 @@ export function createLedgerHttpHandler(dependencies: LedgerHttpDependencies) {
       if (write && (request.headers.get('origin') !== origin || request.headers.get('sec-fetch-site') === 'cross-site')) return problem('FORBIDDEN', 'A same-origin request is required.');
       const session = await dependencies.session(request.headers);
       if (!session) return problem('UNAUTHENTICATED', 'Sign in to the local application.');
+      // This is a stale-workspace denial guard, never a client-selected actor or permission grant.
+      const expectedUser = request.headers.get('X-Encore-Expected-User');
+      if (expectedUser !== null && expectedUser !== encodeURIComponent(session.user.id)) return problem('FORBIDDEN', 'The signed-in account changed. Reload this workspace before continuing.');
       if (!allowed(session.user.id)) return problem('RATE_LIMITED', 'Too many requests. Wait a minute and retry.');
       if (operation !== 'create-venue' && operation !== 'accept-invite' && operation !== 'venues') assertUuid(scopeId, 'scopeId');
       const context = { authenticatedUserId: session.user.id, nightId: scopeId };

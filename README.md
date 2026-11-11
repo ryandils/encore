@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. Local ledger, setup/access, owner discovery and audit CSV APIs enforce server-side venue/night permissions. A separate persisted door rehearsal connects real local sessions to PostgreSQL; production authentication and operational pilot readiness remain outstanding. See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. Local ledger, setup/access, owner discovery and audit CSV APIs enforce server-side venue/night permissions. Separate persisted door and owner workspaces connect real local sessions to PostgreSQL; production authentication and operational pilot readiness remain outstanding. See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -157,7 +157,7 @@ This repository is public. Do not commit credentials, personal contact details, 
 
 `src/server/ledger-service.ts` supplies internal PostgreSQL commands and authorized reads, using the existing domain schema. With the disposable local database running and migrated, run `pnpm run ledger:service:verify` for synthetic permission, retry, concurrent-write and close-race checks. The verifier creates uniquely named records and removes its own records afterward.
 
-The kernel itself is a server foundation; the separate local HTTP boundary below exposes it with a separate local persisted door adapter described below. Callers must supply a user ID from a verified server session. Production authentication and recovery, persisted owner/setup screens and real two-device convergence remain outstanding under #11; #12 is not ready.
+The kernel itself is a server foundation; the separate local HTTP boundary below exposes it with a separate local persisted door adapter described below. Callers must supply a user ID from a verified server session. Production authentication/recovery and real two-device convergence remain outstanding under #11; #12 is not ready.
 
 ## Local authenticated ledger API (B4 slice)
 
@@ -165,17 +165,17 @@ After local database/auth setup, `pnpm run dev` exposes session-protected night 
 
 ## Local venue and invitation API
 
-The local API also supports creating venues, opening nights, changing presets, issuing/canceling staff invites, accepting an invite with a verified intended account, and revoking assignments. All routes share the local session/origin/body-limit safeguards and reject production. Invitation responses contain a secret fragment link once; there is no email delivery or acceptance page yet. Unverified accounts cannot accept an invitation, including seeded demo accounts whose verification flag is false.
+The local API also supports creating venues, opening nights, changing presets, issuing/canceling staff invites, accepting an invite with a verified intended account, and revoking assignments. All routes share the local session/origin/body-limit safeguards and reject production. Invitation responses contain a secret fragment link once; the local acceptance page requires an explicit click and a verified intended account; no email delivery is configured. Unverified accounts cannot accept an invitation, including seeded demo accounts whose verification flag is false.
 
-Run `pnpm run venue:access:verify` for isolated PostgreSQL transaction/permission tests and `pnpm run venue:http:verify` after local auth setup for real HTTP/cookie checks. Both create only synthetic task records and remove their own records; they never reset the database or send messages. Account verification/recovery configuration, persisted owner/setup screens and real two-device acceptance remain outstanding.
+Run `pnpm run venue:access:verify` for isolated PostgreSQL transaction/permission tests and `pnpm run venue:http:verify` after local auth setup for real HTTP/cookie checks. Both create only synthetic task records and remove their own records; they never reset the database or send messages. Account verification/recovery configuration and real two-device acceptance remain outstanding.
 
 ## Owner discovery and local audit downloads
 
-Owner-scoped reads now list owned venues, saved configuration/presets, active/closed nights, and invitation/assignment metadata. This lets a future owner screen recover server-created IDs and history after reload or a lost acknowledgement. Access lists return no invitation token, token hash or secret link.
+Owner-scoped reads now list owned venues, saved configuration/presets, active/closed nights, and invitation/assignment metadata. This lets the local owner workspace recover server-created IDs and history after reload or a lost acknowledgement. Access lists return no invitation token, token hash or secret link.
 
 `GET /api/nights/<night-id>/export` returns an owner-authorized, no-store CSV attachment for the local synthetic database. Its 25-column audit format includes the opening baseline, original event request/actor/time/charges, reversal target/reason, and closing request/totals. Text fields are spreadsheet-escaped and monetary values remain integer cents. It is an audit export, not a database backup or restore format. The existing 16-column fixture export remains unchanged.
 
-Run `pnpm run owner:read:verify` for isolated PostgreSQL read/export checks and `pnpm run owner:http:verify` after local auth setup for real cookie/permission/download checks. Production remains disabled; persisted owner UI, real account verification/recovery, physical-device and pilot acceptance remain outstanding.
+Run `pnpm run owner:read:verify` for isolated PostgreSQL read/export checks and `pnpm run owner:http:verify` after local auth setup for real cookie/permission/download checks. Production remains disabled; real account verification/recovery, physical-device and pilot acceptance remain outstanding.
 
 ## Persisted local door rehearsal
 
@@ -184,3 +184,13 @@ With local database/auth setup and an authorized night assignment, open `/nights
 A submitted request is journaled in this tab before transport. Reload after an unknown outcome blocks new actions until retrying the original UUID recovers its acknowledgement. Disabled/corrupt storage pauses recording instead of sending an untracked action. Closing the tab or clearing storage can lose the local recovery record; do not leave while a request is unresolved. This is not an offline queue or a production durability claim.
 
 `pnpm run door:browser:verify` exercises separate synthetic browser sessions at 320px against local PostgreSQL, including shared counts, reload recovery and revocation. It is automated browser evidence, not a physical two-device or venue rehearsal.
+
+## Local persisted owner workspace
+
+After local database/auth setup, run `pnpm run dev`, sign in through `/demo/sign-in`, and open [http://localhost:3000/local/owner](http://localhost:3000/local/owner). Use synthetic records only. Create a venue, open a night, edit prices, manage staff access, view saved history, close cash and download the protected audit CSV. The selected venue/night IDs survive refresh; authoritative totals always come from PostgreSQL.
+
+Invitation links use `/invites/accept#token=…`. The page immediately removes the fragment from the address bar and holds the token only in memory until explicit acceptance. The intended account must already have a verified email; the synthetic seeded accounts are not automatically verified. Opening sign-in in another tab preserves the invitation page's in-memory token. Reloading loses it; the owner can reconcile access and issue another invitation if needed. No verification email or invitation message is sent.
+
+Closeout journals the original request ID, counted cash and notes in this tab's session storage before sending. After an uncertain response or reload, retry the original command before making other changes. Closing the tab, clearing storage or switching devices can lose recovery data; this is not an offline queue. Create/open/invite writes do not automatically retry after uncertain outcomes: refresh the server lists and reconcile first. The workspace rejects requests if the authenticated account changes from the account that opened it.
+
+Run `pnpm run owner:browser:verify` with local database/auth and Chromium for the 320px automated owner/staff journey, including fragment acceptance, shared prices/counts, revocation, uncertain-close recovery and CSV download. Its verified staff account is an explicitly synthetic database fixture, not evidence of real email verification. Production routes remain disabled; physical-device and venue-pilot acceptance remain outstanding.
