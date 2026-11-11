@@ -20,6 +20,8 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 - An isolated owner fixture rehearsal at `/demo/owner-rehearsal` covers venue/night setup, price changes, simulated staff access, traffic summary, cash closeout, session-only history and CSV. It is disabled in production and clears on refresh; no real invitations or shared backend are involved.
 - B2 synthetic door console at `/demo/door`: phone-sized paid/free entry, exit, eligible undo, recent actions, acknowledged occupancy and explicit pending/rejected/unknown/stale feedback. An in-memory adapter consumes B1 contracts; reload resets it and production rejects the route. No database or login is required for these fake records.
 
+- Shared pure CSV formatting is reused by the synthetic owner rehearsal; spreadsheet-safe formatting is separate from the still-unimplemented protected export endpoint.
+
 - First B4 server kernel: internal PostgreSQL event/close transactions, membership/assignment checks, durable retry receipts, scoped door reads and owner summaries. The standalone kernel has no routes itself; local HTTP integration is described below. Live UI integration remains outstanding; see the B4 boundary in [architecture](ARCHITECTURE.md).
 
 - Local session-authenticated ledger HTTP routes expose the internal kernel for scoped reads, event commands and closing. They are unavailable in production and do not connect the fixture screens.

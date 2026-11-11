@@ -29,3 +29,7 @@ A signed-in user is not automatically allowed to use every venue. The HTTP layer
 ## Next step
 
 Review/merge this slice before dependent live adapters. Remaining B4 includes venue/night setup, invitations/revocation services, protected CSV delivery, production verification/recovery configuration, and authenticated two-device evidence. B5 remains blocked on full B4 and real venue participation.
+
+## CSV merge integration
+
+Integrated user-approved CSV PR #35/main `fb30db1` before merging this PR. Resolved the CONTEXT conflict by preserving the CSV capability and the current kernel/HTTP descriptions. No HTTP or CSV implementation changed during reconciliation. Combined doctor/check, strict typecheck, lint (73 files), all 239 tests, optimized build and production HTTP checks passed. Independent review confirms HTTP files match `88f1575` and CSV files match `fb30db1`, with all boundary descriptions preserved. Context/whitespace checks passed before commit; this branch integration does not itself merge #36.

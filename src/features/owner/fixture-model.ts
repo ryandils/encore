@@ -1,3 +1,4 @@
+import { formatNightCsv } from '../../domain/csv-export.ts';
 import type { AssignmentView, CloseCommand, CoverPreset, CreateInviteCommand, CreateVenueCommand, OpenNightCommand, OwnerSummary, PresetSlot, PresetsCommand, VenueView } from '../../domain/contracts.ts';
 import { parseCloseCommand, parseCreateInviteCommand, parseCreateVenueCommand, parseOpenNightCommand, parsePresetsCommand } from '../../domain/contracts.ts';
 import { createLedgerFixtures } from '../../domain/fixtures.ts';
@@ -119,17 +120,6 @@ export function closeFixtureNight(state: OwnerFixtureState, command: CloseComman
   const closed: OwnerFixtureNight = { ...active, summary, closeRequest: parsed };
   return { ...state, active: closed, history: [...state.history, closed] };
 }
-function cell(value: string | number): string {
-  const text = String(value);
-  const safe = typeof value === 'string' && (/^[\s]*[=+\-@]/.test(text) || /^[\t\r\n]/.test(text)) ? `'${text}` : text;
-  return `"${safe.replaceAll('"', '""')}"`;
-}
 export function exportFixtureNight(night: OwnerFixtureNight): { contentType: 'text/csv'; filename: string; csv: string } {
-  const rows: (string | number)[][] = [
-    ['synthetic', 'recordType', 'nightId', 'nightLabel', 'id', 'sequence', 'type', 'amountCents', 'actorId', 'recordedAt', 'countedCashCents', 'expectedCoverCents', 'floatCents', 'expectedDrawerCents', 'varianceCents', 'notes'],
-    ...night.events.map((event): (string | number)[] => ['true', 'event', event.nightId, night.summary.night.label, event.id, event.sequence, event.type, event.amountCents, event.actorId, event.recordedAt, '', '', '', '', '', '']),
-  ];
-  const result = night.summary.reconciliation;
-  if (result) rows.push(['true', 'reconciliation', night.input.nightId, night.summary.night.label, '', '', '', '', result.closedBy, result.closedAt, result.countedCashCents, result.expectedCoverCents, result.floatCents, result.expectedDrawerCents, result.varianceCents, result.notes]);
-  return { contentType: 'text/csv', filename: `synthetic-encore-${night.input.nightId}.csv`, csv: `${rows.map((row) => row.map(cell).join(',')).join('\r\n')}\r\n` };
+  return { contentType: 'text/csv', filename: `synthetic-encore-${night.input.nightId}.csv`, csv: formatNightCsv(night.summary, night.events, { synthetic: true }) };
 }
