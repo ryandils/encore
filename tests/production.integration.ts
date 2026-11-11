@@ -109,13 +109,13 @@ async function verify(): Promise<void> {
     check(ready, 'Optimized landing page did not become available within 30 seconds.');
 
     step = 'production demo and authentication denial';
-    const paths = ['/demo/sign-in', '/demo/owner', '/demo/staff', '/demo/door', '/api/demo/session', '/api/auth/get-session'];
+    const paths = ['/demo/sign-in', '/demo/owner', '/demo/staff', '/demo/door', '/api/demo/session', '/api/auth/get-session', '/api/nights/00000000-0000-4000-8000-000000000001/door-state', '/api/nights/00000000-0000-4000-8000-000000000001/summary'];
     for (const path of paths) {
       const response = await request(path);
       await response.text();
       check(response.status === 404, `${path} did not reject production access with HTTP 404 (received ${response.status}).`);
     }
-    for (const path of ['/api/auth/sign-in/email', '/api/auth/sign-out', '/api/auth/sign-up/email']) {
+    for (const path of ['/api/auth/sign-in/email', '/api/auth/sign-out', '/api/auth/sign-up/email', '/api/nights/00000000-0000-4000-8000-000000000001/events', '/api/nights/00000000-0000-4000-8000-000000000001/close']) {
       const response = await request(path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: origin },
@@ -129,7 +129,7 @@ async function verify(): Promise<void> {
   } finally {
     await stopServer(child);
   }
-  console.log('PASS optimized production HTTP: labeled landing page returns 200; demo pages/session and authentication endpoints return 404 with invalid database/auth settings. No PostgreSQL service, credentials, browser walkthrough, or deployment was required.');
+  console.log('PASS optimized production HTTP: labeled landing page returns 200; demo pages/session, authentication and ledger endpoints return 404 with invalid database/auth settings. No PostgreSQL service, credentials, browser walkthrough, or deployment was required.');
 }
 
 await verify().catch((error: unknown) => {

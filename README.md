@@ -157,4 +157,8 @@ This repository is public. Do not commit credentials, personal contact details, 
 
 `src/server/ledger-service.ts` supplies internal PostgreSQL commands and authorized reads, using the existing domain schema. With the disposable local database running and migrated, run `pnpm run ledger:service:verify` for synthetic permission, retry, concurrent-write and close-race checks. The verifier creates uniquely named records and removes its own records afterward.
 
-This is a server foundation, with no new HTTP endpoints or live screen adapter. Callers must supply a user ID from a verified server session. Setup/invitations, production authentication and recovery, CSV endpoints, and real two-device convergence remain outstanding under #11; #12 is not ready.
+The kernel itself is a server foundation; the separate local HTTP boundary below exposes it without a live screen adapter. Callers must supply a user ID from a verified server session. Setup/invitations, production authentication and recovery, CSV endpoints, and real two-device convergence remain outstanding under #11; #12 is not ready.
+
+## Local authenticated ledger API (B4 slice)
+
+After local database/auth setup, `pnpm run dev` exposes session-protected night reads and event/close commands under `/api/nights/[nightId]`. Venue membership and active staff assignment are enforced by the server kernel; synthetic login navigation roles do not grant access. No venue/night provisioning or live screen adapter is added here. The routes reject production mode. Run `pnpm run ledger:http:verify` with local PostgreSQL migrated, identities seeded and `auth:init`/`auth:seed` complete for real HTTP/session regression checks. The verifier starts and stops a temporary development server and removes its own synthetic domain records and sessions without resetting the database.
