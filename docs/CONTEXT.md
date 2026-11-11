@@ -20,17 +20,19 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 - An isolated owner fixture rehearsal at `/demo/owner-rehearsal` covers venue/night setup, price changes, simulated staff access, traffic summary, cash closeout, session-only history and CSV. It is disabled in production and clears on refresh; no real invitations or shared backend are involved.
 - B2 synthetic door console at `/demo/door`: phone-sized paid/free entry, exit, eligible undo, recent actions, acknowledged occupancy and explicit pending/rejected/unknown/stale feedback. An in-memory adapter consumes B1 contracts; reload resets it and production rejects the route. No database or login is required for these fake records.
 
-- Shared pure CSV formatting is reused by the synthetic owner rehearsal; spreadsheet-safe formatting is separate from the still-unimplemented protected export endpoint.
+- Shared pure CSV formatting is reused by the synthetic owner rehearsal; spreadsheet-safe formatting is shared with the protected local audit export endpoint.
 
-- First B4 server kernel: internal PostgreSQL event/close transactions, membership/assignment checks, durable retry receipts, scoped door reads and owner summaries. The standalone kernel has no routes itself; local HTTP integration is described below. Live UI integration remains outstanding; see the B4 boundary in [architecture](ARCHITECTURE.md).
+- First B4 server kernel: internal PostgreSQL event/close transactions, membership/assignment checks, durable retry receipts, scoped door reads and owner summaries. The standalone kernel has no routes itself; local HTTP integration is described below. The separate local persisted interfaces are described below; see the B4 boundary in [architecture](ARCHITECTURE.md).
 
 - Local session-authenticated ledger HTTP routes expose the internal kernel for scoped reads, event commands and closing. They are unavailable in production and do not connect the fixture screens.
 
-- Local authenticated venue/night setup, preset changes and staff invitation/assignment APIs persist through PostgreSQL. Invites require a verified intended account, store token hashes and support pending cancellation; no invitation email or acceptance page is provided.
+- Local authenticated venue/night setup, preset changes and staff invitation/assignment APIs persist through PostgreSQL. Invites require a verified intended account, store token hashes and support pending cancellation; no invitation email is sent; the separate local acceptance page is described below.
 
-- Local owner discovery/configuration/night-history/access reads and protected synthetic audit CSV downloads persist through PostgreSQL. Access lists omit invite secrets; exported snapshots include original request/correction linkage and opening/closing context. No persisted owner UI or production export policy is claimed.
+- Local owner discovery/configuration/night-history/access reads and protected synthetic audit CSV downloads persist through PostgreSQL. Access lists omit invite secrets; exported snapshots include original request/correction linkage and opening/closing context. No production export policy is claimed.
 
 - A separate `/nights/[nightId]/door` local persisted rehearsal uses authenticated ledger APIs, validates acknowledgements and gates refresh recovery of unresolved request IDs through per-tab storage. The fixture demo remains separate; production and physical-device acceptance are not provided.
+
+- A local persisted owner workspace at `/local/owner` adds venue/night setup and selection, preset/access management, authoritative summaries, cash closeout, closed history and protected audit downloads. Per-tab original close commands survive refresh and gate subsequent writes until resolved. `/invites/accept` scrubs fragment tokens immediately and requires explicit acceptance by a verified intended account. Production remains disabled; automated synthetic browser evidence does not prove real verification or physical-device acceptance.
 
 ## Not implemented
 
