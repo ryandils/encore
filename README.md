@@ -6,7 +6,7 @@ Encore is a phone-first tool for independent bars and small clubs that collect c
 
 ## Current status
 
-This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. **Live door endpoints, venue/night authorization, and production authentication are not implemented.** See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
+This repository contains the MVP specification, contributor harness, Next.js/React/Tailwind setup landing page, local PostgreSQL/Prisma storage, and a **synthetic local sign-in demo** using Better Auth. Owner/staff demo pages use real server-validated sessions. B1 adds pure ledger calculations, shared TypeScript contracts and synthetic fixtures, and domain database models. The separate synthetic door console exercises local entries, exits and undo without a database. A separate synthetic owner rehearsal covers setup, summary and closeout. Local ledger, setup/access, owner discovery and audit CSV APIs enforce server-side venue/night permissions. Production authentication and operational pilot readiness remain outstanding. See [the build plan](docs/BUILD_PLAN.md) for the remaining work.
 
 ## Start here: Windows or macOS
 
@@ -157,7 +157,7 @@ This repository is public. Do not commit credentials, personal contact details, 
 
 `src/server/ledger-service.ts` supplies internal PostgreSQL commands and authorized reads, using the existing domain schema. With the disposable local database running and migrated, run `pnpm run ledger:service:verify` for synthetic permission, retry, concurrent-write and close-race checks. The verifier creates uniquely named records and removes its own records afterward.
 
-The kernel itself is a server foundation; the separate local HTTP boundary below exposes it without a live screen adapter. Callers must supply a user ID from a verified server session. Production authentication and recovery, CSV endpoints, live screens and real two-device convergence remain outstanding under #11; #12 is not ready.
+The kernel itself is a server foundation; the separate local HTTP boundary below exposes it without a live screen adapter. Callers must supply a user ID from a verified server session. Production authentication and recovery, persisted owner/setup screens and real two-device convergence remain outstanding under #11; #12 is not ready.
 
 ## Local authenticated ledger API (B4 slice)
 
@@ -168,3 +168,11 @@ After local database/auth setup, `pnpm run dev` exposes session-protected night 
 The local API also supports creating venues, opening nights, changing presets, issuing/canceling staff invites, accepting an invite with a verified intended account, and revoking assignments. All routes share the local session/origin/body-limit safeguards and reject production. Invitation responses contain a secret fragment link once; there is no email delivery or acceptance page yet. Unverified accounts cannot accept an invitation, including seeded demo accounts whose verification flag is false.
 
 Run `pnpm run venue:access:verify` for isolated PostgreSQL transaction/permission tests and `pnpm run venue:http:verify` after local auth setup for real HTTP/cookie checks. Both create only synthetic task records and remove their own records; they never reset the database or send messages. Account verification/recovery configuration, live screens and real two-device acceptance remain outstanding.
+
+## Owner discovery and local audit downloads
+
+Owner-scoped reads now list owned venues, saved configuration/presets, active/closed nights, and invitation/assignment metadata. This lets a future owner screen recover server-created IDs and history after reload or a lost acknowledgement. Access lists return no invitation token, token hash or secret link.
+
+`GET /api/nights/<night-id>/export` returns an owner-authorized, no-store CSV attachment for the local synthetic database. Its 25-column audit format includes the opening baseline, original event request/actor/time/charges, reversal target/reason, and closing request/totals. Text fields are spreadsheet-escaped and monetary values remain integer cents. It is an audit export, not a database backup or restore format. The existing 16-column fixture export remains unchanged.
+
+Run `pnpm run owner:read:verify` for isolated PostgreSQL read/export checks and `pnpm run owner:http:verify` after local auth setup for real cookie/permission/download checks. Production remains disabled; persisted owner UI, real account verification/recovery, physical-device and pilot acceptance remain outstanding.

@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import type { Pool, PoolClient } from 'pg';
 import { closeRequestPayload, eventRequestPayload, parseCloseCommand, parseEventCommand } from '../domain/contracts.ts';
-import type { ApiErrorCode, CloseCommand, CloseResult, DoorState, EventCommand, EventResult, NightView, OwnerSummary } from '../domain/contracts.ts';
+import type { ApiErrorCode, CloseCommand, CloseResult, DoorState, EventCommand, EventResult, NightView, OwnerSummary, NightCsvExport } from '../domain/contracts.ts';
+import { formatNightCsv } from '../domain/csv-export.ts';
 import { projectLedger, reconcileLedger } from '../domain/ledger.ts';
 import type { DoorEvent, NightLedgerInput } from '../domain/types.ts';
 import { assertNonemptyString, assertUuid, validateDoorEvent } from '../domain/validation.ts';
@@ -133,6 +134,17 @@ export class PostgresLedgerService implements TransactionalLedgerCommands {
           event.type === 'REVERSAL' ? event.targetEventId : null, event.type === 'REVERSAL' ? event.reason : null, access.now, { payload }, result]);
       await db.query('UPDATE night SET version=$2 WHERE id=$1', [context.nightId, access.night.version]);
       return result;
+    });
+  }
+  exportNight(context: LedgerCommandContext): Promise<NightCsvExport> {
+    return this.transaction(context, async (db, access) => {
+      if (access.role !== 'OWNER') fail('FORBIDDEN', 'Owner access required.');
+      const events = await history(db, context.nightId);
+      const summary = await ownerSummary(db, access, events);
+      const receipt = await db.query<{ requestId: string }>('SELECT "requestId" FROM reconciliation WHERE "nightId"=$1', [context.nightId]);
+      return { contentType: 'text/csv', filename: `synthetic-encore-${context.nightId}.csv`, csv: formatNightCsv(summary, events, {
+        synthetic: true, audit: true, reconciliationRequestId: receipt.rows[0]?.requestId,
+      }) };
     });
   }
   close(context: LedgerCommandContext, value: CloseCommand): Promise<CloseResult> {
