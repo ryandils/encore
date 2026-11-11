@@ -2,7 +2,7 @@
 
 Goal: Conomos and Ryan can clone the same commit, run the same checks, and submit a small reviewed change. No previous programming experience is required. Budget roughly 30–60 minutes for the first setup, with time for downloads.
 
-**Current milestone: a setup landing page, local database, and synthetic sign-in demo.** You can run the landing page and contributor checks without Docker or credentials. The [local database guide](LOCAL_DATABASE.md) adds Docker Desktop, migrations, and optional local owner/staff sign-in. Door operations, production authentication, and venue permissions remain later work in [the build plan](BUILD_PLAN.md); no paid service or production key is needed.
+**Current milestone: a setup landing page, local database, and synthetic sign-in demo.** You can run the landing page and contributor checks without Docker or credentials. The [local database guide](LOCAL_DATABASE.md) adds Docker Desktop, migrations, and optional local owner/staff sign-in. Local ledger/setup/access APIs and a persisted synthetic door rehearsal enforce venue permissions. Production authentication and real pilot acceptance remain later work in [the build plan](BUILD_PLAN.md); no paid service or production key is needed.
 
 ## 1. Install the tools
 

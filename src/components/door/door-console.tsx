@@ -9,8 +9,8 @@ import styles from './door.module.css';
 export function money(cents: number): string { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: cents % 100 ? 2 : 0 }).format(cents / 100); }
 function actionLabel(action: RecentDoorAction) { return action.type === 'EXIT' ? 'Exit' : action.type === 'REVERSAL' ? 'Undo recorded' : action.amountCents === 0 ? 'Free entry' : `Paid entry · ${money(action.amountCents)}`; }
 
-export function DoorConsole({ api, nightId }: { api: DoorApi; nightId: string }) {
-  const [controller] = useState(() => new DoorController(api, nightId));
+export function DoorConsole({ api, nightId, persisted = false }: { api: DoorApi; nightId: string; persisted?: boolean }) {
+  const [controller] = useState(() => new DoorController(api, nightId, Date.now, () => crypto.randomUUID(), persisted ? 'saved to the local server.' : 'saved in this demo.'));
   const snapshot = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot);
   const [undo, setUndo] = useState<RecentDoorAction | null>(null);
   const [reason, setReason] = useState('Accidental tap');
@@ -29,15 +29,15 @@ export function DoorConsole({ api, nightId }: { api: DoorApi; nightId: string })
   const disabled = !controller.canSubmit();
   const canUndo = (action: RecentDoorAction) => state?.recentActions.some(current => current.id === action.id && current.canUndo && !current.reversed) && snapshot.now - Date.parse(action.recordedAt) <= 60000 && !disabled && snapshot.queue.length === 0;
   return <section className={styles.console} aria-label="Door console">
-    <header className={styles.heading}><div><p className={styles.eyebrow}>ENCORE / DOOR</p><h1>Keep the door moving.</h1></div><span className={styles.badge}>{state?.night.status === 'CLOSED' ? 'Night closed' : 'Practice night'}</span></header>
+    <header className={styles.heading}><div><p className={styles.eyebrow}>ENCORE / DOOR</p><h1>Keep the door moving.</h1></div><span className={styles.badge}>{state?.night.status === 'CLOSED' ? 'Night closed' : persisted ? 'Local night' : 'Practice night'}</span></header>
     <section className={styles.countPanel} aria-labelledby="occupancy-label">
       <p id="occupancy-label">Recorded occupancy</p><p className={styles.count} data-testid="occupancy">{state ? state.occupancy : '—'}</p>
-      <p>{state?.night.label ?? 'Connecting to the synthetic fixture'}</p>
+      <p>{state?.night.label ?? (persisted ? 'Connecting to the local night' : 'Connecting to the synthetic fixture')}</p>
       <p className={styles.muted}>Acknowledged actions only · capacity reference {state?.night.capacity ?? '—'}</p>
       {state?.atOrAboveCapacity && <p className={styles.warning}>At or above the capacity reference. Follow venue procedures.</p>}
       {stale && <p className={styles.warning}>Stale count — not a current headcount.</p>}
     </section>
-    <div className={styles.sync} aria-live="polite"><strong>{snapshot.syncError ? 'Disconnected / sync failed' : stale ? 'Awaiting synchronization' : 'Fixture synchronized'}</strong><span>Last sync: {snapshot.lastSync === null ? 'never' : new Date(snapshot.lastSync).toLocaleTimeString('en-US')}</span></div>
+    <div className={styles.sync} aria-live="polite"><strong>{snapshot.syncError ? 'Disconnected / sync failed' : stale ? 'Awaiting synchronization' : persisted ? 'Local night synchronized' : 'Fixture synchronized'}</strong><span>Last sync: {snapshot.lastSync === null ? 'never' : new Date(snapshot.lastSync).toLocaleTimeString('en-US')}</span></div>
     {snapshot.syncError && <p className={styles.warning} role="alert">{snapshot.syncError}</p>}
     <div className={styles.feedback} role="status"><p>{snapshot.message}</p>{snapshot.queue.length > 0 && <p>{snapshot.queue.length} pending {snapshot.queue.length === 1 ? 'action' : 'actions'} · excluded from acknowledged count until saved</p>}</div>
     {(snapshot.phase === 'unknown' || snapshot.phase === 'failed') && <div className={styles.recovery}><button type="button" onClick={controller.retry}>Retry same request</button>{snapshot.phase === 'failed' && <button type="button" onClick={controller.discardRejected}>Cancel rejected and unsent taps</button>}<p>Pause admissions in this screen. Keep a physical backup; do not tap again for the same person.</p></div>}
