@@ -34,6 +34,8 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - A local persisted owner workspace at `/local/owner` adds venue/night setup and selection, preset/access management, authoritative summaries, cash closeout, closed history and protected audit downloads. Per-tab original close commands survive refresh and gate subsequent writes until resolved. `/invites/accept` scrubs fragment tokens immediately and requires explicit acceptance by a verified intended account. Production remains disabled; automated synthetic browser evidence does not prove real verification or physical-device acceptance.
 
+- An unwired local Better Auth lifecycle factory supports isolated synthetic email capture, verified sign-in, one-hour verification/reset tokens, verification replay denial and reset session revocation. Application routes remain session-only. See [architecture](ARCHITECTURE.md); memory-adapter tests are not production delivery or PostgreSQL concurrency evidence.
+
 ## Not implemented
 
 No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
