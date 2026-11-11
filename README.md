@@ -152,3 +152,9 @@ QR guest lists, discounts, opt-in marketing, digital re-entry, NFC payments, for
 Use a responsive TypeScript 7 web app first: Next.js, PostgreSQL, Prisma, and maintained authentication tooling. See the architecture document for the intended shape and pilot gates. Future React Native clients may share domain types and APIs, but web screens do not automatically port to native.
 
 This repository is public. Do not commit credentials, personal contact details, actual venue/customer data, or the original group-chat screenshots. Use synthetic records. The package.json private flag prevents accidental npm publishing; it does not change GitHub visibility.
+
+## Transactional ledger kernel (first B4 slice)
+
+`src/server/ledger-service.ts` supplies internal PostgreSQL commands and authorized reads, using the existing domain schema. With the disposable local database running and migrated, run `pnpm run ledger:service:verify` for synthetic permission, retry, concurrent-write and close-race checks. The verifier creates uniquely named records and removes its own records afterward.
+
+This is a server foundation, with no new HTTP endpoints or live screen adapter. Callers must supply a user ID from a verified server session. Setup/invitations, production authentication and recovery, CSV endpoints, and real two-device convergence remain outstanding under #11; #12 is not ready.

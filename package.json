@@ -31,6 +31,7 @@
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
     "ledger:verify": "node tests/ledger-schema.integration.ts",
+    "ledger:service:verify": "node tests/ledger-service.integration.ts",
     "auth:init": "node scripts/auth-init.ts",
     "auth:seed": "node scripts/auth-seed.ts",
     "auth:verify": "node tests/auth.integration.ts",
