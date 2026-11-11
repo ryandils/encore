@@ -49,3 +49,15 @@ Open a bar profile, tap Add to favorites, then choose View My Spots. Favorites p
 The browser stores only fictional venue IDs under encore.discovery.spots.v1. This is not an account or synchronized history: another browser, device, hostname, or port has a different list. Clearing site data removes the list. If storage is blocked or full, the UI warns that selections last only on the current page. All venue data and occupancy remain synthetic. No browser or location permissions are requested.
 
 The customer Discover screen does not include development location-state switches. The former Area set, Denied, and Manual search controls were design-review fixtures, not real permission or search settings. The sample-area label remains visible; future manual-entry and denied-permission accessibility requirements remain documented in the guidelines and Settings explanation.
+
+## Persistent customer navigation
+
+The bottom bar stays fixed on Discover, My Spots, Profile, Settings, and all three venue profiles. Venue profiles highlight Discover as their parent section and provide native keyboard-operable links to all four destinations. Content reserves space for the bar and mobile bottom safe area.
+
+To keep another preview running, set ENCORE_PREVIEW_PORT to an unused port before starting preview.ts (for example, in PowerShell: $env:ENCORE_PREVIEW_PORT='4174'). The default remains 4173. A different port has separate browser-local favorites and recents. Existing server processes must be restarted to load TypeScript changes; alternatively use the new port.
+
+## Picture cards and sample occupancy filter
+
+Every Discover card uses the existing illustrated bar placeholder on the left and venue details on the right. Each image says Sample image; these are not actual venue photos. Replace the card image source with an approved venue photo when one is available.
+
+Open the compact Filter control at the top right beside Around this area, then choose All occupancy levels, Under 50% full, 50% to under 80% full, or 80% full or more. The filter compares occupancy divided by capacity using the existing fictional venue data; it does not request live data. The result count is announced to screen readers without a visible count label, and All restores the full list. Selecting a range closes the menu and returns focus to Filter; a selected range highlights the control. JavaScript is required for filtering; without it all cards remain accessible and the select is disabled. Run the focused filter tests with node --test docs/design/mobile-brand-kit/occupancy-filter.test.ts.

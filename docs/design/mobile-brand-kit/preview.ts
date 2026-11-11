@@ -22,6 +22,7 @@ const files = new Map([
   ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
   ['/discovery-client.js', ['../../../.generated/discovery-preview/discovery-client.js', 'text/javascript; charset=utf-8']],
   ['/venue-data.js', ['../../../.generated/discovery-preview/venue-data.js', 'text/javascript; charset=utf-8']],
+  ['/occupancy-filter.js', ['../../../.generated/discovery-preview/occupancy-filter.js', 'text/javascript; charset=utf-8']],
   ['/spots-state.js', ['../../../.generated/discovery-preview/spots-state.js', 'text/javascript; charset=utf-8']],
   ['/GUIDELINES.md', ['GUIDELINES.md', 'text/plain; charset=utf-8']],
   ['/assets/encore-mark.svg', ['assets/encore-mark.svg', 'image/svg+xml']],
@@ -53,6 +54,7 @@ server.on('error', (error: Error) => {
   console.error(`Design preview could not start: ${error.message}`);
   process.exitCode = 1;
 });
-server.listen(4173, '127.0.0.1', () => {
-  console.log('Encore design review: http://127.0.0.1:4173 (Ctrl+C to stop)');
+const port = Number(process.env.ENCORE_PREVIEW_PORT ?? 4173);
+server.listen(port, '127.0.0.1', () => {
+  console.log('Encore design review: http://127.0.0.1:' + port + ' (Ctrl+C to stop)');
 });

@@ -115,10 +115,23 @@ test('Discover has no location-state test controls and keeps a non-live sample a
   assert.doesNotMatch(css, /location-picker|area-state|denied-state|manual-state|location-denied|location-manual|manual-results/);
   assert.ok(page.includes('Sample area: East Quarter'));
   assert.ok(page.includes('Sample distances from this area, not your device.'));
-  assert.ok(page.includes('No live location or accounts.'));
+  assert.ok(page.includes('Sample occupancy'));
   assert.ok(page.includes('Denied or unavailable permission returns to manual area search'));
   assert.ok(page.includes('<details class="header-search">'));
   assert.equal((page.match(/<article class="venue-card /g) ?? []).length, 3);
   assert.equal((page.match(/<fieldset\b/g) ?? []).length, (page.match(/<\/fieldset>/g) ?? []).length);
   assert.doesNotMatch(page + client, /navigator\.geolocation|getCurrentPosition|watchPosition/);
 });
+for (const venue of venues) {
+  test(`${venue.name} keeps all discovery destinations reachable without JavaScript`, () => {
+    const page = renderVenueProfile(`/venues/${venue.slug}`);
+    assert.ok(page);
+    const navigation = page.match(/<nav class="bottom-navigation"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+    assert.ok(navigation);
+    for (const hash of ['discover', 'my-spots', 'profile', 'settings']) {
+      assert.ok(navigation.includes(`href="/discover.html#${hash}"`));
+    }
+    assert.equal((navigation.match(/aria-current=/g) ?? []).length, 1);
+    assert.ok(navigation.includes('href="/discover.html#discover" aria-current="location"'));
+  });
+}

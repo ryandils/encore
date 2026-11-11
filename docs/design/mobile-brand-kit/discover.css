@@ -1,5 +1,6 @@
-.discovery { background:#09090c; }
-.discovery-shell { max-width:480px; margin:auto; background:#000; min-height:100dvh; }
+.discovery { background:#09090c; --navigation-space:calc(104px + env(safe-area-inset-bottom,0px)); }
+html:has(.discovery) { scroll-padding-bottom:var(--navigation-space,calc(104px + env(safe-area-inset-bottom,0px))); }
+.discovery-shell { max-width:480px; margin:auto; background:#000; min-height:100dvh; padding-bottom:var(--navigation-space); }
 .discovery-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:24px 20px 16px; }
 .discovery-header a { min-height:48px; display:flex; align-items:center; }
 .concept-badge { font-size:11px; letter-spacing:1px; color:#c0c0c0; text-align:right; }
@@ -47,11 +48,11 @@
 .profile-panel,.settings-panel { display:none; }
 .view-picker:has(#profile-view:checked) .feed-panel,.view-picker:has(#settings-view:checked) .feed-panel { display:none; }
 .view-picker:has(#profile-view:checked) .profile-panel,.view-picker:has(#settings-view:checked) .settings-panel { display:block; }
-.bottom-navigation { position:sticky; bottom:0; z-index:2; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid #777; background:#0d0d12; padding:8px 12px max(12px,env(safe-area-inset-bottom)); gap:8px; }
-.bottom-navigation label { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-height:64px; color:#c0c0c0; border:1px solid transparent; border-radius:10px; font-size:13px; cursor:pointer; padding:8px 4px; text-align:center; overflow-wrap:anywhere; }
+.bottom-navigation { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; z-index:10; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid #777; background:#0d0d12; padding:8px 12px max(12px,env(safe-area-inset-bottom)); gap:8px; }
+.bottom-navigation label,.bottom-navigation a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-height:64px; color:#c0c0c0; border:1px solid transparent; border-radius:10px; font-size:13px; cursor:pointer; padding:8px 4px; text-align:center; overflow-wrap:anywhere; }
 .bottom-navigation svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.7; }
 #feed-view:checked~.bottom-navigation label[for="feed-view"],#profile-view:checked~.bottom-navigation label[for="profile-view"],#settings-view:checked~.bottom-navigation label[for="settings-view"] { color:white; background:#0000ff; border-color:#a0a0ff; }
-.view-input:focus-visible~.bottom-navigation label { outline:none; }
+.view-input:focus-visible~.bottom-navigation label,.bottom-navigation a { outline:none; }
 #feed-view:focus-visible~.bottom-navigation label[for="feed-view"],#profile-view:focus-visible~.bottom-navigation label[for="profile-view"],#settings-view:focus-visible~.bottom-navigation label[for="settings-view"] { outline:3px solid #00a1ff; outline-offset:2px; }
 .discovery input[readonly]:focus-visible { outline:3px solid #00a1ff; outline-offset:3px; }
 .concept-footer { display:flex; flex-direction:column; padding:20px; gap:8px; }
@@ -99,7 +100,7 @@
 @media(max-width:360px) { .discovery-header { gap:8px; padding-inline:16px; }.discovery-header .concept-badge { max-width:86px; font-size:10px; }.header-search-panel { padding:16px; } }
 /* Four distinct phone-sized tabs; My Spots never requires an account. */
 .bottom-navigation { grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; padding-inline:8px; }
-.bottom-navigation label { min-height:64px; font-size:12px; padding-inline:2px; }
+.bottom-navigation label,.bottom-navigation a { min-height:64px; font-size:12px; padding-inline:2px; }
 .spots-panel { display:none; min-height:65dvh; }
 .view-picker:has(#spots-view:checked) .feed-panel { display:none; }
 .view-picker:has(#spots-view:checked) .spots-panel { display:block; }
@@ -123,3 +124,32 @@
 .spots-empty p { color:#c0c0c0; font-size:14px; }
 .spots-empty .return-action { margin-top:18px; }
 .saved-spot-link:focus-visible { outline:3px solid #00a1ff; outline-offset:-4px; border-radius:10px; }
+
+.bottom-navigation a[aria-current] { color:white; background:#0000ff; border-color:#a0a0ff; }
+.bottom-navigation a:focus-visible { outline:3px solid #00a1ff; outline-offset:2px; }
+
+/* Picture left, venue details right at every phone width. */
+.photo-card .venue-profile-link { display:grid; grid-template-columns:34% minmax(0,1fr); }
+.card-picture { position:relative; min-width:0; background:#15151c; }
+.card-picture .venue-card-image { height:100%; min-height:180px; aspect-ratio:auto; object-fit:cover; }
+.card-picture>span { position:absolute; inset:auto 6px 8px; background:#09090ce8; border-radius:5px; padding:4px; color:#fff; font-size:10px; text-align:center; }
+.photo-card .venue-info { padding:14px 12px; }
+.photo-card h3 { font-size:20px; overflow-wrap:anywhere; }
+.photo-card .profile-cta { min-height:44px; margin-top:10px; font-size:12px; }
+.venue-card[hidden],[data-filter-empty][hidden] { display:none; }
+.occupancy-filter { margin:0 0 18px; border:1px solid #5381e6; border-radius:12px; background:#101423; }
+.occupancy-filter summary { min-height:48px; padding:14px 16px; cursor:pointer; font-weight:650; }
+.occupancy-filter-options { padding:0 16px 12px; }
+.occupancy-filter label { display:block; font-size:13px; margin-bottom:10px; }
+.occupancy-filter select { width:100%; min-width:0; min-height:48px; padding:10px; border:1px solid #777; border-radius:8px; background:#09090c; color:#fff; font:inherit; font-size:14px; }
+.occupancy-filter select:focus-visible,.occupancy-filter summary:focus-visible { outline:3px solid #00a1ff; outline-offset:2px; }
+.occupancy-filter .fine { margin:12px 0 0; }
+/* Compact filter occupies the former result-count position. */
+.discovery-list-heading { position:relative; flex-wrap:nowrap; gap:8px; }
+.discovery-list-heading h2 { min-width:0; font-size:20px; }
+.discovery-list-heading .occupancy-filter { flex:0 0 auto; margin:0; border:0; background:transparent; }
+.discovery-list-heading .occupancy-filter summary { display:flex; align-items:center; gap:6px; min-height:44px; padding:8px 10px; border:1px solid #777; border-radius:10px; font-size:12px; list-style:none; }
+.occupancy-filter summary::-webkit-details-marker { display:none; }
+.occupancy-filter summary svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+.occupancy-filter[open] summary,.occupancy-filter.has-occupancy-filter summary { border-color:#a0a0ff; background:#0000ff; }
+.discovery-list-heading .occupancy-filter-options { position:absolute; right:0; top:calc(100% + 8px); z-index:6; width:min(280px,100%); padding:16px; border:1px solid #777; border-radius:12px; background:#101423; box-shadow:0 12px 30px #000a; }
