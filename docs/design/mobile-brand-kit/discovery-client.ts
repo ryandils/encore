@@ -1,3 +1,4 @@
+import { matchesOccupancy } from './occupancy-filter.ts';
 import { venues } from './venue-data.ts';
 import { SPOTS_STORAGE_KEY, parseSpots, readSpots, saveSpots, toggleFavorite, recordVisit, tabIdForHash } from './spots-state.ts';
 import type { SpotsState } from './spots-state.ts';
@@ -127,3 +128,37 @@ window.addEventListener('hashchange', selectHashTab);
 selectHashTab();
 if (currentSlug) persist(recordVisit(state, currentSlug));
 else render();
+
+const occupancyFilter = document.querySelector<HTMLSelectElement>('#occupancy-filter');
+function filterVenues(): void {
+  if (!occupancyFilter) return;
+  let visible = 0;
+  for (const venue of venues) {
+    const card = document.getElementById(`spot-${venue.slug}`);
+    if (!card) continue;
+    card.hidden = !matchesOccupancy(venue.occupancy, venue.capacity, occupancyFilter.value);
+    if (!card.hidden) visible += 1;
+  }
+  const count = document.querySelector('[data-filter-count]');
+  if (count) count.textContent = `${visible} OF ${venues.length} SAMPLE SPOTS`;
+  const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
+  if (empty) empty.hidden = visible > 0;
+  const disclosure = occupancyFilter.closest('details');
+  disclosure?.classList.toggle('has-occupancy-filter', occupancyFilter.value !== 'all');
+  disclosure?.querySelector('summary')?.setAttribute('aria-label', `Filter by occupancy: ${occupancyFilter.selectedOptions[0]?.textContent ?? 'All occupancy levels'}`);
+}
+if (occupancyFilter) {
+  occupancyFilter.disabled = false;
+  occupancyFilter.addEventListener('change', () => {
+    filterVenues();
+    const disclosure = occupancyFilter.closest('details');
+    if (disclosure) {
+      const summary = disclosure.querySelector('summary');
+
+      disclosure.open = false;
+      summary?.focus();
+    }
+  });
+  window.addEventListener('pageshow', filterVenues);
+  filterVenues();
+}
