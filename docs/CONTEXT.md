@@ -26,6 +26,8 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - Local session-authenticated ledger HTTP routes expose the internal kernel for scoped reads, event commands and closing. They are unavailable in production and do not connect the fixture screens.
 
+- Local authenticated venue/night setup, preset changes and staff invitation/assignment APIs persist through PostgreSQL. Invites require a verified intended account, store token hashes and support pending cancellation; no invitation email or acceptance page is provided.
+
 ## Not implemented
 
 No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.

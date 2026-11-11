@@ -39,6 +39,7 @@ export interface OwnerSummary {
 }
 export interface EventResult { readonly eventId: string; readonly requestId: string; readonly state: DoorState }
 export interface CloseResult { readonly requestId: string; readonly summary: OwnerSummary }
+export interface InviteRevocationView { readonly id: string; readonly revokedAt: string }
 export interface InviteResult { readonly id: string; readonly expiresAt: string; readonly inviteUrl: string }
 export interface AssignmentView { readonly nightId: string; readonly userId: string; readonly startsAt: string; readonly endsAt: string; readonly revokedAt: string | null }
 export type ApiErrorCode = 'UNAUTHENTICATED' | 'FORBIDDEN' | 'VALIDATION' | 'NOT_FOUND' | 'REQUEST_CONFLICT'
@@ -51,6 +52,7 @@ export interface LedgerApi {
   openNight(venueId: string, input: OpenNightCommand): Promise<ApiResult<OwnerSummary>>;
   updatePresets(venueId: string, input: PresetsCommand): Promise<ApiResult<readonly CoverPreset[]>>;
   createInvite(nightId: string, input: CreateInviteCommand): Promise<ApiResult<InviteResult>>;
+  revokeInvite(nightId: string, inviteId: string): Promise<ApiResult<InviteRevocationView>>;
   acceptInvite(input: AcceptInviteCommand): Promise<ApiResult<AssignmentView>>;
   revokeAssignment(nightId: string, userId: string): Promise<ApiResult<AssignmentView>>;
   recordEvent(nightId: string, input: EventCommand): Promise<ApiResult<EventResult>>;

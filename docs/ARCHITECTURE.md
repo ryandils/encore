@@ -91,12 +91,13 @@ Retries must return the original result for an identical request ID and payload;
 
 ## API shape
 
-B1 exports TypeScript contracts and synthetic fixtures shared by B2/B3. The routes below are contract definitions, not registered HTTP endpoints. B4 must run field validation and authoritative calculations on the server.
+B1 exports TypeScript contracts and synthetic fixtures shared by B2/B3. The routes below define the shared API. Local-only HTTP handlers implement ledger operations plus venue/night configuration and invitations; export delivery remains outstanding. Every handler validates fields and enforces server authorization; production is denied.
 
 - POST /api/venues: create venue and owner membership atomically.
 - POST /api/venues/:venueId/nights: open night; prevent multiple open nights per venue.
 - PATCH /api/venues/:venueId/presets: owner-only price edits.
 - POST /api/nights/:nightId/invites: create staff invite; return secret link once.
+- DELETE /api/nights/:nightId/invites/:inviteId: cancel a pending invitation; accepted access uses assignment revocation.
 - POST /api/invites/accept: consume a token after account authentication/verification.
 - DELETE /api/nights/:nightId/assignments/:userId: owner revokes access.
 - POST /api/nights/:nightId/events: admission, exit, or reversal command with requestId.
@@ -171,4 +172,12 @@ The service takes an internal authenticated context; it does not validate a brow
 
 The B4 local integration exposes `GET /api/nights/[nightId]/door-state`, `GET /api/nights/[nightId]/summary`, `POST /api/nights/[nightId]/events` and `POST /api/nights/[nightId]/close`. Better Auth validates the session on the server; the authenticated user ID is supplied to the PostgreSQL kernel, which independently checks venue membership/assignment. Client actors, roles, venue IDs and totals are rejected by command parsers. Responses use the shared `ApiResult` shape and `Cache-Control: no-store`; unavailable backend/authentication returns a generic `UNAVAILABLE` error without internal diagnostics.
 
-Writes require the configured local origin and bounded JSON bodies. A bounded per-process account throttle protects this local slice; it is not a distributed production rate limiter. Every route returns 404 before authentication/database work in production. No production auth, setup/invitations, live screen adapter, protected export or two-device pilot acceptance is provided by these routes. The HTTP integration verifier uses separate real synthetic session cookies and local PostgreSQL, not physical devices.
+Writes require the configured local origin and bounded JSON bodies. A bounded per-process account throttle protects this local slice; it is not a distributed production rate limiter. Every route returns 404 before authentication/database work in production. Setup/access operations share this boundary as described below. No production auth, live screen adapter, protected export or two-device pilot acceptance is provided by these routes. The HTTP integration verifier uses separate real synthetic session cookies and local PostgreSQL, not physical devices.
+
+## Local venue and staff access services
+
+`VenueAccessService` creates venue/owner/presets atomically, opens one active night per venue, and serializes preset changes with the active night. Opening serializes on the venue with `FOR NO KEY UPDATE`, authorizes the owner and rejects an existing open night. Preset updates take that venue lock, then the active night, then membership/presets. Night access operations lock night first and never take the venue lock afterward. This is compatible with the ledger kernel; preset edits advance active-night version without changing stored admission charges.
+
+The owner receives a random 32-byte invitation token once in a fragment-only URL, keeping it out of request paths/referrers; only its SHA-256 hash is stored. Tokens expire after one hour. Acceptance locks and rechecks the token and database account, requires the intended normalized email and `emailVerified=true`, never downgrades an owner, and atomically consumes the token plus grants a 12-hour staff assignment. The fragment link is an API artifact; no acceptance page, delivery provider or verification bypass is added. Seeded demo accounts remain subject to their actual verification state.
+
+Pending invitation cancellation is owner-only and idempotently preserves its first revocation timestamp. A consumed invitation cannot be canceled as a substitute for revoking staff access. Assignment revocation marks the assignment and cancels outstanding invites for that recipient/night under the same night lock, preventing an older link from silently regranting access. Closed nights reject new night-scoped access mutations. No outbound messages are sent.
