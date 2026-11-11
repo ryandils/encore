@@ -40,3 +40,16 @@ Swapped the secondary action document order: Exit (−), No refund on the left; 
 Main feed/Profile/Settings and area/denied/manual-search design states passed Chromium checks at 320/390/430/768px, including keyboard radio selection and no horizontal overflow. A 320px computed-text doubling check passed. Preview server still rejects `.env`; no page exceptions were observed. Independent review found no substantive issues. Refreshed evidence: [feed](evidence/discovery-feed.png), [denied](evidence/discovery-denied.png), [manual search](evidence/discovery-search.png), [settings](evidence/discovery-settings.png). These screenshots contain fictional data only.
 
 Doctor, repository check, and standalone preview strict TypeScript 7 check passed. Full typecheck was attempted and again blocked by the existing Prisma checksum host HTTP 403; no checksum bypass was used. Actual device location, filtering/geocoding, accounts, real bar data, and physical-phone usability remain unimplemented/unverified.
+
+## Follow-up: customer profiles and My Spots (November 11, 2026)
+
+The earlier discovery screenshots and browser checks describe the previous three-tab review. The current local prototype has Discover, My Spots, Profile, and Settings, linked fictional venue profiles, tappable Apple Maps destinations, browser-local favorites/recents, and a top-header search disclosure. Location-state review switches have been removed. The existing evidence images have not been regenerated and must not be presented as screenshots of this revision.
+
+On Windows with Node 24.14.1 and pinned pnpm 12.18.0 / TypeScript 7.0.2:
+
+- Focused Node tests cover profile data and links, explicit sample labels, Maps encoding, header control targets, search disclosure, favorite add/remove, normalized stored IDs, reload persistence via a test storage adapter, recent ordering, unavailable storage, all four tabs, empty-hash return to Discover, inset saved-card focus, and removal of location-state toggles.
+- Live loopback HTTP checks cover discovery, all three venue profiles, styles and local modules. Private source and environment routes remain unavailable.
+- Doctor, repository check, full strict typecheck, lint (60 configured files), all 186 existing tests (one skipped), optimized application build, and production HTTP verification pass. Lint's configured scope excludes these design files, so it is not HTML/CSS lint evidence. The focused prototype tests and standalone strict TypeScript checks are run separately, outside the default app test/typecheck scope.
+- Automated browser interaction was unavailable for this local revision. Current mobile layout, actual focus/history/storage behavior, and native Apple Maps handoff are not device-verified. Source and HTTP checks are not a substitute for that acceptance.
+
+All venue data remains fictional and occupancy is not live. No production backend, account, shared history, or geolocation capability is added.
