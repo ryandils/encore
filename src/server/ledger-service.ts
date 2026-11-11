@@ -28,20 +28,26 @@ async function history(db: PoolClient, nightId: string): Promise<DoorEvent[]> {
     validateDoorEvent(event); return event;
   });
 }
-function undoAllowed(event: DoorEvent, events: readonly DoorEvent[], access: Access, actor: string): boolean {
-  if (access.night.status !== 'OPEN' || event.type === 'REVERSAL' || events.some((e) => e.type === 'REVERSAL' && e.targetEventId === event.id)) return false;
+interface UndoContext { reversedIds: ReadonlySet<string>; latestActionId: string | undefined }
+function undoContext(events: readonly DoorEvent[], actor: string, reversedIds: ReadonlySet<string>): UndoContext {
+  // History is in server sequence order; timestamps do not determine the latest action.
+  const latest = events.findLast((event) => event.actorId === actor && event.type !== 'REVERSAL' && !reversedIds.has(event.id));
+  return { reversedIds, latestActionId: latest?.id };
+}
+function undoAllowed(event: DoorEvent, undo: UndoContext, access: Access, actor: string): boolean {
+  if (access.night.status !== 'OPEN' || event.type === 'REVERSAL' || undo.reversedIds.has(event.id)) return false;
   if (access.role === 'OWNER') return true;
-  const latest = events.filter((e) => e.actorId === actor && e.type !== 'REVERSAL' && !events.some((r) => r.type === 'REVERSAL' && r.targetEventId === e.id)).at(-1);
   const age = access.now.getTime() - Date.parse(event.recordedAt);
-  return event.actorId === actor && latest?.id === event.id && age >= 0 && age <= 60_000;
+  return event.actorId === actor && undo.latestActionId === event.id && age >= 0 && age <= 60_000;
 }
 async function state(db: PoolClient, access: Access, actor: string, events: readonly DoorEvent[]): Promise<DoorState> {
   const projection = projectLedger(input(access.night), events);
+  const undo = undoContext(events, actor, new Set(projection.reversedEventIds));
   const { rows: presets } = await db.query('SELECT slot,label,"amountCents" FROM cover_preset WHERE "venueId"=$1 ORDER BY slot', [access.night.venueId]);
   return { night: view(access.night), occupancy: projection.occupancy, atOrAboveCapacity: projection.atOrAboveCapacity, presets,
     recentActions: events.filter((e) => access.role === 'OWNER' || e.actorId === actor).slice(-20).reverse().map((e) => ({
       id: e.id, type: e.type, sequence: e.sequence, recordedAt: e.recordedAt, amountCents: e.amountCents,
-      reversed: projection.reversedEventIds.includes(e.id), canUndo: undoAllowed(e, events, access, actor),
+      reversed: undo.reversedIds.has(e.id), canUndo: undoAllowed(e, undo, access, actor),
     })), syncedAt: access.now.toISOString() };
 }
 async function ownerSummary(db: PoolClient, access: Access, events: readonly DoorEvent[]): Promise<OwnerSummary> {
@@ -108,7 +114,9 @@ export class PostgresLedgerService implements TransactionalLedgerCommands {
       }
       if (command.type === 'REVERSAL') {
         const target = events.find((e) => e.id === command.targetEventId);
-        if (!target || !undoAllowed(target, events, access, context.authenticatedUserId)) fail('FORBIDDEN', 'This action cannot be corrected.');
+        const reversedIds = new Set(events.filter((e) => e.type === 'REVERSAL').map((e) => e.targetEventId));
+        const undo = undoContext(events, context.authenticatedUserId, reversedIds);
+        if (!target || !undoAllowed(target, undo, access, context.authenticatedUserId)) fail('FORBIDDEN', 'This action cannot be corrected.');
       }
       const event = { id: randomUUID(), venueId: access.night.venueId, nightId: context.nightId, actorId: context.authenticatedUserId,
         requestId: command.requestId, sequence: (events.at(-1)?.sequence ?? 0) + 1, recordedAt: access.now.toISOString(),
