@@ -20,6 +20,8 @@ Integrated `pnpm run test`: 451/451 passed across 20 files, including 11 new lif
 
 Independent reviewer authored no changes, reviewed the combined code/tests/docs and reran all 11 lifecycle cases successfully; no unresolved findings. Review prompted an explicit required adapter and an unverified-reset regression. `pnpm run context:check --base origin/main` passed with the handoff staged.
 
+CI follow-up: run 42964769864 reached full typechecking and found a missing required provisioning-source argument in the synthetic `createUser` fixture. The fixture now supplies `{ method: 'email-password' }`; no runtime authentication behavior changed. A replacement CI run must validate the corrected head.
+
 ## Context impact
 
 README documents the database-free test command. ARCHITECTURE explains the unwired factory, one-time consumption, fail-closed recovery and adapter limitations. CONTEXT records the isolated capability without claiming production verification or delivery. No schema, migration, dependency or application-route changes.

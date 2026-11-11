@@ -27,7 +27,7 @@ async function fixture() {
   const auth = createLocalAuthLifecycle(memoryAdapter(store), async (message) => { mail.push(message); });
   const context = await auth.$context;
   async function user(email = 'owner@encore-lifecycle.invalid') {
-    const created = await context.internalAdapter.createUser({ name: 'Synthetic lifecycle account', email, emailVerified: false });
+    const created = await context.internalAdapter.createUser({ name: 'Synthetic lifecycle account', email, emailVerified: false }, { method: 'email-password' });
     await context.internalAdapter.createAccount({ userId: created.id, accountId: created.id, providerId: 'credential', password: await context.password.hash(password) });
     return created;
   }
