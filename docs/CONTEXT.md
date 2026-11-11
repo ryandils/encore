@@ -34,9 +34,11 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - A local persisted owner workspace at `/local/owner` adds venue/night setup and selection, preset/access management, authoritative summaries, cash closeout, closed history and protected audit downloads. Per-tab original close commands survive refresh and gate subsequent writes until resolved. `/invites/accept` scrubs fragment tokens immediately and requires explicit acceptance by a verified intended account. Production remains disabled; automated synthetic browser evidence does not prove real verification or physical-device acceptance.
 
+- An unwired local Better Auth lifecycle factory supports isolated synthetic email capture, verified sign-in, one-hour verification/reset tokens, verification replay denial and reset session revocation. Application routes remain session-only. See [architecture](ARCHITECTURE.md); memory-adapter tests are not production delivery or PostgreSQL concurrency evidence.
+
 ## Not implemented
 
-No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and password recovery still need application hooks, exposed routes/UI and lifecycle tests, as well as a chosen HTTPS domain and configured email provider/sender. The current local auth allowlist exposes only sign-in, sign-out and session reads. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
+No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and password recovery still need application integration, exposed routes/UI and PostgreSQL adapter evidence, as well as a chosen HTTPS domain and configured email provider/sender. Isolated memory-adapter lifecycle tests exist as described above. The current local auth allowlist exposes only sign-in, sign-out and session reads. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
 
 ## Durable decisions
 
