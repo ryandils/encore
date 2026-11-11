@@ -109,7 +109,7 @@ async function verify(): Promise<void> {
     check(ready, 'Optimized landing page did not become available within 30 seconds.');
 
     step = 'production demo and authentication denial';
-    const paths = ['/demo/sign-in', '/demo/owner', '/demo/staff', '/demo/door', '/api/demo/session', '/api/auth/get-session', '/nights/00000000-0000-4000-8000-000000000001/door', '/api/nights/00000000-0000-4000-8000-000000000001/door-state', '/api/nights/00000000-0000-4000-8000-000000000001/summary'];
+    const paths = ['/demo/sign-in', '/demo/owner', '/demo/staff', '/demo/door', '/api/demo/session', '/api/auth/get-session', '/nights/00000000-0000-4000-8000-000000000001/door', '/api/venues', '/api/venues/00000000-0000-4000-8000-000000000001', '/api/venues/00000000-0000-4000-8000-000000000001/nights', '/api/nights/00000000-0000-4000-8000-000000000001/access', '/api/nights/00000000-0000-4000-8000-000000000001/export', '/api/nights/00000000-0000-4000-8000-000000000001/door-state', '/api/nights/00000000-0000-4000-8000-000000000001/summary'];
     for (const path of paths) {
       const response = await request(path);
       await response.text();

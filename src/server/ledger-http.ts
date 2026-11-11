@@ -4,11 +4,14 @@ import { assertNonemptyString, assertUuid, DomainValidationError } from '../doma
 import { LedgerAccessError } from './ledger-service.ts';
 import type { PostgresLedgerService } from './ledger-service.ts';
 import type { VenueAccessService } from './venue-access-service.ts';
+import type { OwnerReadService } from './owner-read-service.ts';
 
 export type LedgerHttpOperation = 'events' | 'door-state' | 'summary' | 'close'
-  | 'create-venue' | 'open-night' | 'presets' | 'create-invite' | 'accept-invite' | 'revoke-assignment' | 'revoke-invite';
+  | 'create-venue' | 'open-night' | 'presets' | 'create-invite' | 'accept-invite' | 'revoke-assignment' | 'revoke-invite' | 'venues' | 'venue-config' | 'nights' | 'night-access' | 'export';
 export type VenueAccessHttpService = Pick<VenueAccessService, 'createVenue' | 'openNight' | 'updatePresets' | 'createInvite' | 'acceptInvite' | 'revokeAssignment' | 'revokeInvite'>;
+export type OwnerReadHttpService = Pick<OwnerReadService, 'listVenues' | 'venueConfiguration' | 'listNights' | 'nightAccess'>;
 const METHODS: Record<LedgerHttpOperation, string> = {
+  venues: 'GET', 'venue-config': 'GET', nights: 'GET', 'night-access': 'GET', export: 'GET',
   events: 'POST', 'door-state': 'GET', summary: 'GET', close: 'POST',
   'create-venue': 'POST', 'open-night': 'POST', presets: 'PATCH', 'create-invite': 'POST', 'accept-invite': 'POST', 'revoke-assignment': 'DELETE', 'revoke-invite': 'DELETE',
 };
@@ -16,8 +19,9 @@ export interface LedgerHttpDependencies {
   available(): boolean;
   origin(): string;
   session(headers: Headers): Promise<{ user: { id: string } } | null>;
-  service(): Pick<PostgresLedgerService, 'record' | 'close' | 'doorState' | 'summary'>;
+  service(): Pick<PostgresLedgerService, 'record' | 'close' | 'doorState' | 'summary'> & Partial<Pick<PostgresLedgerService, 'exportNight'>>;
   access?(): VenueAccessHttpService;
+  owners?(): OwnerReadHttpService;
   now?: () => number;
 }
 const MAX_BODY_BYTES = 16_384;
@@ -98,7 +102,7 @@ export function createLedgerHttpHandler(dependencies: LedgerHttpDependencies) {
       const session = await dependencies.session(request.headers);
       if (!session) return problem('UNAUTHENTICATED', 'Sign in to the local application.');
       if (!allowed(session.user.id)) return problem('RATE_LIMITED', 'Too many requests. Wait a minute and retry.');
-      if (operation !== 'create-venue' && operation !== 'accept-invite') assertUuid(scopeId, 'scopeId');
+      if (operation !== 'create-venue' && operation !== 'accept-invite' && operation !== 'venues') assertUuid(scopeId, 'scopeId');
       const context = { authenticatedUserId: session.user.id, nightId: scopeId };
       switch (operation) {
         case 'events': {
@@ -111,6 +115,27 @@ export function createLedgerHttpHandler(dependencies: LedgerHttpDependencies) {
         }
         case 'door-state': return json({ ok: true, data: await dependencies.service().doorState(context) });
         case 'summary': return json({ ok: true, data: await dependencies.service().summary(context) });
+        case 'export': {
+          const service = dependencies.service();
+          if (!service.exportNight) throw new Error('Export is unavailable.');
+          const exported = await service.exportNight(context);
+          return new Response(exported.csv, { headers: {
+            'Content-Type': 'text/csv; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
+            // UUID scope was validated above; do not reflect arbitrary names in attachment headers.
+            'Content-Disposition': `attachment; filename="synthetic-encore-${scopeId}.csv"`,
+          } });
+        }
+      }
+      if (operation === 'venues' || operation === 'venue-config' || operation === 'nights' || operation === 'night-access') {
+        const owners = dependencies.owners?.();
+        if (!owners) throw new Error('Owner reads are unavailable.');
+        const actor = session.user.id;
+        switch (operation) {
+          case 'venues': return json({ ok: true, data: await owners.listVenues(actor) });
+          case 'venue-config': return json({ ok: true, data: await owners.venueConfiguration(actor, scopeId) });
+          case 'nights': return json({ ok: true, data: await owners.listNights(actor, scopeId) });
+          case 'night-access': return json({ ok: true, data: await owners.nightAccess(actor, scopeId) });
+        }
       }
       const access = dependencies.access?.();
       if (!access) throw new Error('Venue access service is unavailable.');

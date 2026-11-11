@@ -91,7 +91,7 @@ Retries must return the original result for an identical request ID and payload;
 
 ## API shape
 
-B1 exports TypeScript contracts and synthetic fixtures shared by B2/B3. The routes below define the shared API. Local-only HTTP handlers implement ledger operations plus venue/night configuration and invitations; export delivery remains outstanding. Every handler validates fields and enforces server authorization; production is denied.
+B1 exports TypeScript contracts and synthetic fixtures shared by B2/B3. The routes below define the shared API. Local-only HTTP handlers implement ledger operations plus venue/night configuration and invitations, owner discovery and protected local audit downloads. Every handler validates fields and enforces server authorization; production is denied.
 
 - POST /api/venues: create venue and owner membership atomically.
 - POST /api/venues/:venueId/nights: open night; prevent multiple open nights per venue.
@@ -158,7 +158,7 @@ This UI is a rehearsal for B3, not a server API implementation. Refresh discards
 
 ## Shared CSV formatting boundary
 
-`src/domain/csv-export.ts` provides a pure CSV formatter over a scoped owner summary and ledger history. It quotes fields, escapes embedded quotes, and neutralizes formula-like text while preserving integer-cent numeric values. The existing synthetic owner export reuses it with the synthetic flag and filename preserved. Formatting is not authorization: future HTTP exports must derive the owner from a verified session and load only that owner's venue/night records. No protected export endpoint, production data access, or pilot acceptance is introduced by this extraction.
+`src/domain/csv-export.ts` provides a pure CSV formatter over a scoped owner summary and ledger history. It quotes fields, escapes embedded quotes, and neutralizes formula-like text while preserving integer-cent numeric values. The existing synthetic owner export reuses it with the synthetic flag and filename preserved. Formatting is not authorization: the separate local export boundary derives the owner from a verified session and loads only that owner's venue/night records. The formatter alone grants no data access or pilot acceptance.
 
 ## B4 transactional kernel boundary
 
@@ -181,6 +181,16 @@ Writes require the configured local origin and bounded JSON bodies. A bounded pe
 The owner receives a random 32-byte invitation token once in a fragment-only URL, keeping it out of request paths/referrers; only its SHA-256 hash is stored. Tokens expire after one hour. Acceptance locks and rechecks the token and database account, requires the intended normalized email and `emailVerified=true`, never downgrades an owner, and atomically consumes the token plus grants a 12-hour staff assignment. The fragment link is an API artifact; no acceptance page, delivery provider or verification bypass is added. Seeded demo accounts remain subject to their actual verification state.
 
 Pending invitation cancellation is owner-only and idempotently preserves its first revocation timestamp. A consumed invitation cannot be canceled as a substitute for revoking staff access. Assignment revocation marks the assignment and cancels outstanding invites for that recipient/night under the same night lock, preventing an older link from silently regranting access. Closed nights reject new night-scoped access mutations. No outbound messages are sent.
+
+## Owner discovery and audit export boundary
+
+Owner metadata is exposed by `GET /api/venues` (only venues where the caller is OWNER), `GET /api/venues/[venueId]` (saved configuration/presets), `GET /api/venues/[venueId]/nights` (active and closed server history), and `GET /api/nights/[nightId]/access` (invite lifecycle and assignment metadata). Authorization is server-derived; invitation secret/hash/URL and receipt JSON fields are never projected into access lists. This supports recovering generated IDs after an uncertain create/open response without automatically repeating non-idempotent commands.
+
+`GET /api/nights/[nightId]/export` returns an actual `text/csv; charset=utf-8` attachment; errors retain the shared JSON envelope. It shares the kernel night lock with event/close commands, checks OWNER before loading finance/history, and snapshots stored events, night metadata and reconciliation together. Attachment filenames use only the validated night UUID with a synthetic prefix; responses are no-store and nosniff. The client-level `LedgerApi.exportNight` result can wrap that CSV body/filename.
+
+The pure formatter keeps its default 16 columns for B3 compatibility. Audit mode adds venue ID, original request ID, reversal target/reason and five opening-context columns (starting occupancy, opening float, timezone, capacity, currency), with a night snapshot row. All original events remain in sequence, including reversals; reconciliation carries its stored close request ID. Formula-like text is neutralized without changing numeric negative variance. Local downloads remain marked synthetic. This is not a full database backup/restore or a production export/deletion policy.
+
+Metadata reads avoid acquiring a night lock after a membership lock. Access reads and exports use night-before-membership ordering; listing authorization and returned venue rows share one SQL statement snapshot. No production authentication or live owner UI is introduced.
 
 ## Local persisted door client
 

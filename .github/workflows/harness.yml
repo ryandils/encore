@@ -52,11 +52,13 @@ jobs:
       - run: pnpm run ledger:verify
       - run: pnpm run ledger:service:verify
       - run: pnpm run venue:access:verify
+      - run: pnpm run owner:read:verify
       - run: pnpm run auth:init
       - run: pnpm run auth:seed
       - run: pnpm run auth:verify
       - run: pnpm run ledger:http:verify
       - run: pnpm run venue:http:verify
+      - run: pnpm run owner:http:verify
       - run: pnpm run db:reset --confirm-local-reset
       - run: pnpm run db:seed
       - run: pnpm run auth:seed

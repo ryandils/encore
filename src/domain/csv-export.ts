@@ -1,7 +1,7 @@
 import type { OwnerSummary } from './contracts.ts';
 import { projectLedger } from './ledger.ts';
 import type { DoorEvent } from './types.ts';
-import { assertNonemptyString, assertNonnegativeInt, assertUtcTimestamp, DomainValidationError, INT32_MAX } from './validation.ts';
+import { assertNonemptyString, assertNonnegativeInt, assertUtcTimestamp, assertUuid, DomainValidationError, INT32_MAX } from './validation.ts';
 
 type CsvSummary = Pick<OwnerSummary, 'night' | 'openingFloatCents' | 'reconciliation'>;
 function formulaPrefix(text: string): boolean {
@@ -19,10 +19,12 @@ function cell(value: string | number): string {
 }
 
 /** Formatting only: callers authorize access and supply a coherent, server-owned snapshot.
- * Preserves the fixture CSV's 16-column format; not a complete audit export (no reversal target/reason).
+ * Defaults to the fixture's 16 columns. Audit mode adds a night snapshot row plus
+ * original request/correction references and five baseline fields (25 columns).
  */
-export function formatNightCsv(summary: CsvSummary, events: readonly DoorEvent[], options: { readonly synthetic: boolean }): string {
+export function formatNightCsv(summary: CsvSummary, events: readonly DoorEvent[], options: { readonly synthetic: boolean; readonly audit?: boolean; readonly reconciliationRequestId?: string }): string {
   const { night, reconciliation } = summary;
+  if (options.reconciliationRequestId !== undefined) assertUuid(options.reconciliationRequestId, 'reconciliationRequestId');
   assertNonemptyString(night.label, 'night label');
   projectLedger({ nightId: night.id, venueId: night.venueId, startingOccupancy: night.startingOccupancy,
     openingFloatCents: summary.openingFloatCents, capacity: night.capacity, timezone: night.timezone, currency: night.currency }, events);
@@ -41,6 +43,16 @@ export function formatNightCsv(summary: CsvSummary, events: readonly DoorEvent[]
   if (reconciliation) {
     const r = reconciliation;
     rows.push([synthetic, 'reconciliation', night.id, night.label, '', '', '', '', r.closedBy, r.closedAt, r.countedCashCents, r.expectedCoverCents, r.floatCents, r.expectedDrawerCents, r.varianceCents, r.notes]);
+  }
+  if (options.audit) {
+    rows[0].push('venueId', 'requestId', 'targetEventId', 'reason', 'startingOccupancy', 'openingFloatCents', 'timezone', 'capacity', 'currency');
+    for (let index = 0; index < events.length; index++) {
+      const event = events[index];
+      rows[index + 1].push(event.venueId, event.requestId, event.type === 'REVERSAL' ? event.targetEventId : '', event.type === 'REVERSAL' ? event.reason : '', '', '', '', '', '');
+    }
+    if (reconciliation) rows.at(-1)?.push(night.venueId, options.reconciliationRequestId ?? '', '', '', '', '', '', '', '');
+    rows.splice(1, 0, [synthetic, 'night', night.id, night.label, night.id, '', night.status, '', '', night.openedAt, '', '', '', '', '', '',
+      night.venueId, '', '', '', night.startingOccupancy, summary.openingFloatCents, night.timezone, night.capacity, night.currency]);
   }
   return `${rows.map((row) => row.map(cell).join(',')).join('\r\n')}\r\n`;
 }

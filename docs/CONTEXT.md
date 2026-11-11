@@ -28,6 +28,8 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - Local authenticated venue/night setup, preset changes and staff invitation/assignment APIs persist through PostgreSQL. Invites require a verified intended account, store token hashes and support pending cancellation; no invitation email or acceptance page is provided.
 
+- Local owner discovery/configuration/night-history/access reads and protected synthetic audit CSV downloads persist through PostgreSQL. Access lists omit invite secrets; exported snapshots include original request/correction linkage and opening/closing context. No persisted owner UI or production export policy is claimed.
+
 - A separate `/nights/[nightId]/door` local persisted rehearsal uses authenticated ledger APIs, validates acknowledgements and gates refresh recovery of unresolved request IDs through per-tab storage. The fixture demo remains separate; production and physical-device acceptance are not provided.
 
 ## Not implemented

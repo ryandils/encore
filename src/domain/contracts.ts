@@ -42,12 +42,24 @@ export interface CloseResult { readonly requestId: string; readonly summary: Own
 export interface InviteRevocationView { readonly id: string; readonly revokedAt: string }
 export interface InviteResult { readonly id: string; readonly expiresAt: string; readonly inviteUrl: string }
 export interface AssignmentView { readonly nightId: string; readonly userId: string; readonly startsAt: string; readonly endsAt: string; readonly revokedAt: string | null }
+export interface OwnerVenueConfiguration { readonly venue: VenueView; readonly presets: readonly CoverPreset[] }
+export interface InviteAccessView {
+  readonly id: string; readonly intendedEmail: string; readonly expiresAt: string;
+  readonly consumedAt: string | null; readonly revokedAt: string | null;
+}
+export interface AssignmentAccessView extends AssignmentView { readonly email: string }
+export interface OwnerNightAccess { readonly invites: readonly InviteAccessView[]; readonly assignments: readonly AssignmentAccessView[] }
+export interface NightCsvExport { readonly contentType: 'text/csv'; readonly filename: string; readonly csv: string }
 export type ApiErrorCode = 'UNAUTHENTICATED' | 'FORBIDDEN' | 'VALIDATION' | 'NOT_FOUND' | 'REQUEST_CONFLICT'
   | 'UNAVAILABLE' | 'NIGHT_CLOSED' | 'NIGHT_ALREADY_OPEN' | 'STALE_PRESET' | 'INVALID_HISTORY' | 'OVERFLOW' | 'INVITE_INVALID' | 'RATE_LIMITED';
 export type ApiResult<T> = { readonly ok: true; readonly data: T } | { readonly ok: false; readonly error: { readonly code: ApiErrorCode; readonly message: string } };
 
 /** All documented operations, including the owner-only operations B3 will consume. */
 export interface LedgerApi {
+  listVenues(): Promise<ApiResult<readonly VenueView[]>>;
+  venueConfiguration(venueId: string): Promise<ApiResult<OwnerVenueConfiguration>>;
+  listNights(venueId: string): Promise<ApiResult<readonly NightView[]>>;
+  nightAccess(nightId: string): Promise<ApiResult<OwnerNightAccess>>;
   createVenue(input: CreateVenueCommand): Promise<ApiResult<VenueView>>;
   openNight(venueId: string, input: OpenNightCommand): Promise<ApiResult<OwnerSummary>>;
   updatePresets(venueId: string, input: PresetsCommand): Promise<ApiResult<readonly CoverPreset[]>>;
@@ -59,7 +71,7 @@ export interface LedgerApi {
   doorState(nightId: string): Promise<ApiResult<DoorState>>;
   summary(nightId: string): Promise<ApiResult<OwnerSummary>>;
   closeNight(nightId: string, input: CloseCommand): Promise<ApiResult<CloseResult>>;
-  exportNight(nightId: string): Promise<ApiResult<{ readonly contentType: 'text/csv'; readonly filename: string; readonly csv: string }>>;
+  exportNight(nightId: string): Promise<ApiResult<NightCsvExport>>;
 }
 
 function invalid(message: string): never { throw new DomainValidationError(message, 'VALIDATION'); }
