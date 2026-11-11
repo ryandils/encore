@@ -27,3 +27,7 @@ Quoting a CSV cell preserves commas and newlines but does not stop a spreadsheet
 ## Next step
 
 Review this focused package and pending kernel PR #33. This preserves the existing 16-column fixture export; a full audit export including reversal target/reason is still a future endpoint requirement. Remaining #11 work includes authenticated endpoints, setup/invitations, live adapters, protected export delivery, production auth/recovery and real two-device evidence. #12 remains blocked and needs a willing venue plus observed pilot results.
+
+## Kernel merge integration
+
+Merged origin/main at kernel commit `9cf262e` into this branch after the user-approved #33 merge. Resolved only ARCHITECTURE and CONTEXT conflicts, preserving both kernel and CSV descriptions. CSV source/tests and kernel source/tests remain unchanged. Integrated doctor/check, strict TypeScript, lint (65 files), all 217 unit tests, build, production HTTP check, context gate and whitespace checks passed. Independent merge review confirmed CSV files match `020c0f1` and kernel files match `9cf262e`, with both documentation sections preserved. New hosted CI is pending. This integrates a prerequisite into the branch; it does not merge #35 into main.

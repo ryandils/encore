@@ -50,6 +50,7 @@ jobs:
       - run: pnpm run db:up
       - run: pnpm run db:verify
       - run: pnpm run ledger:verify
+      - run: pnpm run ledger:service:verify
       - run: pnpm run auth:init
       - run: pnpm run auth:seed
       - run: pnpm run auth:verify

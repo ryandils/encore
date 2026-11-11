@@ -158,3 +158,11 @@ This UI is a rehearsal for B3, not a server API implementation. Refresh discards
 ## Shared CSV formatting boundary
 
 `src/domain/csv-export.ts` provides a pure CSV formatter over a scoped owner summary and ledger history. It quotes fields, escapes embedded quotes, and neutralizes formula-like text while preserving integer-cent numeric values. The existing synthetic owner export reuses it with the synthetic flag and filename preserved. Formatting is not authorization: future HTTP exports must derive the owner from a verified session and load only that owner's venue/night records. No protected export endpoint, production data access, or pilot acceptance is introduced by this extraction.
+
+## B4 transactional kernel boundary
+
+`PostgresLedgerService` implements internal `record`/`close` commands plus `doorState` and owner-only `summary` using the existing `pg` dependency and domain tables. Each operation locks the night row, checks venue membership and an active staff assignment, then evaluates server time after permission locks. Membership/assignment locks protect the authorization decision through commit. All future assignment and preset mutation services must use a compatible lock order: night first, then permission/preset rows.
+
+Events, version changes and canonical request/response receipts commit together. Closing takes the same night lock and stores an immutable reconciliation/receipt. Identical authorized retries return the original snapshot before closed-night rejection; changed payload or actor conflicts. Event receipts scope recent actions to the actor even for owners, so demotion cannot disclose other actors through an old receipt. Full owner history remains available through owner-authorized reads. Paid commands read the stored preset, while historical charges remain on events.
+
+The service takes an internal authenticated context; it does not validate a browser session or register HTTP routes. It adds no production auth, invitations, live adapters, export endpoint or two-device acceptance. Future routes must derive identity from verified sessions and add transport-level protections. The integration verifier uses guarded disposable local PostgreSQL and synthetic records, not venue data.

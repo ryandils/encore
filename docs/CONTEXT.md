@@ -22,9 +22,11 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - Shared pure CSV formatting is reused by the synthetic owner rehearsal; spreadsheet-safe formatting is separate from the still-unimplemented protected export endpoint.
 
+- First B4 server kernel: internal PostgreSQL event/close transactions, membership/assignment checks, durable retry receipts, scoped door reads and owner summaries. It has no HTTP routes or live UI integration; see the B4 boundary in [architecture](ARCHITECTURE.md).
+
 ## Not implemented
 
-No live ledger endpoints, production owner dashboard, venue/night authorization, or production authentication exists yet. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
+No live ledger endpoints, production owner dashboard, route-level venue/night authorization, or production authentication exists yet. Internal kernel authorization does not expose an operational service. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
 
 ## Durable decisions
 
