@@ -36,7 +36,7 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 ## Not implemented
 
-No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and recovery require future provider configuration. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
+No production ledger endpoints, production owner dashboard, or production authentication exists yet. Local HTTP routes enforce venue/night authorization but do not establish an operational service. Real-user email verification and password recovery still need application hooks, exposed routes/UI and lifecycle tests, as well as a chosen HTTPS domain and configured email provider/sender. The current local auth allowlist exposes only sign-in, sign-out and session reads. Both fixtures record simulated actions only; neither can record live admissions or cash. Harness, scaffold, local database, and authentication checks are not pilot readiness.
 
 ## Durable decisions
 
