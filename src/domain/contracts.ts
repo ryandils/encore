@@ -42,7 +42,7 @@ export interface CloseResult { readonly requestId: string; readonly summary: Own
 export interface InviteResult { readonly id: string; readonly expiresAt: string; readonly inviteUrl: string }
 export interface AssignmentView { readonly nightId: string; readonly userId: string; readonly startsAt: string; readonly endsAt: string; readonly revokedAt: string | null }
 export type ApiErrorCode = 'UNAUTHENTICATED' | 'FORBIDDEN' | 'VALIDATION' | 'NOT_FOUND' | 'REQUEST_CONFLICT'
-  | 'NIGHT_CLOSED' | 'NIGHT_ALREADY_OPEN' | 'STALE_PRESET' | 'INVALID_HISTORY' | 'OVERFLOW' | 'INVITE_INVALID' | 'RATE_LIMITED';
+  | 'UNAVAILABLE' | 'NIGHT_CLOSED' | 'NIGHT_ALREADY_OPEN' | 'STALE_PRESET' | 'INVALID_HISTORY' | 'OVERFLOW' | 'INVITE_INVALID' | 'RATE_LIMITED';
 export type ApiResult<T> = { readonly ok: true; readonly data: T } | { readonly ok: false; readonly error: { readonly code: ApiErrorCode; readonly message: string } };
 
 /** All documented operations, including the owner-only operations B3 will consume. */

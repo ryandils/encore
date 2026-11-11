@@ -54,6 +54,7 @@ jobs:
       - run: pnpm run auth:init
       - run: pnpm run auth:seed
       - run: pnpm run auth:verify
+      - run: pnpm run ledger:http:verify
       - run: pnpm run db:reset --confirm-local-reset
       - run: pnpm run db:seed
       - run: pnpm run auth:seed

@@ -18,6 +18,7 @@ Here, "harness" means the shared instructions, task briefs, executable checks, a
 | `pnpm run db:verify` | With the local Compose database running, checks repeatable migration/seeding and persistence across a PostgreSQL restart |
 | `pnpm run ledger:verify` | With local PostgreSQL running and migrations applied, verifies domain SQL constraints using synthetic records inside a rolled-back transaction; no live endpoint or permission enforcement is tested |
 | `pnpm run ledger:service:verify` | With migrated local PostgreSQL, exercises internal B4 transactions, permissions, retries, concurrent writes and close races using temporary synthetic records; no HTTP or device convergence |
+| `pnpm run ledger:http:verify` | With migrated/seeded local database and auth setup, exercises actual ledger HTTP routes with separate synthetic session cookies; no production or physical-device claim |
 | `pnpm run auth:init` / `pnpm run auth:seed` | Generate ignored local authentication settings, then create repeatable synthetic credential accounts without printing passwords |
 | `pnpm run auth:verify` | With local database/auth setup complete, starts a dedicated development server for HTTP/session regression checks |
 | `pnpm run browser:verify` | With local database/auth setup and Chromium available, starts a dedicated development server and drives real owner/staff forms, refresh/sign-out, protected redirects, and narrow-phone layout/focus checks |
