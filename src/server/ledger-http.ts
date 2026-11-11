@@ -1,15 +1,23 @@
 import type { ApiErrorCode, ApiResult } from '../domain/contracts.ts';
-import { parseCloseCommand, parseEventCommand } from '../domain/contracts.ts';
-import { assertUuid, DomainValidationError } from '../domain/validation.ts';
+import { parseAcceptInviteCommand, parseCloseCommand, parseCreateInviteCommand, parseCreateVenueCommand, parseEventCommand, parseOpenNightCommand, parsePresetsCommand } from '../domain/contracts.ts';
+import { assertNonemptyString, assertUuid, DomainValidationError } from '../domain/validation.ts';
 import { LedgerAccessError } from './ledger-service.ts';
 import type { PostgresLedgerService } from './ledger-service.ts';
+import type { VenueAccessService } from './venue-access-service.ts';
 
-export type LedgerHttpOperation = 'events' | 'door-state' | 'summary' | 'close';
+export type LedgerHttpOperation = 'events' | 'door-state' | 'summary' | 'close'
+  | 'create-venue' | 'open-night' | 'presets' | 'create-invite' | 'accept-invite' | 'revoke-assignment' | 'revoke-invite';
+export type VenueAccessHttpService = Pick<VenueAccessService, 'createVenue' | 'openNight' | 'updatePresets' | 'createInvite' | 'acceptInvite' | 'revokeAssignment' | 'revokeInvite'>;
+const METHODS: Record<LedgerHttpOperation, string> = {
+  events: 'POST', 'door-state': 'GET', summary: 'GET', close: 'POST',
+  'create-venue': 'POST', 'open-night': 'POST', presets: 'PATCH', 'create-invite': 'POST', 'accept-invite': 'POST', 'revoke-assignment': 'DELETE', 'revoke-invite': 'DELETE',
+};
 export interface LedgerHttpDependencies {
   available(): boolean;
   origin(): string;
   session(headers: Headers): Promise<{ user: { id: string } } | null>;
   service(): Pick<PostgresLedgerService, 'record' | 'close' | 'doorState' | 'summary'>;
+  access?(): VenueAccessHttpService;
   now?: () => number;
 }
 const MAX_BODY_BYTES = 16_384;
@@ -74,34 +82,52 @@ export function createLedgerHttpHandler(dependencies: LedgerHttpDependencies) {
     if (buckets.size >= MAX_ACTIVE_USERS) return false;
     buckets.set(userId, { startedAt: now, count: 1 }); return true;
   }
-  return async function handle(operation: LedgerHttpOperation, request: Request, nightId: string): Promise<Response> {
+  return async function handle(operation: LedgerHttpOperation, request: Request, scopeId = '', targetId?: string): Promise<Response> {
     // Production must reject before reading auth settings, sessions or opening a database pool.
     if (!dependencies.available()) return problem('NOT_FOUND', 'Not found.');
     try {
-      const write = operation === 'events' || operation === 'close';
-      if (request.method !== (write ? 'POST' : 'GET')) {
+      const method = METHODS[operation];
+      const write = method !== 'GET';
+      if (request.method !== method) {
         const response = problem('VALIDATION', 'Method not allowed.', 405);
-        response.headers.set('Allow', write ? 'POST' : 'GET');
+        response.headers.set('Allow', method);
         return response;
       }
-      if (write && (request.headers.get('origin') !== dependencies.origin() || request.headers.get('sec-fetch-site') === 'cross-site')) return problem('FORBIDDEN', 'A same-origin request is required.');
+      const origin = write ? dependencies.origin() : '';
+      if (write && (request.headers.get('origin') !== origin || request.headers.get('sec-fetch-site') === 'cross-site')) return problem('FORBIDDEN', 'A same-origin request is required.');
       const session = await dependencies.session(request.headers);
       if (!session) return problem('UNAUTHENTICATED', 'Sign in to the local application.');
       if (!allowed(session.user.id)) return problem('RATE_LIMITED', 'Too many requests. Wait a minute and retry.');
-      assertUuid(nightId, 'nightId');
-      const context = { authenticatedUserId: session.user.id, nightId };
-      if (operation === 'events') {
-        const command = parseEventCommand(await commandBody(request));
-        return json({ ok: true, data: await dependencies.service().record(context, command) });
+      if (operation !== 'create-venue' && operation !== 'accept-invite') assertUuid(scopeId, 'scopeId');
+      const context = { authenticatedUserId: session.user.id, nightId: scopeId };
+      switch (operation) {
+        case 'events': {
+          const command = parseEventCommand(await commandBody(request));
+          return json({ ok: true, data: await dependencies.service().record(context, command) });
+        }
+        case 'close': {
+          const command = parseCloseCommand(await commandBody(request));
+          return json({ ok: true, data: await dependencies.service().close(context, command) });
+        }
+        case 'door-state': return json({ ok: true, data: await dependencies.service().doorState(context) });
+        case 'summary': return json({ ok: true, data: await dependencies.service().summary(context) });
       }
-      if (operation === 'close') {
-        const command = parseCloseCommand(await commandBody(request));
-        return json({ ok: true, data: await dependencies.service().close(context, command) });
+      const access = dependencies.access?.();
+      if (!access) throw new Error('Venue access service is unavailable.');
+      const actor = session.user.id;
+      switch (operation) {
+        case 'create-venue': return json({ ok: true, data: await access.createVenue(actor, parseCreateVenueCommand(await commandBody(request))) });
+        case 'open-night': return json({ ok: true, data: await access.openNight(actor, scopeId, parseOpenNightCommand(await commandBody(request))) });
+        case 'presets': return json({ ok: true, data: await access.updatePresets(actor, scopeId, parsePresetsCommand(await commandBody(request))) });
+        case 'create-invite': return json({ ok: true, data: await access.createInvite(actor, scopeId, parseCreateInviteCommand(await commandBody(request)), origin) });
+        case 'accept-invite': return json({ ok: true, data: await access.acceptInvite(actor, parseAcceptInviteCommand(await commandBody(request))) });
+        case 'revoke-assignment':
+          assertNonemptyString(targetId, 'targetUserId');
+          return json({ ok: true, data: await access.revokeAssignment(actor, scopeId, targetId) });
+        case 'revoke-invite':
+          assertUuid(targetId, 'inviteId');
+          return json({ ok: true, data: await access.revokeInvite(actor, scopeId, targetId) });
       }
-      const service = dependencies.service();
-      return operation === 'door-state'
-        ? json({ ok: true, data: await service.doorState(context) })
-        : json({ ok: true, data: await service.summary(context) });
     } catch (error) {
       if (error instanceof BodyError) return problem('VALIDATION', error.message, error.status);
       if (error instanceof DomainValidationError || error instanceof LedgerAccessError) return problem(error.code, error.message);

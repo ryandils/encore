@@ -115,7 +115,7 @@ async function verify(): Promise<void> {
       await response.text();
       check(response.status === 404, `${path} did not reject production access with HTTP 404 (received ${response.status}).`);
     }
-    for (const path of ['/api/auth/sign-in/email', '/api/auth/sign-out', '/api/auth/sign-up/email', '/api/nights/00000000-0000-4000-8000-000000000001/events', '/api/nights/00000000-0000-4000-8000-000000000001/close']) {
+    for (const path of ['/api/auth/sign-in/email', '/api/auth/sign-out', '/api/auth/sign-up/email', '/api/nights/00000000-0000-4000-8000-000000000001/events', '/api/nights/00000000-0000-4000-8000-000000000001/close', '/api/venues', '/api/venues/00000000-0000-4000-8000-000000000001/nights', '/api/nights/00000000-0000-4000-8000-000000000001/invites', '/api/invites/accept']) {
       const response = await request(path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: origin },
@@ -123,6 +123,15 @@ async function verify(): Promise<void> {
       });
       await response.text();
       check(response.status === 404, `${path} did not reject production access with HTTP 404 (received ${response.status}).`);
+    }
+    for (const [method, path] of [
+      ['PATCH', '/api/venues/00000000-0000-4000-8000-000000000001/presets'],
+      ['DELETE', '/api/nights/00000000-0000-4000-8000-000000000001/assignments/synthetic-staff'],
+      ['DELETE', '/api/nights/00000000-0000-4000-8000-000000000001/invites/00000000-0000-4000-8000-000000000002'],
+    ]) {
+      const response = await request(path, { method, headers: { Origin: origin, 'Content-Type': 'application/json' }, ...(method === 'PATCH' ? { body: '{}' } : {}) });
+      await response.text();
+      check(response.status === 404, `${path} did not reject production access with HTTP 404.`);
     }
   } catch (error) {
     throw new VerificationFailure(error instanceof VerificationFailure ? `${step}: ${error.message}` : `${step}: verification failed; raw diagnostics withheld to protect local settings.`);
