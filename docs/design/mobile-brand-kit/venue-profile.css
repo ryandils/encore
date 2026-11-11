@@ -1,0 +1,45 @@
+.venue-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 20px; }
+.venue-header .wordmark { display:flex; align-items:center; min-height:48px; }
+.back-link { display:inline-flex; align-items:center; gap:10px; min-height:48px; font-size:15px; font-weight:650; }
+.back-link span { font-size:24px; color:#00a1ff; }
+.venue-profile main { padding:0 20px 32px; }
+.venue-hero { position:relative; margin:0 -20px 28px; }
+.venue-hero img { display:block; width:100%; height:auto; aspect-ratio:3/2; object-fit:cover; }
+.venue-hero figcaption { position:absolute; bottom:14px; left:16px; background:#09090ce8; border:1px solid #777; border-radius:20px; color:#fff; padding:7px 12px; font-size:11px; }
+.venue-heading { padding-bottom:6px; }
+.venue-profile h1 { font-size:clamp(34px,10vw,46px); line-height:1.06; margin:0 0 16px; letter-spacing:-1.6px; }
+.venue-heading .eyebrow { font-size:10px; margin-bottom:12px; }
+.venue-heading>p:last-child { color:#c0c0c0; font-size:16px; }
+.section-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+.section-heading h2 { font-size:21px; }
+.sample-tag { font-size:10px; font-weight:700; letter-spacing:1px; color:#c0c0c0; border:1px solid #666; border-radius:5px; padding:5px 7px; }
+.occupancy-card { border:1px solid #5381e6; background:linear-gradient(135deg,#101435,#12121b); border-radius:18px; padding:22px; margin:20px 0 28px; }
+.occupancy-total { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.occupancy-total strong { font-size:64px; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-3px; }
+.occupancy-total span { color:#c0c0c0; font-size:17px; }
+.occupancy-card progress { appearance:none; display:block; width:100%; height:8px; border:0; border-radius:8px; overflow:hidden; background:#393949; accent-color:#00a1ff; }
+.occupancy-card progress::-webkit-progress-bar { background:#393949; border-radius:8px; }
+.occupancy-card progress::-webkit-progress-value { background:#00a1ff; border-radius:8px; }
+.occupancy-card progress::-moz-progress-bar { background:#00a1ff; }
+.occupancy-caption { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin:12px 0 18px; font-size:12px; }
+.occupancy-caption span { color:#c0c0c0; }
+.occupancy-card .fine { margin-bottom:0; }
+.venue-section { border-top:1px solid #38383e; padding:26px 0 10px; }
+.venue-section address { font-style:normal; font-size:19px; line-height:1.5; overflow-wrap:anywhere; margin-bottom:12px; }
+.venue-profile .venue-hours { margin:0 0 16px; }
+.venue-profile .venue-hours>div { padding:13px 0; border-color:#38383e; font-size:15px; align-items:baseline; }
+.venue-hours dt { color:#c0c0c0; }
+.venue-hours dd { margin:0; text-align:right; }
+.venue-profile .return-action { margin-top:16px; min-height:56px; }
+.profile-endnote { color:#c0c0c0; font-size:12px; line-height:1.6; text-align:center; margin:18px 10px 0; }
+@media(max-width:360px) { .venue-profile main { padding-inline:16px; }.venue-hero { margin-inline:-16px; }.occupancy-card { padding:18px; }.occupancy-total strong { font-size:56px; } }
+.address-link { display:flex; flex-direction:column; justify-content:center; gap:10px; min-height:56px; border:1px solid #5381e6; border-radius:12px; padding:16px; color:#fff; background:#101423; }
+.address-link:hover { border-color:#00a1ff; }
+.maps-action { display:flex; align-items:center; justify-content:space-between; gap:12px; color:#74caff; font-size:14px; font-weight:650; }
+.maps-action>span { font-size:20px; }
+.favorite-actions { display:flex; flex-direction:column; gap:8px; margin:18px 0 12px; }
+.favorite-toggle { display:flex; align-items:center; justify-content:center; gap:12px; width:100%; min-height:56px; border:1px solid #5381e6; border-radius:12px; padding:12px; color:#fff; background:#101423; font-size:16px; font-weight:700; cursor:pointer; }
+.favorite-toggle[aria-pressed="true"] { background:#0000ff; border-color:#a0a0ff; }
+.favorite-toggle:disabled { cursor:default; opacity:.65; }
+.favorite-toggle [data-favorite-icon] { font-size:26px; line-height:1; }
+.my-spots-link { display:flex; align-items:center; justify-content:center; min-height:48px; color:#74caff; font-size:14px; }
