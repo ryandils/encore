@@ -81,7 +81,7 @@ This separate integration command uses the same guarded local database URL. It d
 
 The checks cover membership/preset uniqueness, one open night per venue, tenant/night relations, event sequence/request/reversal uniqueness, event shapes and money ranges, original admission prices after preset changes, restricted deletion of referenced audit data, and reconciliation arithmetic. Raw database errors are withheld because they can contain record or credential data.
 
-The domain migration creates empty venue/night/ledger tables; the identity and credential seeds still create only the existing synthetic authentication fixtures. `createLedgerFixtures()` supplies in-memory B2/B3 examples, not database records or access grants. Schema constraints do not implement append-only permissions, locked commands, retry responses, negative-occupancy replay, or live two-device behavior; B4 must enforce those through the server. Pure ledger replay and contract cases run separately with `pnpm run test`.
+The domain migration creates empty venue/night/ledger tables; the identity and credential seeds still create only the existing synthetic authentication fixtures. `createLedgerFixtures()` supplies in-memory B2/B3 examples, not database records or access grants. Schema constraints alone do not implement command authorization. The local server kernel and HTTP services now enforce membership/assignment, transactional retries and occupancy rules; physical two-device and production behavior remain unverified. Pure ledger replay and contract cases run separately with `pnpm run test`.
 
 ## Set up local demo sign-in
 
@@ -108,7 +108,7 @@ Successful login creates a database-backed session and opens the matching protec
 
 Use the exact origin configured in `BETTER_AUTH_URL`; `localhost` and `127.0.0.1` are different browser origins. If port 3000 is occupied, stop the other server or configure a matching explicit HTTP loopback origin and development-server port. Restart the server after changing authentication settings.
 
-All authentication and demo routes reject `NODE_ENV=production`, including an optimized `pnpm run start` server. Use `pnpm run dev` for this local demo. Production authentication, real-user email verification and password recovery, provider configuration, and B4 venue/night authorization remain unimplemented. No email is sent by these commands.
+All authentication and demo routes reject `NODE_ENV=production`, including an optimized `pnpm run start` server. Use `pnpm run dev` for this local demo. Production authentication, real-user email verification and password recovery, provider configuration and production venue/night access remain unimplemented; local API authorization is separately enforced. No email is sent by these commands.
 
 With the local database and demo credentials ready, stop any `pnpm run dev` server in this checkout with Ctrl+C, then run `pnpm run auth:verify` for separate HTTP/PostgreSQL regression checks. It starts its own development server, exercises sessions and rejection cases, and stops that test server afterward. Ordinary `pnpm run test` remains database-free. Native Windows/macOS Docker walkthroughs must be recorded separately from hosted application CI.
 

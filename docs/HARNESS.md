@@ -23,6 +23,7 @@ Here, "harness" means the shared instructions, task briefs, executable checks, a
 | `pnpm run venue:http:verify` | Separate local synthetic cookie sessions exercise setup/access HTTP; no outbound mail or account-verification bypass |
 | `pnpm run owner:read:verify` | Local PostgreSQL owner-scoped metadata/history and coherent audit CSV checks; synthetic fixtures only |
 | `pnpm run owner:http:verify` | Actual local cookie authorization, metadata redaction and audit CSV HTTP attachment checks |
+| `pnpm run door:browser:verify` | With local database/auth and Chromium, exercises separate 320px persisted-door sessions, shared state, reload/unknown retry and revocation; not physical devices |
 | `pnpm run auth:init` / `pnpm run auth:seed` | Generate ignored local authentication settings, then create repeatable synthetic credential accounts without printing passwords |
 | `pnpm run auth:verify` | With local database/auth setup complete, starts a dedicated development server for HTTP/session regression checks |
 | `pnpm run browser:verify` | With local database/auth setup and Chromium available, starts a dedicated development server and drives real owner/staff forms, refresh/sign-out, protected redirects, and narrow-phone layout/focus checks |

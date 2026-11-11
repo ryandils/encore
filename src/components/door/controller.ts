@@ -20,7 +20,7 @@ export class DoorController {
   private writing = false;
   private reading = false;
   private unknownRequests = new Set<string>();
-  constructor(private api: DoorApi, private nightId: string, private clock = Date.now, private requestId = () => crypto.randomUUID()) {
+  constructor(private api: DoorApi, private nightId: string, private clock = Date.now, private requestId = () => crypto.randomUUID(), private savedMessage = 'saved in this demo.') {
     this.snapshot = { state: null, queue: [], phase: 'idle', message: 'Loading door state…', syncError: null, lastSync: null, now: clock() };
   }
   getSnapshot = (): ConsoleSnapshot => this.snapshot;
@@ -80,7 +80,7 @@ export class DoorController {
           if (result.data.requestId !== action.command.requestId) throw new Error('Mismatched acknowledgement');
           this.unknownRequests.delete(action.command.requestId);
           this.accept(result.data.state);
-          this.update({ queue: this.snapshot.queue.slice(1), message: `${action.label} saved in this demo.` });
+          this.update({ queue: this.snapshot.queue.slice(1), message: `${action.label} ${this.savedMessage}` });
         } catch {
           this.unknownRequests.add(action.command.requestId);
           this.update({ phase: 'unknown', message: 'Outcome unknown. This tap may have saved. Retry this same request before adding another person.' });
