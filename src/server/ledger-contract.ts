@@ -1,6 +1,6 @@
 import type { CloseCommand, CloseResult, EventCommand, EventResult } from '../domain/contracts.ts';
 
-/** Internal server contract, never construct from client role/actor fields. B4 supplies the implementation. */
+/** Internal server contract, never construct from client role/actor fields. PostgresLedgerService supplies the first B4 implementation. */
 export interface LedgerCommandContext {
   readonly authenticatedUserId: string;
   readonly nightId: string;
@@ -15,7 +15,7 @@ export interface LedgerCommandContext {
  * Events, receipt, sequence and version commit atomically. Closing uses that same lock
  * and stores reconciliation plus its request/response receipt atomically. Implementations
  * must not expose financial summary data in EventResult, even to owner door clients.
- * No runtime transaction, permission enforcement, or HTTP endpoint exists in B1.
+ * PostgresLedgerService supplies runtime transactions and permissions; HTTP endpoints remain outstanding.
  */
 export interface TransactionalLedgerCommands {
   record(context: LedgerCommandContext, command: EventCommand): Promise<EventResult>;

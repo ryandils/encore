@@ -158,3 +158,7 @@ These checks prevent common configuration mistakes; a loopback address cannot pr
 | Seed/verification detects unexpected data | Preserve the database and inspect the discrepancy before resetting. Seed verification is not permission to delete unrelated records. |
 
 Report the command, operating system, commit, and safe error text. Redact connection strings, passwords, and personal paths. `db:verify` establishes the tested local persistence behavior; it does not validate authentication, permissions, two-device ledger behavior, or readiness for a real venue.
+
+## Internal B4 kernel verification
+
+After `db:up` and `db:migrate`, run `pnpm run ledger:service:verify`. It uses the existing local-only connection guard, creates unique synthetic venue/night/users, exercises real concurrent transactions, then deletes only those records in foreign-key order. It does not reset your database or seed a live venue. A failed connection or process interruption can leave synthetic verification records; use a disposable development database. This checks the internal service, not HTTP sessions, production auth or two-device operation.
