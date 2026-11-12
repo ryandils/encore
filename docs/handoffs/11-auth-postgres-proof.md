@@ -14,7 +14,7 @@ The verifier uses independent clients/auth instances and explicitly enables adap
 
 ## Verification
 
-Frozen install, doctor, repository check and all 465 existing tests passed locally on Node 24.22.1 / pnpm 12.18.0. The 11 memory lifecycle tests passed again after disabling global cleanup. Docker PostgreSQL starts successfully. Full cloud setup/typecheck, build and migration are blocked by HTTP 403 downloading the official Prisma engine checksum from binaries.prisma.sh; checksums were not bypassed. `auth:lifecycle:verify` fails its local prerequisites because the generated Prisma client is unavailable. Final lint/context gate, independent review and hosted CI are pending.
+Frozen install, doctor, repository check, lint and all 465 existing tests passed locally on Node 24.22.1 / pnpm 12.18.0. The 11 memory lifecycle tests passed again after disabling global cleanup. Docker PostgreSQL starts successfully. Full cloud setup/typecheck, build and migration are blocked by HTTP 403 downloading the official Prisma engine checksum from binaries.prisma.sh; checksums were not bypassed. `auth:lifecycle:verify` fails its local prerequisites because the generated Prisma client is unavailable. The staged context gate and whitespace check passed. Independent source review found no remaining blocking findings after correcting failure-injection predicates, unrelated-token cleanup and all-target-session assertions. Actual PostgreSQL execution, strict TypeScript and hosted CI remain pending; source review is not runtime approval.
 
 ## Context impact
 
@@ -26,4 +26,4 @@ One-use tokens need both a single winner under concurrent requests and rollback 
 
 ## Next step
 
-Complete hosted PostgreSQL and full application checks and independent review. Application enrollment/verification/recovery is a separate package only after this proof merges; public signup additionally needs Ryan's owner-enrollment policy. Domain/HTTPS, provider/sender configuration, actual delivery, physical devices and operational acceptance remain gates. #11 stays In progress and #12 stays Blocked. No merge is authorized.
+The implementation branch is pushed; draft PR publication awaits explicit approval, so PR-triggered hosted CI has not run. Complete hosted PostgreSQL and full application checks and final review before readiness. Application enrollment/verification/recovery is a separate package only after this proof merges; public signup additionally needs Ryan's owner-enrollment policy. Domain/HTTPS, provider/sender configuration, actual delivery, physical devices and operational acceptance remain gates. #11 stays In progress and #12 stays Blocked. No merge is authorized.
