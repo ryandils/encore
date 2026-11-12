@@ -1,6 +1,6 @@
 # Quick start: Windows and macOS
 
-For the optional existing-synthetic-account verification/recovery rehearsal after setup, add `ENCORE_AUTH_CAPTURE=1` to ignored `.env` and follow [the local account guide](../README.md#local-account-verification-and-recovery). Secret captures remain in ignored `.local-auth-mail/`; no email provider or public signup is enabled.
+For the optional existing-synthetic-account verification/recovery rehearsal after setup, add `ENCORE_AUTH_CAPTURE=1` to ignored `.env` start with `pnpm run dev --webpack`, and follow [the local account guide](../README.md#local-account-verification-and-recovery). Secret captures remain in ignored `.local-auth-mail/`; no email provider or public signup is enabled.
 
 Goal: Conomos and Ryan can clone the same commit, run the same checks, and submit a small reviewed change. No previous programming experience is required. Budget roughly 30–60 minutes for the first setup, with time for downloads.
 

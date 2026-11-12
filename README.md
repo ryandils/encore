@@ -209,8 +209,10 @@ For the separate actual Prisma/PostgreSQL proof, run `pnpm run auth:lifecycle:ve
 
 ## Local account verification and recovery
 
-After local database/auth setup, add `ENCORE_AUTH_CAPTURE=1` to your ignored `.env`, run `pnpm run dev`, and open `/local/account`. This separate local flow supports **existing synthetic accounts only**. Public signup is disabled pending the owner/staff enrollment policy; there is no real email provider. The original `/demo/sign-in` remains a labeled rehearsal.
+After local database/auth setup, add `ENCORE_AUTH_CAPTURE=1` to your ignored `.env`, run `pnpm run dev --webpack`, and open `/local/account`. This separate local flow supports **existing synthetic accounts only**. Public signup is disabled pending the owner/staff enrollment policy; there is no real email provider. The original `/demo/sign-in` remains a labeled rehearsal.
 
 Request a verification or recovery link using a reserved `.invalid` test email. Eligible messages are written as private JSON files under ignored `.local-auth-mail/`; open the matching file locally and use its `url`. These files contain secrets: never share them or commit them, and remove them after the rehearsal. There is no browser inbox or HTTP capture endpoint. Verification/reset pages remove the fragment token from the address bar and require an explicit action. Refresh loses the token. Verified sign-in opens `/local/owner`; venue and night permissions are checked separately.
+
+Use the webpack command for this account rehearsal, matching the browser harness. Default Turbopack compatibility remains unresolved after hosted runs showed repeated document reloads during account startup.
 
 Run `pnpm run account:browser:verify` after database/auth setup and Chromium installation for the isolated 320px captured-link journey. It creates and removes its own synthetic accounts and captures, without changing existing seed credentials. Production is denied even when capture is enabled. Real delivery, enrollment, HTTPS hosting and physical-device acceptance remain separate gates.
