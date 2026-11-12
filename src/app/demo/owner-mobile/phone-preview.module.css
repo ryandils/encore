@@ -1,0 +1,15 @@
+.preview { min-height:100dvh; padding:24px 12px 40px; display:flex; flex-direction:column; align-items:center; color:#edf2ff; background:radial-gradient(ellipse at top,#172543,#080e19 65%); }
+.preview header { text-align:center; max-width:560px; }
+.preview h1 { font-size:24px; font-weight:700; margin:0 0 8px; }
+.preview p { font-size:14px; color:#b9c6d8; line-height:1.6; }
+.sizes { border:0; padding:0; margin:16px 0 20px; display:flex; gap:8px; }
+.sizes legend { text-align:center; color:#b9c6d8; font-size:12px; margin-bottom:8px; }
+.sizes label { position:relative; }
+.sizes input { position:absolute; opacity:0; width:1px; height:1px; }
+.sizes span { min-height:44px; min-width:72px; display:grid; place-items:center; border:1px solid #657894; border-radius:10px; cursor:pointer; }
+.sizes input:checked+span { background:#0000ff; border-color:#a0a0ff; }
+.sizes input:focus-visible+span { outline:3px solid #00a1ff; outline-offset:3px; }
+.device { max-width:100%; height:780px; border-radius:28px; outline:6px solid #34445f; overflow:hidden; background:#080e19; box-shadow:0 20px 70px #0008; }
+.device iframe { display:block; width:100%; height:100%; border:0; }
+.note { text-align:center; max-width:440px; margin:24px 0 8px; }
+.open { display:inline-flex; align-items:center; min-height:44px; color:#82cfff; font-size:14px; }
