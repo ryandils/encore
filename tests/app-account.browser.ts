@@ -128,12 +128,20 @@ async function verify(): Promise<void> {
     const targetPage = await page(target);
     const post = (value: BrowserContext, path: string, data: Record<string, unknown>) => value.request.post(`${origin}${path}`, { headers: { Origin: origin }, data, timeout: 30000 });
     const submit = async (view: Page, button: string, endpoint: string) => {
+      step = `account form ${endpoint}: wait for button`;
+      await view.getByRole('button', { name: button, exact: true }).waitFor({ state: 'visible' });
+      step = `account form ${endpoint}: submit and await response`;
       const [response] = await Promise.all([view.waitForResponse((response) => new URL(response.url()).pathname === `/api/local-auth/${endpoint}` && response.request().method() === 'POST'), view.getByRole('button', { name: button, exact: true }).click()]);
+      console.log(`CHECKPOINT account browser: ${endpoint} responded ${response.status()}.`);
       return response.status();
     };
     async function signIn(secret: string) {
+      step = 'sign-in: navigation';
       await targetPage.goto(`${origin}/local/account`, { waitUntil: 'domcontentloaded' });
+      console.log('CHECKPOINT account browser: sign-in navigation completed.');
+      step = 'sign-in: fill email';
       await targetPage.getByLabel('Email', { exact: true }).fill(emails[0]);
+      step = 'sign-in: fill password';
       await targetPage.getByLabel('Password', { exact: true }).fill(secret);
       return submit(targetPage, 'Sign in', 'sign-in/email');
     }
@@ -154,13 +162,20 @@ async function verify(): Promise<void> {
       await phoneLayout(targetPage);
     }
 
-    step = 'unverified sessions and demo bypass denial';
+    step = 'unverified sessions: legacy sign-in';
     check((await post(legacy, '/api/auth/sign-in/email', { email: emails[0], password })).status() === 200, 'Legacy synthetic sign-in prerequisite failed.');
+    console.log('CHECKPOINT account browser: legacy sign-in completed.');
+    step = 'unverified sessions: protected venue denial';
     check((await legacy.request.get(`${origin}/api/venues`)).status() === 401, 'Unverified non-demo legacy session bypassed application verification.');
+    console.log('CHECKPOINT account browser: unverified legacy session denied.');
     check(await signIn(password) === 403, 'Unverified application sign-in was allowed.');
+    step = 'unverified sign-in: visible error';
     await targetPage.getByRole('alert').waitFor();
+    console.log('CHECKPOINT account browser: unverified sign-in error visible.');
+    step = 'unverified sign-in: phone layout';
     await phoneLayout(targetPage);
     check(await targetPage.locator('a[href="/demo/sign-in"]').count() > 0, 'Separate labeled demo entry disappeared.');
+    step = 'unverified sign-in: keyboard focus';
     await targetPage.getByLabel('Email', { exact: true }).focus(); await targetPage.keyboard.press('Tab');
     check(await targetPage.getByLabel('Password', { exact: true }).evaluate((element) => element === document.activeElement && getComputedStyle(element).outlineStyle !== 'none'), 'Keyboard focus is not visible.');
 
@@ -233,7 +248,8 @@ async function verify(): Promise<void> {
     check(!pageError && !tokenInUrl, 'Account journey had a page error or exposed a token in a network URL.');
     console.log(`PASS Chromium ${browser.version()}: 320px account verification/resend/expiry/replay, verified sign-in, reset/password replacement/session isolation, demo-session bypass denial, private fragment captures, keyboard focus and scoped cleanup. Synthetic local browser evidence only; no email sent.`);
   } catch (error) {
-    throw new BrowserVerificationFailure(error instanceof BrowserVerificationFailure ? `${step}: ${error.message}` : `${step}: browser verification failed; raw diagnostics withheld to protect credentials.`);
+    const kind = error instanceof Error && error.name === 'TimeoutError' ? 'browser timeout' : 'browser verification failed';
+    throw new BrowserVerificationFailure(error instanceof BrowserVerificationFailure ? `${step}: ${error.message}` : `${step}: ${kind}; pageError=${pageError}; raw diagnostics withheld to protect credentials.`);
   } finally {
     try { for (const context of contexts) await context.close().catch(() => {}); if (browser) await browser.close().catch(() => {}); }
     finally {

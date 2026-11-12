@@ -23,7 +23,7 @@ export function AccountForm({ mode }: { mode: Mode }) {
   const router = useRouter();
   const captured = useRef(false);
   const inFlight = useRef(false);
-  const [ready, setReady] = useState(mode === 'sign-in');
+  const [ready, setReady] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -33,6 +33,7 @@ export function AccountForm({ mode }: { mode: Mode }) {
 
   useEffect(() => {
     if (mode === 'sign-in') {
+      setReady(true);
       let active = true;
       void fetch('/api/local-auth/get-session', { cache: 'no-store', credentials: 'same-origin', redirect: 'error', signal: AbortSignal.timeout(15000) })
         .then(async (response) => { if (response.ok && active) setSignedIn(verifiedSession(await response.json())); })
@@ -121,18 +122,18 @@ export function AccountForm({ mode }: { mode: Mode }) {
       <a href="/local/owner" className="inline-flex min-h-12 items-center py-3 text-amber-200 underline">Open owner workspace</a>
       <button type="button" onClick={() => { void signOut(); }} disabled={busy} className={buttonClass}>Sign out</button>
     </div>}
-    {!finished && <form onSubmit={submit} className="space-y-5" aria-busy={busy}>
+    {!finished && <form method="post" onSubmit={submit} className="space-y-5" aria-busy={busy}>
       {!token && <div>
         <label htmlFor="account-email" className="mb-2 block font-medium">Email</label>
         <input id="account-email" name="email" type="email" required maxLength={254} autoComplete="username" autoCapitalize="none" spellCheck={false} disabled={busy || !ready} className={inputClass} />
       </div>}
       {(mode === 'sign-in' || mode === 'reset' && token) && <div>
         <label htmlFor="account-password" className="mb-2 block font-medium">{mode === 'reset' ? 'New password' : 'Password'}</label>
-        <input id="account-password" name="password" type="password" required minLength={mode === 'reset' ? 8 : undefined} maxLength={128} autoComplete={mode === 'reset' ? 'new-password' : 'current-password'} disabled={busy} className={inputClass} />
+        <input id="account-password" name="password" type="password" required minLength={mode === 'reset' ? 8 : undefined} maxLength={128} autoComplete={mode === 'reset' ? 'new-password' : 'current-password'} disabled={busy || !ready} className={inputClass} />
       </div>}
       {mode === 'reset' && token && <div>
         <label htmlFor="confirm-password" className="mb-2 block font-medium">Confirm password</label>
-        <input id="confirm-password" name="confirm-password" type="password" required minLength={8} maxLength={128} autoComplete="new-password" disabled={busy} className={inputClass} />
+        <input id="confirm-password" name="confirm-password" type="password" required minLength={8} maxLength={128} autoComplete="new-password" disabled={busy || !ready} className={inputClass} />
       </div>}
       {token && <p className="text-sm leading-relaxed text-slate-300">The link was removed from the address bar. Confirm below to use it. Reloading this page loses the link; it is not saved in browser storage.</p>}
       <button type="submit" disabled={busy || !ready} className={buttonClass}>{busy ? 'Please wait…' : mode === 'sign-in' ? 'Sign in' : mode === 'verify' ? token ? 'Verify email' : 'Request verification link' : token ? 'Replace password' : 'Request recovery link'}</button>

@@ -26,4 +26,6 @@ Verifying an email and granting venue access are different checks. A verified se
 
 ## Next step
 
+Initial hosted run passed all three OS harness/build/production jobs and PostgreSQL regressions, but the new browser journey timed out during initial sign-in. A possible pre-hydration submission race is addressed by initially disabled controls and a defensive POST form; a server-rendered regression checks this boundary. Safe browser checkpoints will identify any remaining failure without logging credentials. Full rerun is pending.
+
 Complete independent review and actual hosted/browser evidence. Before public signup, Ryan must decide whether owners are operator/invitation-provisioned or self-registering, and how staff receive their first account. Real delivery, HTTPS hosting, physical-device and operational acceptance remain gates. #11 stays In progress, #12 Blocked; no merge authorized.
