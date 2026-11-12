@@ -183,7 +183,7 @@ async function verify() {
     failPasswordUpdate = true;
     const failedReset = await reset(rollback.token);
     failPasswordUpdate = false;
-    check(failedReset.status >= 400 && injectedFailures === 2, 'Password-write failure was not exercised.');
+    check(failedReset.status >= 400 && Number(injectedFailures) === 2, 'Password-write failure was not exercised.');
     check((await client.account.findFirst({ where: { userId: resetOwner.id, providerId: 'credential' } }))?.password === accountBefore?.password, 'Failed reset changed the persisted password.');
     check(await client.session.count({ where: { userId: resetOwner.id } }) === sessionsBefore, 'Failed reset did not roll back session deletion.');
     check(await client.verification.count({ where: { identifier: `reset-password:${rollback.token}` } }) === 1, 'Failed reset did not restore its token.');
@@ -222,13 +222,13 @@ async function verify() {
     step = 'production denial and seed preservation';
     const priorMode = process.env.NODE_ENV;
     try {
-      process.env.NODE_ENV = 'production';
+      Object.assign(process.env, { NODE_ENV: 'production' });
       let rejected = false;
       try { createLocalAuthLifecycle(prismaAdapter(client, { provider: 'postgresql', transaction: true }), capture); } catch { rejected = true; }
       check(rejected, 'Production lifecycle was enabled.');
     } finally {
-      if (priorMode === undefined) delete process.env.NODE_ENV;
-      else process.env.NODE_ENV = priorMode;
+      if (priorMode === undefined) Reflect.deleteProperty(process.env, 'NODE_ENV');
+      else Object.assign(process.env, { NODE_ENV: priorMode });
     }
     check(await seedSnapshot() === beforeSeed, 'Existing seeded identities, accounts or sessions changed.');
     check(JSON.stringify(await client.verification.findUnique({ where: { id: sentinelId } })) === JSON.stringify(sentinel), 'Lifecycle lookup changed an unrelated expired token.');
