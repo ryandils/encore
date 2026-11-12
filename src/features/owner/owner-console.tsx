@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import type { CloseCommand, CoverPreset, PresetSlot } from '../../domain/contracts';
 import {
@@ -11,6 +11,7 @@ import {
 import type { OwnerFixtureNight, OwnerFixtureState } from './fixture-model';
 import styles from './owner-console.module.css';
 import { OwnerTonight } from './owner-tonight';
+import { nextClosingTime } from './closing-time';
 import { OwnerDoorControls } from './owner-door-controls';
 import phone from './owner-phone.module.css';
 import { createSampleOwnerNight } from './sample-owner-night';
@@ -99,6 +100,23 @@ export default function OwnerConsole() {
   const [confirmation, setConfirmation] = useState<CloseCommand | null>(null);
   const [historyId, setHistoryId] = useState<string | null>(null);
   const [section, setSection] = useState('#tonight');
+  const [closingTime, setClosingTime] = useState('05:00');
+  const [closingAnchor, setClosingAnchor] = useState<number | null>(null);
+  const promptedClosing = useRef<number | null>(null);
+  const closingAt = useMemo(() => closingAnchor !== null && state.venue ? nextClosingTime(closingAnchor, state.venue.timezone, closingTime) : null, [closingAnchor, state.venue, closingTime]);
+  useEffect(() => {
+    if (closingAt === null || state.active?.summary.night.status !== 'OPEN') return;
+    const check = () => {
+      if (Date.now() < closingAt || promptedClosing.current === closingAt) return;
+      promptedClosing.current = closingAt;
+      setMessage('Closing time reached. Count your cash and confirm Finish to close this practice night.');
+      window.location.hash = '#closeout';
+    };
+    check();
+    const timer = window.setInterval(check, 30000);
+    document.addEventListener('visibilitychange', check);
+    return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', check); };
+  }, [closingAt, state.active?.summary.night.status]);
   useEffect(() => {
     const update = () => setSection(['#tonight', '#setup', '#access', '#closeout', '#history', '#summary', '#activity'].includes(window.location.hash) ? window.location.hash : '#tonight');
     update();
@@ -117,6 +135,7 @@ export default function OwnerConsole() {
   function run(change: (current: OwnerFixtureState) => OwnerFixtureState, feedback: string) {
     try {
       const next = change(state);
+      if (next.active?.summary.night.id !== state.active?.summary.night.id) { setClosingAnchor(Date.now()); promptedClosing.current = null; }
       setState(next); setError(''); setMessage(feedback);
       return true;
     } catch (caught) {
@@ -164,8 +183,16 @@ export default function OwnerConsole() {
       }}><OwnerDoorControls state={state} presets={state.presets.filter((preset) => preset.slot <= priceCount)} blocked={confirmation !== null} onRecord={(type, slot) => {
         if (confirmation) return;
         run((current) => recordFixtureEvent(current, type, slot), type === 'EXIT' ? 'One person exited. Door money is unchanged.' : 'One entry recorded at the selected price.');
-      }} /></OwnerTonight></div>
-      <nav className={phone.nav} aria-label="Owner sections">{[['#tonight', 'Tonight'], ['#setup', 'My bar'], ['#access', 'Staff'], ['#closeout', 'Finish'], ['#history', 'Past nights']].map(([href, label]) => <a key={href} href={href} aria-current={(href === section || (section === '#activity' && href === '#tonight') || (section === '#summary' && href === (historyId ? '#history' : '#tonight'))) ? 'location' : undefined}>{label}</a>)}</nav>
+      }} />
+      <div className={styles.card}>
+        <h2>Closing time</h2>
+        <label className={styles.field}><span>Time in {state.venue?.timezone ?? 'the bar time zone'}</span><input type="time" required value={closingTime} onChange={(event) => { if (event.target.validity.valid && event.target.value) setClosingTime(event.target.value); }} /></label>
+        {isOpen && closingAt !== null && state.venue && <p>Next finish prompt: {when(new Date(closingAt).toISOString(), state.venue.timezone)}.</p>}
+        <p className={styles.muted}>Practice reminder only: opens Finish while this page is running, or when you return. Count cash to close. Automatic closing while the app is off is not connected.</p>
+        <p className={styles.muted}>If the clocks skip this time, use the first valid time after the jump. If it repeats, use the next occurrence.</p>
+      </div>
+      </OwnerTonight></div>
+      <nav className={phone.nav} aria-label="Owner sections">{[['#tonight', 'Tonight'], ['#setup', 'My bar'], ['#access', 'Staff'], ['#history', 'Past nights']].map(([href, label]) => <a key={href} href={href} aria-current={(href === section || (['#activity', '#closeout'].includes(section) && href === '#tonight') || (section === '#summary' && href === (historyId ? '#history' : '#tonight'))) ? 'location' : undefined}>{label}</a>)}</nav>
       <div className={styles.feedback} hidden={!message && !error}><p role="status">{message}</p>{error && <p role="alert" className={styles.error}>{error}</p>}</div>
 
       <Section hidden={section !== '#setup'} id="setup" title={state.venue ? state.venue.name : 'Set up your bar'} eyebrow="01 · Prepare">

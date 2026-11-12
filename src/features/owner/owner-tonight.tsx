@@ -17,6 +17,7 @@ export function OwnerTonight({ state, onLoadSample, onReviewCurrentNight, childr
       {projection && capacity > 0 && <progress aria-label={`Sample occupancy ${projection.occupancy} of room capacity ${capacity}`} value={Math.min(projection.occupancy, capacity)} max={capacity} />}
       <p>{projection?.atOrAboveCapacity ? 'At or above room capacity. Check the room.' : 'Based on entries and exits. Check the room if the count looks wrong.'}</p>
     </div>
+    {summary && !closed && <a className={styles.primary} href="#closeout">Finish tonight</a>}
     {children}
     <dl className={styles.metrics}><div><dt>Door money recorded</dt><dd>{projection ? money(projection.expectedCoverCents) : '—'}</dd></div><div><dt>Cash to expect</dt><dd>{projection ? money(projection.expectedDrawerCents) : '—'}</dd></div><div><dt>Came in / left</dt><dd>{projection ? `${projection.entries} / ${projection.exits}` : '—'}</dd></div><div><dt>Most inside at once</dt><dd>{projection?.peakOccupancy ?? '—'}</dd></div></dl>
     <p className={styles.context}>{summary ? `Cash to expect includes ${money(summary.openingFloatCents)} starting cash. Includes the door money recorded tonight.` : 'Your totals appear after you open a night. No sample numbers are presented as your actual activity.'}</p>

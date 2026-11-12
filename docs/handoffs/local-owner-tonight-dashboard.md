@@ -34,3 +34,11 @@ The dashboard and controls share the existing fixture ledger instead of duplicat
 ## Next step
 
 Review the draft PR and complete the phone-width interaction walkthrough when browser control is permitted. Keep the persisted backend work independent. Do not merge without authorization.
+
+## Finish placement and closing-time follow-up
+
+Finish is now a Tonight action, with four bottom tabs and Tonight selected while viewing closeout. The existing counted-cash review/confirmation flow remains intact. Closing time defaults to 05:00 and is configurable in Tonight using the venue IANA time zone. The deadline is the next occurrence after starting/loading the practice night, including overnight date rollover. A skipped DST time resolves to the first valid minute after the forward jump; a repeated time uses the next future occurrence. Changing the time recalculates from the same night anchor.
+
+This prototype opens the closeout screen once when the deadline is reached, checking every 30 seconds and on visibility changes. It never marks the ledger closed or invents counted cash. A sleeping/backgrounded browser may deliver the prompt late; closing or refreshing the page loses the fixture and schedule. Reliable automatic closure requires a persisted server scheduler, idempotent night transitions and a defined policy for uncounted cash, which remain independent backend work. UI and README explicitly describe the limitation.
+
+Doctor/check, strict types, lint, optimized build, production HTTP guards and 464 tests passed (one skipped). New cases cover four-tab markup, the Finish link/default time, overnight and exact-boundary dates, non-DST zones, spring-forward gaps (including midnight), fall-back repeats and invalid input. Actual phone/timer interaction remains unverified under the prior browser-control stop. No backend/schema or shared-contract changes; PR remains draft and unmerged.

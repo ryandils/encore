@@ -22,6 +22,7 @@ describe('owner Tonight dashboard', () => {
     expect(html).toContain('$55.00');
     expect(html).toContain('$155.00');
     expect(html).toContain('Try adding an entry');
+    expect(html).toContain('href="#closeout">Finish tonight</a>');
     expect(html).toContain('View current totals');
     expect(html).toContain('href="#summary"');
     expect(html).not.toContain('Try it with sample numbers');

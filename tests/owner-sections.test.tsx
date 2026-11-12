@@ -28,3 +28,13 @@ it('keeps only bottom navigation and starts Prepare with one visible price', () 
   expect(html).toContain('type="button" aria-label="Add another entry price"');
   expect(html).toContain('1 of 3 entry prices');
 });
+
+it('keeps Finish out of the four bottom tabs and defaults to a truthful 5am practice prompt', () => {
+  const html = renderToStaticMarkup(<OwnerConsole />);
+  const nav = html.match(/<nav[\s\S]*?<\/nav>/)?.[0] ?? '';
+  expect(nav.match(/<a /g)).toHaveLength(4);
+  expect(nav).not.toContain('#closeout');
+  expect(html).toContain('type="time"');
+  expect(html).toContain('value="05:00"');
+  expect(html).toContain('Automatic closing while the app is off is not connected.');
+});
