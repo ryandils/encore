@@ -170,7 +170,7 @@ async function verify(): Promise<void> {
     console.log('CHECKPOINT account browser: unverified legacy session denied.');
     check(await signIn(password) === 403, 'Unverified application sign-in was allowed.');
     step = 'unverified sign-in: visible error';
-    await targetPage.getByRole('alert').waitFor();
+    await targetPage.locator('main').getByRole('alert').waitFor();
     console.log('CHECKPOINT account browser: unverified sign-in error visible.');
     step = 'unverified sign-in: phone layout';
     await phoneLayout(targetPage);
@@ -184,7 +184,7 @@ async function verify(): Promise<void> {
     await pool.query('UPDATE verification SET "expiresAt"=now()-interval \'1 second\' WHERE value=$1', [ids[0]]);
     await openToken(expired);
     check(await submit(targetPage, 'Verify email', 'verify-email') === 400, 'Expired verification was accepted.');
-    await targetPage.getByRole('alert').waitFor();
+    await targetPage.locator('main').getByRole('alert').waitFor();
     const fresh = await requestMail('verification');
     check(fresh.token !== expired.token, 'Resend reused a token.');
     await openToken(fresh);
