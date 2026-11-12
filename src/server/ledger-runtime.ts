@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { getAuth } from './auth.ts';
+import { getProtectedLocalSession } from './local-session.ts';
 import { demoAvailable, getAuthConfig } from './auth-config.ts';
 import { createLedgerHttpHandler } from './ledger-http.ts';
 import { PostgresLedgerService } from './ledger-service.ts';
@@ -23,7 +23,7 @@ function getRuntime(): LedgerRuntime {
 export const handleLedgerRequest = createLedgerHttpHandler({
   available: demoAvailable,
   origin: () => getAuthConfig().baseURL,
-  session: async (headers) => getAuth().api.getSession({ headers }),
+  session: getProtectedLocalSession,
   service: () => getRuntime().service,
   access: () => getRuntime().access,
   owners: () => getRuntime().owners,

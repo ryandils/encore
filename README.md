@@ -201,6 +201,16 @@ Run `pnpm run owner:browser:verify` with local database/auth and Chromium for th
 
 ## Isolated auth token tests
 
+The original session-only demo API remains unchanged; the separate local account flow below uses its own namespace.
+
 Run `pnpm exec vitest run tests/auth-lifecycle.test.ts` for the provider-neutral verification/password-reset package under #11. These isolated local fixtures use actual Better Auth handlers and in-memory captured synthetic messages. No database service, provider credentials or email delivery is needed. The application remains production-disabled and its session-only auth routes are unchanged. See [the lifecycle boundary](docs/ARCHITECTURE.md) for token consumption and remaining configuration limits.
 
 For the separate actual Prisma/PostgreSQL proof, run `pnpm run auth:lifecycle:verify` after `db:init`, `db:up`, `db:generate`, `db:migrate` and `auth:init`. It uses two independent clients, captured synthetic mail and temporary accounts, then removes only its own records. It neither verifies seeded demo users nor sends email. The lifecycle adapter explicitly enables transactions for password reset. See [local verification details](docs/LOCAL_DATABASE.md); a passing memory test does not replace this database check.
+
+## Local account verification and recovery
+
+After local database/auth setup, add `ENCORE_AUTH_CAPTURE=1` to your ignored `.env`, run `pnpm run dev`, and open `/local/account`. This separate local flow supports **existing synthetic accounts only**. Public signup is disabled pending the owner/staff enrollment policy; there is no real email provider. The original `/demo/sign-in` remains a labeled rehearsal.
+
+Request a verification or recovery link using a reserved `.invalid` test email. Eligible messages are written as private JSON files under ignored `.local-auth-mail/`; open the matching file locally and use its `url`. These files contain secrets: never share them or commit them, and remove them after the rehearsal. There is no browser inbox or HTTP capture endpoint. Verification/reset pages remove the fragment token from the address bar and require an explicit action. Refresh loses the token. Verified sign-in opens `/local/owner`; venue and night permissions are checked separately.
+
+Run `pnpm run account:browser:verify` after database/auth setup and Chromium installation for the isolated 320px captured-link journey. It creates and removes its own synthetic accounts and captures, without changing existing seed credentials. Production is denied even when capture is enabled. Real delivery, enrollment, HTTPS hosting and physical-device acceptance remain separate gates.

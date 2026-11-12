@@ -10,18 +10,19 @@ function requireSyntheticEmail(email: string) {
 }
 const verificationKey = (token: string) => `encore-email:${createHash('sha256').update(token).digest('hex')}`;
 
-/** Isolated local lifecycle seam. No route or delivery provider enables this factory. */
-export function createLocalAuthLifecycle(database: NonNullable<BetterAuthOptions['database']>, capture: (email: CapturedAuthEmail) => Promise<void>) {
+/** Local synthetic lifecycle; callers supply storage and private capture, never a mail provider. */
+export function createLocalAuthLifecycle(database: NonNullable<BetterAuthOptions['database']>, capture: (email: CapturedAuthEmail) => Promise<void>, namespace?: { basePath: string; cookiePrefix: string }) {
   // Always consult the real process environment; callers cannot opt into production.
   const config = getAuthConfig();
   if (!database) throw new Error('An isolated lifecycle database adapter is required.');
   const auth = betterAuth({
     appName: 'Encore isolated synthetic auth lifecycle',
     baseURL: config.baseURL,
+    ...(namespace ? { basePath: namespace.basePath } : {}),
     secret: config.secret,
     database,
     trustedOrigins: [config.baseURL],
-    advanced: { disableOriginCheck: false, disableCSRFCheck: false },
+    advanced: { disableOriginCheck: false, disableCSRFCheck: false, ...(namespace ? { cookiePrefix: namespace.cookiePrefix } : {}) },
     emailAndPassword: {
       enabled: true,
       disableSignUp: true,

@@ -56,9 +56,9 @@ export function AcceptInvite() {
     <p className="text-sm font-semibold uppercase tracking-wide text-amber-200">Local database rehearsal</p>
     <h1 className="text-3xl font-semibold">Accept staff invitation</h1>
     <p className="leading-relaxed text-slate-300">Use the account matching the invitation’s intended email. The server requires verified email ownership and an available invitation; opening this page alone does not grant access.</p>
-    <p className="rounded-xl border border-amber-700 bg-amber-950 p-4 leading-relaxed text-amber-100">This local build has no real-user email verification or password recovery configured. Synthetic test evidence is not real email verification. No message is sent from this page.</p>
+    <p className="rounded-xl border border-amber-700 bg-amber-950 p-4 leading-relaxed text-amber-100">Existing synthetic accounts can verify and recover access using locally captured links. No real email is sent, and account registration is unavailable. This rehearsal does not establish real email delivery.</p>
     {!assignment && <>
-      <a href="/demo/sign-in" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center rounded-lg border border-slate-500 px-4 py-3 font-medium focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-amber-300">Sign in in another tab</a>
+      <a href="/local/account" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center rounded-lg border border-slate-500 px-4 py-3 font-medium focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-amber-300">Sign in in another tab</a>
       <p className="text-sm leading-relaxed text-slate-400">Keep this tab open while signing in. The link secret is removed from the address bar and is not saved in browser storage. Reloading or closing this tab loses it; reopen the original invitation if needed.</p>
       <button type="button" onClick={() => { void accept(); }} disabled={!token || busy} aria-busy={busy} className="min-h-12 w-full rounded-lg bg-amber-300 px-4 py-3 font-semibold text-slate-950 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-amber-300 disabled:opacity-50">{busy ? 'Checking invitation…' : unknown ? 'Retry same invitation' : 'Accept invitation'}</button>
     </>}

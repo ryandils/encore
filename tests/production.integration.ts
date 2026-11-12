@@ -74,6 +74,7 @@ async function verify(): Promise<void> {
     env: {
       ...process.env,
       NODE_ENV: 'production',
+      ENCORE_AUTH_CAPTURE: '1',
       DATABASE_URL: 'invalid-production-smoke-database-url',
       BETTER_AUTH_URL: 'invalid-production-smoke-auth-url',
       BETTER_AUTH_SECRET: 'invalid',
@@ -109,13 +110,13 @@ async function verify(): Promise<void> {
     check(ready, 'Optimized landing page did not become available within 30 seconds.');
 
     step = 'production demo and authentication denial';
-    const paths = ['/local/owner', '/invites/accept', '/demo/sign-in', '/demo/owner', '/demo/owner-mobile', '/demo/owner-rehearsal', '/demo/staff', '/demo/door', '/api/demo/session', '/api/auth/get-session', '/nights/00000000-0000-4000-8000-000000000001/door', '/api/venues', '/api/venues/00000000-0000-4000-8000-000000000001', '/api/venues/00000000-0000-4000-8000-000000000001/nights', '/api/nights/00000000-0000-4000-8000-000000000001/access', '/api/nights/00000000-0000-4000-8000-000000000001/export', '/api/nights/00000000-0000-4000-8000-000000000001/door-state', '/api/nights/00000000-0000-4000-8000-000000000001/summary'];
+    const paths = ['/local/account', '/local/account/verify', '/local/account/reset', '/api/local-auth/get-session', '/api/local-auth/sign-up/email', '/local/owner', '/invites/accept', '/demo/sign-in', '/demo/owner', '/demo/owner-mobile', '/demo/owner-rehearsal', '/demo/staff', '/demo/door', '/api/demo/session', '/api/auth/get-session', '/nights/00000000-0000-4000-8000-000000000001/door', '/api/venues', '/api/venues/00000000-0000-4000-8000-000000000001', '/api/venues/00000000-0000-4000-8000-000000000001/nights', '/api/nights/00000000-0000-4000-8000-000000000001/access', '/api/nights/00000000-0000-4000-8000-000000000001/export', '/api/nights/00000000-0000-4000-8000-000000000001/door-state', '/api/nights/00000000-0000-4000-8000-000000000001/summary'];
     for (const path of paths) {
       const response = await request(path);
       await response.text();
       check(response.status === 404, `${path} did not reject production access with HTTP 404 (received ${response.status}).`);
     }
-    for (const path of ['/api/auth/sign-in/email', '/api/auth/sign-out', '/api/auth/sign-up/email', '/api/nights/00000000-0000-4000-8000-000000000001/events', '/api/nights/00000000-0000-4000-8000-000000000001/close', '/api/venues', '/api/venues/00000000-0000-4000-8000-000000000001/nights', '/api/nights/00000000-0000-4000-8000-000000000001/invites', '/api/invites/accept']) {
+    for (const path of ['/api/local-auth/sign-in/email', '/api/local-auth/sign-out', '/api/local-auth/sign-up/email', '/api/local-auth/send-verification-email', '/api/local-auth/verify-email', '/api/local-auth/request-password-reset', '/api/local-auth/reset-password', '/api/auth/sign-in/email', '/api/auth/sign-out', '/api/auth/sign-up/email', '/api/nights/00000000-0000-4000-8000-000000000001/events', '/api/nights/00000000-0000-4000-8000-000000000001/close', '/api/venues', '/api/venues/00000000-0000-4000-8000-000000000001/nights', '/api/nights/00000000-0000-4000-8000-000000000001/invites', '/api/invites/accept']) {
       const response = await request(path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Origin: origin },

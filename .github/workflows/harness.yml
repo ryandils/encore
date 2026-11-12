@@ -99,3 +99,4 @@ jobs:
       - run: pnpm run auth:lifecycle:verify
       - run: pnpm run door:browser:verify
       - run: pnpm run owner:browser:verify
+      - run: pnpm run account:browser:verify
