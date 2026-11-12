@@ -21,7 +21,6 @@ function verifiedSession(value: unknown): boolean {
 
 export function AccountForm({ mode }: { mode: Mode }) {
   const router = useRouter();
-  const captured = useRef(false);
   const inFlight = useRef(false);
   const [ready, setReady] = useState(false);
   const [token, setToken] = useState<string | null>(null);
@@ -40,22 +39,31 @@ export function AccountForm({ mode }: { mode: Mode }) {
         .catch(() => {});
       return () => { active = false; };
     }
-    if (captured.current) return;
-    captured.current = true;
-    const fragment = window.location.hash.slice(1);
-    try {
-      window.history.replaceState(null, '', window.location.pathname);
-      if (fragment) {
-        const parameters = new URLSearchParams(fragment);
-        const value = parameters.get('token');
-        if (parameters.size !== 1 || !value || !/^[A-Za-z0-9._-]{16,4096}$/.test(value)) {
-          setError('This link is missing or malformed. Request a fresh link below.');
-        } else setToken(value);
+    function captureLink() {
+      const fragment = window.location.hash.slice(1);
+      try {
+        window.history.replaceState(null, '', window.location.pathname);
+        if (fragment) {
+          if (inFlight.current) {
+            setError('A request is still pending. Open the new link again after it finishes.');
+            return;
+          }
+          setFinished(false); setNotice(''); setError(''); setToken(null);
+          const parameters = new URLSearchParams(fragment);
+          const value = parameters.get('token');
+          if (parameters.size !== 1 || !value || !/^[A-Za-z0-9._-]{16,4096}$/.test(value)) {
+            setError('This link is missing or malformed. Request a fresh link below.');
+          } else setToken(value);
+        }
+        setReady(true);
+      } catch {
+        setReady(false);
+        setError('This link could not be removed safely from the address bar. Open it in a supported browser.');
       }
-      setReady(true);
-    } catch {
-      setError('This link could not be removed safely from the address bar. Open it in a supported browser.');
     }
+    captureLink();
+    window.addEventListener('hashchange', captureLink);
+    return () => window.removeEventListener('hashchange', captureLink);
   }, [mode]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {

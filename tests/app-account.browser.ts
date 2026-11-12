@@ -157,10 +157,14 @@ async function verify(): Promise<void> {
     }
     async function openToken(message: CapturedAuthEmail) {
       check(new URL(message.url).origin === origin && !new URL(message.url).search, 'Capture link was not local and fragment-only.');
+      step = 'captured link: navigation';
       await targetPage.goto(message.url, { waitUntil: 'domcontentloaded' });
+      step = 'captured link: fragment scrub';
       await targetPage.waitForFunction(() => window.location.hash === '' && !window.location.search);
       check(!await targetPage.evaluate((token) => [localStorage, sessionStorage].some((storage) => Object.values(storage).some((value: unknown) => typeof value === 'string' && value.includes(token))), message.token), 'Token was persisted in browser storage.');
       check(!(await targetPage.locator('body').textContent())?.includes(message.token), 'Token was rendered into the page.');
+      step = 'captured link: explicit confirmation control';
+      await targetPage.getByRole('button', { name: message.kind === 'verification' ? 'Verify email' : 'Replace password', exact: true }).waitFor();
       await phoneLayout(targetPage);
     }
 
