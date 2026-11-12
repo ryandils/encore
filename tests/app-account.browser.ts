@@ -61,6 +61,8 @@ async function verify(): Promise<void> {
   let failedScripts = 0;
   let consoleErrors = 0;
   const consoleErrorSamples: string[] = [];
+  const httpFailures: { path: string; status: number; type: string }[] = [];
+  const documentNavigations: string[] = [];
   let stateReadError = '';
   const safeError = (error: unknown) => {
     let line = error instanceof Error ? `${error.name}: ${error.message.split('\n', 1)[0]}` : 'Unknown error';
@@ -133,6 +135,12 @@ async function verify(): Promise<void> {
     }
     async function page(value: BrowserContext) {
       const result = await value.newPage(); result.setDefaultTimeout(30000); result.setDefaultNavigationTimeout(60000);
+      result.on('framenavigated', (frame) => {
+        if (frame === result.mainFrame() && documentNavigations.length < 10) documentNavigations.push(new URL(frame.url()).pathname);
+      });
+      result.on('response', (response) => {
+        if (response.status() >= 400 && httpFailures.length < 10) httpFailures.push({ path: new URL(response.url()).pathname, status: response.status(), type: response.request().resourceType() });
+      });
       result.on('pageerror', () => { pageError = true; });
       result.on('crash', () => { pageCrashed = true; });
       result.on('requestfailed', (request) => { if (request.resourceType() === 'script') failedScripts++; });
@@ -304,7 +312,7 @@ async function verify(): Promise<void> {
       })).catch((error: unknown) => { stateReadError = safeError(error); return null; });
       console.log(`CHECKPOINT account browser safe state: ${JSON.stringify(state)}`);
     }
-    const diagnostic = { pageCrashed, browserDisconnected, failedScripts, consoleErrors, consoleErrorSamples, stateReadError, pageClosed: diagnosticPage?.isClosed(),
+    const diagnostic = { pageCrashed, browserDisconnected, failedScripts, consoleErrors, consoleErrorSamples, httpFailures, documentNavigations, stateReadError, pageClosed: diagnosticPage?.isClosed(),
       disabledControl: error instanceof Error && error.message.includes('element is not enabled'),
       targetClosed: error instanceof Error && /Target.*closed|has been closed/.test(error.message),
       contextDestroyed: error instanceof Error && error.message.includes('Execution context was destroyed'),
