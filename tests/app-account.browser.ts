@@ -56,6 +56,7 @@ async function verify(): Promise<void> {
   let child: ChildProcess | undefined;
   let browser: Browser | undefined;
   let pageError = false;
+  let diagnosticPage: Page | undefined;
   let tokenInUrl = false;
   const capturedTokens: string[] = [];
   let step = 'local prerequisites';
@@ -126,6 +127,7 @@ async function verify(): Promise<void> {
     }
     const target = await context(); const other = await context(); const legacy = await context();
     const targetPage = await page(target);
+    diagnosticPage = targetPage;
     const post = (value: BrowserContext, path: string, data: Record<string, unknown>) => value.request.post(`${origin}${path}`, { headers: { Origin: origin }, data, timeout: 30000 });
     const submit = async (view: Page, button: string, endpoint: string) => {
       step = `account form ${endpoint}: wait for button`;
@@ -248,6 +250,17 @@ async function verify(): Promise<void> {
     check(!pageError && !tokenInUrl, 'Account journey had a page error or exposed a token in a network URL.');
     console.log(`PASS Chromium ${browser.version()}: 320px account verification/resend/expiry/replay, verified sign-in, reset/password replacement/session isolation, demo-session bypass denial, private fragment captures, keyboard focus and scoped cleanup. Synthetic local browser evidence only; no email sent.`);
   } catch (error) {
+    if (diagnosticPage && !diagnosticPage.isClosed()) {
+      const state = await diagnosticPage.evaluate(() => ({
+        path: window.location.pathname,
+        controls: Array.from(document.querySelectorAll('main input, main button')).map((element) => ({
+          tag: element.tagName, id: element.id, type: element.getAttribute('type'),
+          disabled: element.hasAttribute('disabled'), visible: element.getClientRects().length > 0,
+          labelCount: element instanceof HTMLInputElement ? element.labels?.length : undefined,
+        })),
+      })).catch(() => null);
+      console.log(`CHECKPOINT account browser safe state: ${JSON.stringify(state)}`);
+    }
     const kind = error instanceof Error && error.name === 'TimeoutError' ? 'browser timeout' : 'browser verification failed';
     throw new BrowserVerificationFailure(error instanceof BrowserVerificationFailure ? `${step}: ${error.message}` : `${step}: ${kind}; pageError=${pageError}; raw diagnostics withheld to protect credentials.`);
   } finally {
