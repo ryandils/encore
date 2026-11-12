@@ -128,14 +128,33 @@ async function verify(): Promise<void> {
     const target = await context(); const other = await context(); const legacy = await context();
     const targetPage = await page(target);
     diagnosticPage = targetPage;
-    const post = (value: BrowserContext, path: string, data: Record<string, unknown>) => value.request.post(`${origin}${path}`, { headers: { Origin: origin }, data, timeout: 30000 });
+    async function waitForRateLimit(response: { status(): number; headers(): Record<string, string> }) {
+      if (response.status() !== 429) return false;
+      const seconds = Number(response.headers()['retry-after'] ?? response.headers()['x-retry-after']);
+      check(Number.isInteger(seconds) && seconds > 0 && seconds <= 60, 'Rate limit did not supply a bounded retry delay.');
+      console.log(`CHECKPOINT account browser: respecting 429 Retry-After ${seconds}s.`);
+      await delay(seconds * 1000);
+      return true;
+    }
+    const post = async (value: BrowserContext, path: string, data: Record<string, unknown>) => {
+      const send = () => value.request.post(`${origin}${path}`, { headers: { Origin: origin }, data, timeout: 30000 });
+      const response = await send();
+      return await waitForRateLimit(response) ? send() : response;
+    };
     const submit = async (view: Page, button: string, endpoint: string) => {
       step = `account form ${endpoint}: wait for button`;
       await view.getByRole('button', { name: button, exact: true }).waitFor({ state: 'visible' });
       step = `account form ${endpoint}: submit and await response`;
-      const [response] = await Promise.all([view.waitForResponse((response) => new URL(response.url()).pathname === `/api/local-auth/${endpoint}` && response.request().method() === 'POST'), view.getByRole('button', { name: button, exact: true }).click()]);
-      console.log(`CHECKPOINT account browser: ${endpoint} responded ${response.status()}.`);
-      return response.status();
+      const send = async () => {
+        const [response] = await Promise.all([view.waitForResponse((response) => new URL(response.url()).pathname === `/api/local-auth/${endpoint}` && response.request().method() === 'POST'), view.getByRole('button', { name: button, exact: true }).click()]);
+        console.log(`CHECKPOINT account browser: ${endpoint} responded ${response.status()}.`);
+        return response;
+      };
+      const response = await send();
+      if (!await waitForRateLimit(response)) return response.status();
+      // A 429 rejects before token/password handling; retry once after the server delay.
+      await view.locator('main').getByRole('alert').waitFor();
+      return (await send()).status();
     };
     async function signIn(secret: string) {
       step = 'sign-in: navigation';
