@@ -114,7 +114,7 @@ async function verify(): Promise<void> {
     step = 'development server';
     const origin = `http://127.0.0.1:${await availablePort()}`;
     let failed = false;
-    child = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--hostname', '127.0.0.1', '--port', new URL(origin).port], {
+    child = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--webpack', '--hostname', '127.0.0.1', '--port', new URL(origin).port], {
       cwd: root, env: { ...process.env, NODE_ENV: 'development', BETTER_AUTH_URL: origin, ENCORE_AUTH_CAPTURE: '1' }, stdio: 'ignore', detached: process.platform !== 'win32',
     });
     child.once('error', () => { failed = true; });
