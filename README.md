@@ -202,3 +202,5 @@ Run `pnpm run owner:browser:verify` with local database/auth and Chromium for th
 ## Isolated auth token tests
 
 Run `pnpm exec vitest run tests/auth-lifecycle.test.ts` for the provider-neutral verification/password-reset package under #11. These isolated local fixtures use actual Better Auth handlers and in-memory captured synthetic messages. No database service, provider credentials or email delivery is needed. The application remains production-disabled and its session-only auth routes are unchanged. See [the lifecycle boundary](docs/ARCHITECTURE.md) for token consumption and remaining configuration limits.
+
+For the separate actual Prisma/PostgreSQL proof, run `pnpm run auth:lifecycle:verify` after `db:init`, `db:up`, `db:generate`, `db:migrate` and `auth:init`. It uses two independent clients, captured synthetic mail and temporary accounts, then removes only its own records. It neither verifies seeded demo users nor sends email. The lifecycle adapter explicitly enables transactions for password reset. See [local verification details](docs/LOCAL_DATABASE.md); a passing memory test does not replace this database check.

@@ -63,6 +63,8 @@ export function createLocalAuthLifecycle(database: NonNullable<BetterAuthOptions
       }),
     },
     session: { cookieCache: { enabled: false } },
+    // Isolated fixtures own their cleanup; never sweep another account's tokens.
+    verification: { disableCleanup: true },
     rateLimit: { enabled: true },
     logger: { disabled: true },
     telemetry: { enabled: false },
