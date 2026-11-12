@@ -23,6 +23,20 @@ const environment = {
 
 afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); vi.resetAllMocks(); });
 
+it('switches out of the app namespace only after explicit successful demo sign-in', async () => {
+  vi.stubEnv('NODE_ENV', 'test');
+  const handler = vi.fn().mockResolvedValue(Response.json({ status: true }));
+  mocks.getAuth.mockReturnValue({ handler });
+  const request = () => new Request('http://localhost:3000/api/auth/sign-in/email', {
+    method: 'POST', headers: { cookie: 'encore-app-auth.selected=1; encore-app-auth.session_token=opaque; unrelated=keep' },
+  });
+  const response = await authPost(request());
+  expect(response.headers.getSetCookie()).toHaveLength(2);
+  expect(response.headers.getSetCookie().every((cookie) => cookie.includes('Max-Age=0') && cookie.startsWith('encore-app-auth.'))).toBe(true);
+  handler.mockResolvedValue(Response.json({ error: 'Rejected' }, { status: 401 }));
+  expect((await authPost(request())).headers.getSetCookie()).toHaveLength(0);
+});
+
 describe('local authentication configuration boundary', () => {
   it.each(['localhost', '127.0.0.1', '[::1]'])('accepts an explicit HTTP loopback origin (%s)', (host) => {
     expect(getAuthConfig({ ...environment, BETTER_AUTH_URL: `http://${host}:3100` }).baseURL).toBe(`http://${host}:3100`);

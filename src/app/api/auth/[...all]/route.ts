@@ -14,6 +14,15 @@ async function handler(request: Request): Promise<Response> {
   }
   try {
     const response = await getAuth().handler(request);
+    if (path === '/api/auth/sign-in/email' && response.ok) {
+      // A deliberate demo sign-in switches namespaces; expiry/logout never does.
+      for (const entry of (request.headers.get('cookie') ?? '').split(';')) {
+        const name = entry.trim().split('=', 1)[0];
+        if (/^encore-app-auth\.[A-Za-z0-9._-]+$/.test(name)) {
+          response.headers.append('Set-Cookie', `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
+        }
+      }
+    }
     response.headers.set('Cache-Control', 'no-store');
     return response;
   } catch {
