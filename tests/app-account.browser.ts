@@ -60,6 +60,7 @@ async function verify(): Promise<void> {
   let browserDisconnected = false;
   let failedScripts = 0;
   let consoleErrors = 0;
+  const consoleErrorSamples: string[] = [];
   let stateReadError = '';
   const safeError = (error: unknown) => {
     let line = error instanceof Error ? `${error.name}: ${error.message.split('\n', 1)[0]}` : 'Unknown error';
@@ -135,7 +136,12 @@ async function verify(): Promise<void> {
       result.on('pageerror', () => { pageError = true; });
       result.on('crash', () => { pageCrashed = true; });
       result.on('requestfailed', (request) => { if (request.resourceType() === 'script') failedScripts++; });
-      result.on('console', (message) => { if (message.type() === 'error') consoleErrors++; });
+      result.on('console', (message) => {
+        if (message.type() !== 'error') return;
+        consoleErrors++;
+        const sample = safeError(new Error(message.text()));
+        if (consoleErrorSamples.length < 5 && !consoleErrorSamples.includes(sample)) consoleErrorSamples.push(sample);
+      });
       result.on('request', (request) => { if (capturedTokens.some((token) => request.url().includes(token))) tokenInUrl = true; });
       return result;
     }
@@ -298,7 +304,7 @@ async function verify(): Promise<void> {
       })).catch((error: unknown) => { stateReadError = safeError(error); return null; });
       console.log(`CHECKPOINT account browser safe state: ${JSON.stringify(state)}`);
     }
-    const diagnostic = { pageCrashed, browserDisconnected, failedScripts, consoleErrors, stateReadError, pageClosed: diagnosticPage?.isClosed(),
+    const diagnostic = { pageCrashed, browserDisconnected, failedScripts, consoleErrors, consoleErrorSamples, stateReadError, pageClosed: diagnosticPage?.isClosed(),
       disabledControl: error instanceof Error && error.message.includes('element is not enabled'),
       targetClosed: error instanceof Error && /Target.*closed|has been closed/.test(error.message),
       contextDestroyed: error instanceof Error && error.message.includes('Execution context was destroyed'),
