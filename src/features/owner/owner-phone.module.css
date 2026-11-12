@@ -1,0 +1,16 @@
+.phone.phone { max-width:480px; padding:0 16px calc(108px + env(safe-area-inset-bottom,0px)); }
+.phone .presetGrid,.phone .twoColumns,.phone .actions { grid-template-columns:1fr; }
+.phone .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.phone section { scroll-margin-top:16px; }
+.nav { position:fixed; z-index:20; bottom:0; left:50%; transform:translateX(-50%); display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); width:100%; max-width:480px; padding:8px 6px calc(10px + env(safe-area-inset-bottom,0px)); gap:4px; border-top:1px solid #44536a; background:#0c1422; }
+.nav a { display:flex; align-items:center; justify-content:center; min-height:52px; padding:6px 2px; border:1px solid transparent; border-radius:10px; color:#c4d2e6; font-size:12px; font-weight:650; text-decoration:none; }
+.nav a[aria-current] { background:#0000ff; border-color:#a0a0ff; color:white; }
+.nav a:focus-visible { outline:3px solid #00a1ff; outline-offset:1px; }
+/* Readable practice screens and forgiving touch targets, scoped to the owner fixture. */
+.phone p,.phone label,.phone dt,.phone li { font-size:16px; line-height:1.6; }
+.phone button,.phone input,.phone textarea,.phone summary { min-height:56px; font-size:16px; }
+.phone fieldset legend { font-size:15px; }
+.phone button { padding:14px 16px; }
+.phone :is(a,button,input,textarea,summary) { scroll-margin-bottom:110px; }
+.phone .nav a { min-height:56px; font-size:13px; text-align:center; line-height:1.35; }
+.phone [hidden] { display:none; }

@@ -1,0 +1,40 @@
+.dashboard { padding:28px 0 20px; color:#fff; scroll-margin-top:20px; }
+.heading { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+.eyebrow { margin:0 0 10px; color:#82cfff; font-size:11px; font-weight:700; letter-spacing:1.6px; }
+.dashboard h1 { margin:0; font-size:clamp(30px,6vw,44px); line-height:1.1; letter-spacing:-1px; overflow-wrap:anywhere; }
+.status { flex-shrink:0; border:1px solid #657894; border-radius:20px; padding:8px 12px; color:#dce8ff; font-size:12px; background:#142137; }
+.context { color:#b9c6d8; font-size:14px; line-height:1.6; margin:14px 0; }
+.sample { display:inline-block; margin:0 0 20px; color:#b9c6d8; font-size:12px; line-height:1.5; }
+.occupancy { border:1px solid #5381e6; border-radius:20px; padding:24px; background:linear-gradient(130deg,#101c45,#101a2a); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; }
+.occupancy>div { display:flex; flex-direction:column; gap:14px; }
+.occupancy strong { font-size:64px; letter-spacing:-2px; line-height:1; font-variant-numeric:tabular-nums; }
+.occupancy small { font-size:16px; color:#b9c6d8; letter-spacing:0; font-weight:400; }
+.capacity { font-size:12px; color:#c6d6ef; }
+.occupancy progress { width:100%; height:8px; accent-color:#00a1ff; }
+.occupancy p { width:100%; margin:0; color:#b9c6d8; font-size:12px; line-height:1.5; }
+.metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0; }
+.metrics>div { border:1px solid #34445f; background:#101a2a; border-radius:14px; padding:18px; }
+.metrics dt { color:#b9c6d8; font-size:12px; line-height:1.5; }
+.metrics dd { margin:12px 0 0; font-size:26px; font-weight:700; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.next { display:grid; gap:12px; border-top:1px solid #34445f; padding:22px 0 8px; margin-top:20px; }
+.next h2 { margin:0; font-size:23px; letter-spacing:-.5px; }
+.next p:not(.eyebrow) { color:#b9c6d8; font-size:14px; line-height:1.6; margin:10px 0; }
+.primary,.secondary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:52px; padding:14px 16px; border-radius:12px; text-decoration:none; font-size:15px; font-weight:650; }
+.primary { background:#0000ff; color:#fff; border:1px solid #a0a0ff; }
+.dashboard .secondary { background:transparent; color:#bde5ff; border:1px solid #5381e6; justify-content:center; }
+.shortcuts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:16px; }
+.shortcuts a { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:16px; min-height:52px; border:1px solid #34445f; border-radius:12px; color:#e3edff; text-decoration:none; font-size:14px; }
+.shortcuts span { color:#82cfff; }
+.dashboard :is(a,button):focus-visible { outline:3px solid #00a1ff; outline-offset:3px; }
+@media(max-width:640px) { .metrics,.shortcuts { grid-template-columns:repeat(2,minmax(0,1fr)); }.metrics>div { padding:16px 12px; }.metrics dd { font-size:25px; }.occupancy { padding:20px; }.heading { gap:10px; }.status { padding:7px 10px; }.shortcuts a { padding:14px 12px; } }
+.dashboard .context,.dashboard .next p:not(.eyebrow) { font-size:16px; line-height:1.6; }
+.dashboard .metrics dt { font-size:15px; }
+.dashboard .sample,.dashboard .capacity,.dashboard .occupancy p { font-size:14px; line-height:1.6; }
+.dashboard .primary,.dashboard .secondary,.dashboard .shortcuts a { min-height:56px; font-size:16px; }.doorControls { margin:20px 0; }
+.doorControls h2 { font-size:22px; }
+.doorControls label { display:grid; gap:8px; font-size:16px; }
+.doorControls select { width:100%; min-width:0; min-height:56px; padding:12px; border:1px solid #657894; border-radius:10px; background:#101a2a; color:white; font-size:16px; }
+.doorButtons { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px; }
+.dashboard .doorButtons button { justify-content:center; min-height:64px; }
+.doorControls :disabled { opacity:.5; cursor:not-allowed; }
+.doorControls select:focus-visible { outline:3px solid #00a1ff; outline-offset:3px; }
