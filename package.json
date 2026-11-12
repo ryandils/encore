@@ -40,6 +40,7 @@
     "auth:init": "node scripts/auth-init.ts",
     "auth:seed": "node scripts/auth-seed.ts",
     "auth:verify": "node tests/auth.integration.ts",
+    "auth:lifecycle:verify": "node tests/auth-lifecycle.integration.ts",
     "production:verify": "node tests/production.integration.ts",
     "browser:verify": "node scripts/browser-verify.ts",
     "door:browser:verify": "node tests/door-live.browser.ts",

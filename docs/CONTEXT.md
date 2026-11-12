@@ -34,7 +34,7 @@ Read this first with AGENTS.md. Keep it concise and evidence-based; inspect curr
 
 - A local persisted owner workspace at `/local/owner` adds venue/night setup and selection, preset/access management, authoritative summaries, cash closeout, closed history and protected audit downloads. Per-tab original close commands survive refresh and gate subsequent writes until resolved. `/invites/accept` scrubs fragment tokens immediately and requires explicit acceptance by a verified intended account. Production remains disabled; automated synthetic browser evidence does not prove real verification or physical-device acceptance.
 
-- An unwired local Better Auth lifecycle factory supports isolated synthetic email capture, verified sign-in, one-hour verification/reset tokens, verification replay denial and reset session revocation. Application routes remain session-only. See [architecture](ARCHITECTURE.md); memory-adapter tests are not production delivery or PostgreSQL concurrency evidence.
+- An unwired local Better Auth lifecycle factory supports isolated synthetic email capture, verified sign-in, one-hour verification/reset tokens, verification replay denial and reset session revocation. Application routes remain session-only. The separate `auth:lifecycle:verify` command targets actual Prisma/PostgreSQL with independent clients and explicit adapter transactions; its execution evidence belongs in [the proof handoff](handoffs/11-auth-postgres-proof.md). See [architecture](ARCHITECTURE.md); isolated fixtures are not production delivery or application integration.
 
 ## Not implemented
 

@@ -112,6 +112,12 @@ All authentication and demo routes reject `NODE_ENV=production`, including an op
 
 With the local database and demo credentials ready, stop any `pnpm run dev` server in this checkout with Ctrl+C, then run `pnpm run auth:verify` for separate HTTP/PostgreSQL regression checks. It starts its own development server, exercises sessions and rejection cases, and stops that test server afterward. Ordinary `pnpm run test` remains database-free. Native Windows/macOS Docker walkthroughs must be recorded separately from hosted application CI.
 
+## Isolated PostgreSQL authentication lifecycle proof
+
+After `db:init`, `db:up`, `db:generate`, `db:migrate` and `auth:init`, run `pnpm run auth:lifecycle:verify`. No development server or mail provider is needed. The verifier invokes the isolated Better Auth handlers against the actual Prisma/PostgreSQL adapter with transactions explicitly enabled. Two independent clients exercise concurrent one-use tokens; captured messages stay in process memory. It provisions uniquely scoped synthetic unverified accounts and verifies them only by redeeming captured links. Existing seeded accounts remain unchanged.
+
+The verifier covers sign-in, expiry/tampering/replay, resend, password replacement, session revocation and other-account preservation, plus controlled write failures. Reset token consumption, session deletion and password replacement must roll back together. Verification deliberately spends a link before the account update; an update failure requires a fresh link. Cleanup targets only the verifier's own users and verification records, including after assertion failure. A killed process can leave its synthetic records behind. This check does not expose application routes, enable public signup, configure delivery or prove pilot readiness.
+
 ## Stop and resume without losing data
 
 ```text
