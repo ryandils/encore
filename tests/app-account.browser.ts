@@ -56,6 +56,8 @@ async function verify(): Promise<void> {
   let child: ChildProcess | undefined;
   let browser: Browser | undefined;
   let pageError = false;
+  let pageCrashed = false;
+  let browserDisconnected = false;
   let diagnosticPage: Page | undefined;
   let tokenInUrl = false;
   const capturedTokens: string[] = [];
@@ -115,6 +117,7 @@ async function verify(): Promise<void> {
     check(ready, 'Account test server did not become ready.');
     const { chromium } = await import('playwright');
     browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined, timeout: 30000 });
+    browser.on('disconnected', () => { browserDisconnected = true; });
     async function context() {
       check(browser, 'Browser unavailable.');
       const value = await browser.newContext({ viewport: { width: 320, height: 844 }, reducedMotion: 'reduce' }); contexts.push(value); return value;
@@ -122,6 +125,7 @@ async function verify(): Promise<void> {
     async function page(value: BrowserContext) {
       const result = await value.newPage(); result.setDefaultTimeout(30000); result.setDefaultNavigationTimeout(60000);
       result.on('pageerror', () => { pageError = true; });
+      result.on('crash', () => { pageCrashed = true; });
       result.on('request', (request) => { if (capturedTokens.some((token) => request.url().includes(token))) tokenInUrl = true; });
       return result;
     }
@@ -284,6 +288,13 @@ async function verify(): Promise<void> {
       })).catch(() => null);
       console.log(`CHECKPOINT account browser safe state: ${JSON.stringify(state)}`);
     }
+    const diagnostic = { pageCrashed, browserDisconnected, pageClosed: diagnosticPage?.isClosed(),
+      disabledControl: error instanceof Error && error.message.includes('element is not enabled'),
+      targetClosed: error instanceof Error && /Target.*closed|has been closed/.test(error.message),
+      contextDestroyed: error instanceof Error && error.message.includes('Execution context was destroyed'),
+      pageCrashedMessage: error instanceof Error && error.message.includes('Page crashed'),
+    };
+    console.log(`CHECKPOINT account browser failure category: ${JSON.stringify(diagnostic)}`);
     const kind = error instanceof Error && error.name === 'TimeoutError' ? 'browser timeout' : 'browser verification failed';
     throw new BrowserVerificationFailure(error instanceof BrowserVerificationFailure ? `${step}: ${error.message}` : `${step}: ${kind}; pageError=${pageError}; raw diagnostics withheld to protect credentials.`);
   } finally {
