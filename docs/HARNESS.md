@@ -87,3 +87,5 @@ Doctor should report required prerequisites honestly. If database or credentials
 ## Public repository rules
 
 The repository is public. Use synthetic records, no original chat screenshots, no venue/customer data, no personal contact details, and no credentials in commits/issues/PRs. `private: true` in package.json prevents accidental npm publication; it does not make GitHub private. Store configuration locally in ignored .env files when the app needs them. If a secret is exposed, revoke/rotate it first; deleting the file in a new commit does not remove history.
+
+The PostgreSQL job also runs `account:browser:verify` on Ubuntu, independently of the Windows browser sequence, to cover verification/recovery with a fresh development server on both platforms.

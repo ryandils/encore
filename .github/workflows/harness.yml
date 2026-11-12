@@ -57,6 +57,8 @@ jobs:
       - run: pnpm run auth:seed
       - run: pnpm run auth:verify
       - run: pnpm run auth:lifecycle:verify
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run account:browser:verify
       - run: pnpm run ledger:http:verify
       - run: pnpm run venue:http:verify
       - run: pnpm run owner:http:verify
