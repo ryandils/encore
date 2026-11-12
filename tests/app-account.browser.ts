@@ -109,7 +109,7 @@ async function verify(): Promise<void> {
     const deadline = Date.now() + 90000;
     while (Date.now() < deadline) {
       check(!failed && child.exitCode === null, 'Test server did not start. Stop any other development server in this checkout.');
-      try { const response = await fetch(`${origin}/api/demo/session`, { signal: AbortSignal.timeout(5000), redirect: 'manual' }); await response.text(); if (response.status === 401) { ready = true; break; } } catch { /* Startup compilation. */ }
+      try { const response = await fetch(`${origin}/api/local-auth/get-session`, { signal: AbortSignal.timeout(5000), redirect: 'manual' }); const session: unknown = await response.json(); if (response.status === 200 && session === null) { ready = true; break; } } catch { /* Startup compilation. */ }
       await delay(250);
     }
     check(ready, 'Account test server did not become ready.');
